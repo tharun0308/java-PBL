@@ -3,9 +3,10 @@ echo ==============================================================
 echo   Compiling SCMS (Smart Complaint Management System) - Java
 echo ==============================================================
 
-if not exist bin mkdir bin
+if exist bin rmdir /s /q bin
+mkdir bin
 
-javac -encoding UTF-8 -d bin -sourcepath src\main\java src\main\java\com\scms\Main.java
+javac -encoding UTF-8 -d bin -sourcepath src\main\java src\main\java\com\scms\Main.java src\main\java\com\scms\controller\*.java src\main\java\com\scms\model\*.java src\main\java\com\scms\repository\*.java src\main\java\com\scms\service\*.java src\main\java\com\scms\util\*.java
 
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Compilation failed!
@@ -22,6 +23,7 @@ if %ERRORLEVEL% NEQ 0 (
     )
 )
 
+if exist scms.jar del /f /q scms.jar
 "%JAR_CMD%" cfe scms.jar com.scms.Main -C bin . >nul 2>nul
 if exist scms.jar (
     echo [SUCCESS] Packaged executable scms.jar successfully.
