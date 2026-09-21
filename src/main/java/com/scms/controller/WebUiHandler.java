@@ -28,6 +28,12 @@ public class WebUiHandler extends BaseHttpHandler {
             return;
         }
 
+        // 1. Transparently proxy to Next.js frontend on port 3000 if active
+        if (proxyToNextJs(exchange)) {
+            return;
+        }
+
+        // 2. Fallback to embedded self-contained HTML client
         Optional<User> userOpt = getAuthenticatedUser(exchange);
         String role = userOpt.map(User::getRole).orElse("user");
         String fullName = userOpt.map(User::getFull_name).orElse("Alex Johnson");
@@ -45,6 +51,71 @@ public class WebUiHandler extends BaseHttpHandler {
 
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(bytes);
+        }
+    }
+
+    private boolean proxyToNextJs(HttpExchange exchange) {
+        try {
+            String rawPath = exchange.getRequestURI().getRawPath();
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            String targetUrl = "http://localhost:3000" + rawPath + (rawQuery != null && !rawQuery.isEmpty() ? "?" + rawQuery : "");
+
+            java.net.http.HttpClient client = java.net.http.HttpClient.newBuilder()
+                    .connectTimeout(java.time.Duration.ofMillis(800))
+                    .followRedirects(java.net.http.HttpClient.Redirect.NEVER)
+                    .build();
+
+            byte[] reqBody = "GET".equalsIgnoreCase(exchange.getRequestMethod()) || "HEAD".equalsIgnoreCase(exchange.getRequestMethod())
+                    ? new byte[0]
+                    : readRequestBody(exchange).getBytes(StandardCharsets.UTF_8);
+
+            java.net.http.HttpRequest.Builder reqBuilder = java.net.http.HttpRequest.newBuilder()
+                    .uri(java.net.URI.create(targetUrl))
+                    .method(exchange.getRequestMethod(), reqBody.length == 0
+                            ? java.net.http.HttpRequest.BodyPublishers.noBody()
+                            : java.net.http.HttpRequest.BodyPublishers.ofByteArray(reqBody));
+
+            // Forward request headers
+            for (java.util.Map.Entry<String, java.util.List<String>> entry : exchange.getRequestHeaders().entrySet()) {
+                String key = entry.getKey();
+                if (!key.equalsIgnoreCase("Host") && !key.equalsIgnoreCase("Content-Length")) {
+                    for (String v : entry.getValue()) {
+                        try {
+                            reqBuilder.header(key, v);
+                        } catch (Exception ignored) {}
+                    }
+                }
+            }
+
+            java.net.http.HttpResponse<byte[]> response = client.send(
+                    reqBuilder.build(),
+                    java.net.http.HttpResponse.BodyHandlers.ofByteArray()
+            );
+
+            // Forward response headers
+            for (java.util.Map.Entry<String, java.util.List<String>> h : response.headers().map().entrySet()) {
+                String name = h.getKey();
+                if (!name.equalsIgnoreCase("Transfer-Encoding") && !name.equalsIgnoreCase("Content-Length")) {
+                    for (String val : h.getValue()) {
+                        exchange.getResponseHeaders().add(name, val);
+                    }
+                }
+            }
+
+            byte[] body = response.body();
+            if ("HEAD".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(response.statusCode(), body != null ? body.length : 0);
+            } else {
+                exchange.sendResponseHeaders(response.statusCode(), body != null ? body.length : -1);
+                if (body != null && body.length > 0) {
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        os.write(body);
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
