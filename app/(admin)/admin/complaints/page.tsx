@@ -30,8 +30,21 @@ import {
   Download,
   Camera,
   Star,
+  Eye,
+  Check,
+  X,
+  ExternalLink,
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+interface PhotoPreviewState {
+  url: string;
+  title: string;
+  subtitle: string;
+  uploader: string;
+  type: 'defect' | 'resolution';
+  downloadName: string;
+}
 
 function AdminComplaintsContent() {
   const searchParams = useSearchParams();
@@ -41,6 +54,7 @@ function AdminComplaintsContent() {
   const [status, setStatus] = useState(initialStatus);
   const [category, setCategory] = useState('all');
   const [priority, setPriority] = useState('all');
+  const [photoPreview, setPhotoPreview] = useState<PhotoPreviewState | null>(null);
 
   const {
     data: complaints = [],
@@ -97,7 +111,7 @@ function AdminComplaintsContent() {
             Facility Complaints Management
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Review, filter, reassign, triage SLA timers, and resolve issues reported across campus.
+            Review, inspect attached defect evidence, reassign technicians, and verify resolution proof.
           </p>
         </div>
 
@@ -186,6 +200,7 @@ function AdminComplaintsContent() {
                     <TableHead>Reported By</TableHead>
                     <TableHead>Priority</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Attachments / Evidence</TableHead>
                     <TableHead>SLA Timer</TableHead>
                     <TableHead>Assigned To</TableHead>
                     <TableHead>Date</TableHead>
@@ -207,14 +222,17 @@ function AdminComplaintsContent() {
                         className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 border-slate-200 dark:border-slate-800"
                       >
                         <TableCell className="font-mono font-bold text-indigo-600 dark:text-indigo-400 text-xs">
-                          <div className="flex items-center gap-1.5">
+                          <Link
+                            href={`/admin/complaints/${complaint.id}`}
+                            className="hover:underline flex items-center gap-1.5"
+                          >
                             <span>{formattedId}</span>
                             {hasPhotos && (
                               <span title="Contains photo attachment">
                                 <Camera className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
                               </span>
                             )}
-                          </div>
+                          </Link>
                         </TableCell>
                         <TableCell>
                           <span className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
@@ -252,6 +270,75 @@ function AdminComplaintsContent() {
                             )}
                           </div>
                         </TableCell>
+
+                        {/* Attachments / Evidence Column */}
+                        <TableCell>
+                          <div className="flex items-center gap-1.5">
+                            {complaint.image_url ? (
+                              <button
+                                type="button"
+                                title="Click to inspect Student Defect Photo"
+                                onClick={() =>
+                                  setPhotoPreview({
+                                    url: complaint.image_url!,
+                                    title: `Student Defect Photo (${formattedId})`,
+                                    subtitle: `${complaint.category} • ${complaint.location}`,
+                                    uploader: complaint.user ? `Reported by ${complaint.user.full_name}` : 'Reported by Student User',
+                                    type: 'defect',
+                                    downloadName: `defect-${complaint.complaint_number}.jpg`,
+                                  })
+                                }
+                                className="relative group w-9 h-9 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 hover:ring-2 hover:ring-indigo-500 transition-all cursor-pointer shrink-0 bg-slate-100 dark:bg-slate-800 shadow-sm"
+                              >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={complaint.image_url}
+                                  alt="Defect thumbnail"
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                                />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white">
+                                  <Eye className="w-3.5 h-3.5" />
+                                </div>
+                              </button>
+                            ) : null}
+
+                            {complaint.resolution_image_url ? (
+                              <button
+                                type="button"
+                                title="Click to inspect Resolution Proof Photo"
+                                onClick={() =>
+                                  setPhotoPreview({
+                                    url: complaint.resolution_image_url!,
+                                    title: `Resolution Proof Photo (${formattedId})`,
+                                    subtitle: `Resolved • Assigned: ${complaint.assigned_to || 'Facilities Team'}`,
+                                    uploader: 'Verified by Facilities Maintenance',
+                                    type: 'resolution',
+                                    downloadName: `resolution-proof-${complaint.complaint_number}.jpg`,
+                                  })
+                                }
+                                className="relative group w-9 h-9 rounded-lg overflow-hidden border-2 border-emerald-500 hover:ring-2 hover:ring-emerald-400 transition-all cursor-pointer shrink-0 bg-emerald-50 dark:bg-emerald-950/40 shadow-sm"
+                              >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={complaint.resolution_image_url}
+                                  alt="Resolution thumbnail"
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                                />
+                                <div className="absolute top-0 right-0 bg-emerald-600 text-white p-0.5 rounded-bl">
+                                  <Check className="w-2.5 h-2.5" />
+                                </div>
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white">
+                                  <Eye className="w-3.5 h-3.5" />
+                                </div>
+                              </button>
+                            ) : null}
+
+                            {!complaint.image_url && !complaint.resolution_image_url && (
+                              <span className="text-[11px] text-slate-400 dark:text-slate-500 italic">No media</span>
+                            )}
+                          </div>
+                        </TableCell>
+
                         <TableCell>
                           <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border whitespace-nowrap ${sla.badgeClass}`}>
                             {sla.label}
@@ -286,6 +373,56 @@ function AdminComplaintsContent() {
           )}
         </CardContent>
       </Card>
+
+      {/* Attachment Inspection Modal */}
+      {photoPreview && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
+          onClick={() => setPhotoPreview(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-700"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4 bg-slate-800 flex items-center justify-between text-white border-b border-slate-700">
+              <div>
+                <h3 className="text-sm font-bold flex items-center gap-2">
+                  <Camera className="w-4 h-4 text-indigo-400" />
+                  {photoPreview.title}
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {photoPreview.subtitle} • {photoPreview.uploader}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href={photoPreview.url}
+                  download={photoPreview.downloadName}
+                  className="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs flex items-center gap-1.5 font-medium transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  Download
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setPhotoPreview(null)}
+                  className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            <div className="p-4 bg-black/70 flex items-center justify-center max-h-[75vh] overflow-auto">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={photoPreview.url}
+                alt={photoPreview.title}
+                className="max-h-[70vh] w-auto object-contain rounded-lg shadow-lg"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
