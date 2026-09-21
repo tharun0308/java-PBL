@@ -34,3 +34,11 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# java
+/bin/
+/target/
+*.class
+*.jar
+/scratch/
+

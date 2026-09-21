@@ -1,8 +1,40 @@
-# Smart Complaint Management System (SCMS)
+# Smart Complaint Management System (SCMS) - Java PBL & Full Stack
 
-> A production-ready, full-stack campus facility complaint management, triage, and resolution platform built with Next.js 14 (App Router, TypeScript), Tailwind CSS, shadcn/ui, Supabase (PostgreSQL, Auth, RLS), TanStack React Query, and Recharts.
+> A production-ready campus facility complaint management, AI auto-triage, SLA monitoring, and resolution platform. Features a complete **Pure Java Standard Edition Backend (JDK 17+)** alongside a Next.js 14 web client and an integrated Java-native single-page dashboard.
 
 ---
+
+## ☕ Pure Java PBL Architecture
+
+The system features a complete, standalone, object-oriented **Pure Java** server built strictly with standard Java SE libraries (zero external Maven dependencies required for compilation and execution):
+
+- **Architecture**: Domain Model Pattern + DAO/Repository Layer + Service Layer + REST HTTP Handlers (`com.sun.net.httpserver.HttpServer`).
+- **Standard Maven Build**: Fully configured with standard `pom.xml` for IDEs (IntelliJ IDEA, Eclipse, VS Code).
+- **Embedded Web Client**: The Java server on port `8080` serves both the JSON REST API and the complete interactive web UI (with dark mode, 4-stage tracking, photo zoom modal, and CSV export).
+- **Zero-Config Scripts**: `run.bat` (single-click build & launch) and `build.bat` (compiles and packages `scms.jar`).
+
+### Quick Start (Pure Java)
+
+To compile and launch the Java system directly on Windows:
+
+```cmd
+run.bat
+```
+
+Or manually:
+
+```cmd
+javac -encoding UTF-8 -d bin -sourcepath src/main/java src/main/java/com/scms/Main.java
+java -cp bin com.scms.Main
+```
+
+Open your browser at:
+- **Web UI**: [http://localhost:8080](http://localhost:8080)
+- **API Endpoints**: [http://localhost:8080/api/](http://localhost:8080/api/)
+- **CSV Export**: [http://localhost:8080/api/export/csv](http://localhost:8080/api/export/csv)
+
+---
+
 
 ## Features
 
