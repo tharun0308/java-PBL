@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Java SCMS",
+      "type": "shell",
+      "command": ".\\build.bat",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "Run Java SCMS Server",
+      "type": "shell",
+      "command": ".\\run.bat",
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

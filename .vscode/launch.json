@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "⚡ Run SCMS Java Server",
+      "request": "launch",
+      "mainClass": "com.scms.Main",
+      "projectName": "smart-complaint-management-system",
+      "env": {
+        "PORT": "8080"
+      }
+    },
+    {
+      "type": "java",
+      "name": "🧪 Run SCMS Service Tests",
+      "request": "launch",
+      "mainClass": "com.scms.ServiceTest",
+      "projectName": "smart-complaint-management-system"
+    }
+  ]
+}
