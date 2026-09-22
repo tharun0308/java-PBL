@@ -35,11 +35,11 @@ export function ComplaintTrackerCard({ complaint, onOpenPhoto }: ComplaintTracke
 
   // Determine stage (1: Submitted, 2: Assigned, 3: In Progress, 4: Resolved, -1: Rejected)
   let stage = 1;
-  if (complaint.status === 'Rejected') {
+  if (complaint.status === 'REJECTED') {
     stage = -1;
-  } else if (complaint.status === 'Resolved') {
+  } else if (complaint.status === 'RESOLVED') {
     stage = 4;
-  } else if (complaint.status === 'In Progress') {
+  } else if (complaint.status === 'IN_PROGRESS') {
     stage = 3;
   } else if (complaint.assigned_to) {
     stage = 2;
@@ -160,7 +160,7 @@ export function ComplaintTrackerCard({ complaint, onOpenPhoto }: ComplaintTracke
         </div>
 
         {/* Photos & Ratings Row */}
-        {(complaint.image_url || complaint.resolution_image_url || complaint.rating || (complaint.status === 'Resolved' && !complaint.rating)) && (
+        {(complaint.image_url || complaint.resolution_image_url || complaint.rating || (complaint.status === 'RESOLVED' && !complaint.rating)) && (
           <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3.5 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 text-xs">
             {/* Attached Photos Preview */}
             <div className="flex items-center gap-2">
@@ -222,7 +222,7 @@ export function ComplaintTrackerCard({ complaint, onOpenPhoto }: ComplaintTracke
                   {complaint.rating}/5 Rated
                 </span>
               </div>
-            ) : complaint.status === 'Resolved' ? (
+            ) : complaint.status === 'RESOLVED' ? (
               <Link href={`/complaints/${complaint.id}`} className="ml-auto">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700/60 font-semibold text-xs hover:bg-amber-500/20 transition-colors cursor-pointer">
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />

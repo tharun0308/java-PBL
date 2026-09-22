@@ -3,11 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Profile } from '@/lib/types';
-import { createClient } from '@/lib/supabase/client';
+import { UserSession } from '@/lib/auth';
 import { Button } from './ui/button';
-import { NotificationBell } from './notification-bell';
-import { ThemeToggle } from './theme-toggle';
 import { toast } from 'sonner';
 import {
   ShieldAlert,
@@ -18,26 +15,34 @@ import {
   Menu,
   X,
   User as UserIcon,
+  Sparkles,
+  UserCheck,
 } from 'lucide-react';
 
+import { BrandIcon } from './brand-logo';
+
 interface NavbarProps {
-  profile?: Profile | null;
+  user?: UserSession | null;
 }
 
-export function Navbar({ profile }: NavbarProps) {
+export function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const supabase = createClient();
-  const isAdmin = profile?.role === 'admin';
+  const isAdmin = user?.role === 'MAIN_ADMIN' || user?.role === 'STAFF_ADMIN';
+  const roleDisplay =
+    user?.role === 'MAIN_ADMIN'
+      ? 'Main Admin'
+      : user?.role === 'STAFF_ADMIN'
+      ? 'Staff Admin'
+      : user?.userTitle || 'Student';
 
   const handleSignOut = async () => {
     setIsLoggingOut(true);
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
-      await supabase.auth.signOut().catch(() => {});
       toast.success('Signed out successfully');
       router.push('/login');
       router.refresh();
@@ -48,19 +53,18 @@ export function Navbar({ profile }: NavbarProps) {
     }
   };
 
-  // Admin manages complaints and cannot file complaints; student files and tracks complaints
   const navLinks = [
     {
       name: 'My Complaints',
       href: '/dashboard',
       icon: LayoutDashboard,
-      show: !!profile && !isAdmin,
+      show: !!user && !isAdmin,
     },
     {
       name: 'New Complaint',
       href: '/complaints/new',
       icon: PlusCircle,
-      show: !!profile && !isAdmin,
+      show: !!user && !isAdmin,
     },
     {
       name: 'Admin Portal',
@@ -69,31 +73,44 @@ export function Navbar({ profile }: NavbarProps) {
       show: isAdmin,
     },
     {
-      name: 'Manage All',
+      name: 'All Complaints',
       href: '/admin/complaints',
       icon: ShieldAlert,
       show: isAdmin,
     },
+    {
+      name: 'Staff Requests',
+      href: '/admin/staff-requests',
+      icon: UserCheck,
+      show: user?.role === 'MAIN_ADMIN',
+    },
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur transition-colors">
+    <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-slate-950/70 backdrop-blur-xl transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
           <div className="flex items-center gap-3">
             <Link
-              href={profile ? (isAdmin ? '/admin/dashboard' : '/dashboard') : '/'}
-              className="flex items-center gap-2.5"
+              href={user ? (isAdmin ? '/admin/dashboard' : '/dashboard') : '/'}
+              className="flex items-center gap-3 group"
             >
-              <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                S
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-[1px] shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-all group-hover:scale-105">
+                <div className="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center p-2">
+                  <BrandIcon className="w-full h-full group-hover:rotate-6 transition-transform duration-300" />
+                </div>
               </div>
-              <div>
-                <span className="font-bold text-slate-900 dark:text-white tracking-tight text-base sm:text-lg">
-                  SCMS
-                </span>
-                <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 font-normal ml-2 border-l border-slate-200 dark:border-slate-800 pl-2">
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-white tracking-tight text-lg">
+                    SCMS
+                  </span>
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    Campus
+                  </span>
+                </div>
+                <span className="hidden sm:inline text-[11px] text-slate-400 font-normal">
                   Smart Complaint System
                 </span>
               </div>
@@ -101,8 +118,8 @@ export function Navbar({ profile }: NavbarProps) {
           </div>
 
           {/* Desktop Nav Links */}
-          {profile && (
-            <nav className="hidden md:flex items-center space-x-1">
+          {user && (
+            <nav className="hidden md:flex items-center gap-1">
               {navLinks
                 .filter((l) => l.show)
                 .map((link) => {
@@ -114,13 +131,13 @@ export function Navbar({ profile }: NavbarProps) {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      className={`inline-flex items-center px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
                         isActive
-                          ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold'
-                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                          ? 'bg-indigo-500/15 text-indigo-300 font-semibold border border-indigo-500/30 shadow-sm'
+                          : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
                       }`}
                     >
-                      <Icon className="w-4 h-4 mr-1.5" />
+                      <Icon className="w-4 h-4 mr-2 text-indigo-400" />
                       {link.name}
                     </Link>
                   );
@@ -129,25 +146,24 @@ export function Navbar({ profile }: NavbarProps) {
           )}
 
           {/* User Controls / Actions */}
-          <div className="hidden md:flex items-center gap-2">
-            {profile && <NotificationBell />}
-            <ThemeToggle />
-
-            {profile ? (
-              <div className="flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-slate-800">
+          <div className="hidden md:flex items-center gap-3">
+            {user ? (
+              <div className="flex items-center gap-3 pl-3 border-l border-white/10">
                 <div className="flex flex-col text-right">
-                  <span className="text-xs font-semibold text-slate-900 dark:text-white truncate max-w-[150px]">
-                    {profile.full_name}
+                  <span className="text-xs font-semibold text-white truncate max-w-[150px]">
+                    {user.fullName || user.email}
                   </span>
                   <div className="flex items-center justify-end gap-1">
                     <span
-                      className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded ${
-                        isAdmin
-                          ? 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                      className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                        user.role === 'MAIN_ADMIN'
+                          ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30'
+                          : user.role === 'STAFF_ADMIN'
+                          ? 'bg-blue-500/15 text-blue-300 border border-blue-500/30'
+                          : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
                       }`}
                     >
-                      {profile.role}
+                      {roleDisplay}
                     </span>
                   </div>
                 </div>
@@ -157,22 +173,22 @@ export function Navbar({ profile }: NavbarProps) {
                   size="sm"
                   onClick={handleSignOut}
                   disabled={isLoggingOut}
-                  className="text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                  className="text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl"
                   title="Sign out"
                 >
                   <LogOut className="w-4 h-4" />
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm">
-                    Log In
+                  <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white">
+                    Sign In
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">
-                    Register
+                  <Button size="sm" variant="glow">
+                    Get Started
                   </Button>
                 </Link>
               </div>
@@ -181,12 +197,10 @@ export function Navbar({ profile }: NavbarProps) {
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-1">
-            {profile && <NotificationBell />}
-            <ThemeToggle />
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-md text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 cursor-pointer"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -196,31 +210,25 @@ export function Navbar({ profile }: NavbarProps) {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-4 space-y-2">
-          {profile && (
-            <div className="py-2 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300">
+        <div className="md:hidden border-t border-white/10 bg-slate-950/95 px-4 pt-3 pb-5 space-y-3 backdrop-blur-xl">
+          {user && (
+            <div className="py-2.5 border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
                   <UserIcon className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{profile.full_name}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{profile.email}</p>
+                  <p className="text-sm font-semibold text-white">{user.fullName || 'Campus Member'}</p>
+                  <p className="text-xs text-slate-400">{user.email}</p>
                 </div>
               </div>
-              <span
-                className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
-                  isAdmin
-                    ? 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                }`}
-              >
-                {profile.role}
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                {roleDisplay}
               </span>
             </div>
           )}
 
-          {profile ? (
+          {user ? (
             <>
               {navLinks
                 .filter((l) => l.show)
@@ -232,40 +240,40 @@ export function Navbar({ profile }: NavbarProps) {
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center px-3 py-2.5 rounded-md text-sm font-medium ${
+                      className={`flex items-center px-3.5 py-2.5 rounded-xl text-sm font-medium ${
                         isActive
-                          ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                          ? 'bg-indigo-500/15 text-indigo-300 font-semibold border border-indigo-500/30'
+                          : 'text-slate-300 hover:bg-slate-900'
                       }`}
                     >
-                      <Icon className="w-4 h-4 mr-2" />
+                      <Icon className="w-4 h-4 mr-2.5 text-indigo-400" />
                       {link.name}
                     </Link>
                   );
                 })}
 
-              <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="pt-2 border-t border-white/10">
                 <button
                   type="button"
                   onClick={handleSignOut}
                   disabled={isLoggingOut}
-                  className="w-full flex items-center px-3 py-2.5 rounded-md text-sm font-medium text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer"
+                  className="w-full flex items-center px-3.5 py-2.5 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10 cursor-pointer"
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <LogOut className="w-4 h-4 mr-2.5" />
                   Sign Out
                 </button>
               </div>
             </>
           ) : (
-            <div className="pt-2 flex flex-col gap-2">
+            <div className="pt-2 flex flex-col gap-2.5">
               <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="outline" className="w-full">
-                  Log In
+                  Sign In
                 </Button>
               </Link>
               <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
-                  Register
+                <Button variant="glow" className="w-full">
+                  Get Started
                 </Button>
               </Link>
             </div>

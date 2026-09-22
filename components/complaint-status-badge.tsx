@@ -14,18 +14,18 @@ export function ComplaintStatusBadge({
   className,
   showIcon = true,
 }: ComplaintStatusBadgeProps) {
-  const config = STATUS_CONFIG[status] || STATUS_CONFIG.Pending;
+  const config = STATUS_CONFIG[status] || STATUS_CONFIG.PENDING;
 
   const renderIcon = () => {
     switch (status) {
-      case 'Pending':
-        return <Clock className="w-3.5 h-3.5 mr-1 text-amber-600" />;
-      case 'In Progress':
-        return <Loader2 className="w-3.5 h-3.5 mr-1 text-blue-600 animate-spin" />;
-      case 'Resolved':
-        return <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-emerald-600" />;
-      case 'Rejected':
-        return <XCircle className="w-3.5 h-3.5 mr-1 text-rose-600" />;
+      case 'PENDING':
+        return <Clock className="w-3.5 h-3.5 mr-1 text-amber-500" />;
+      case 'IN_PROGRESS':
+        return <Loader2 className="w-3.5 h-3.5 mr-1 text-blue-500 animate-spin" />;
+      case 'RESOLVED':
+        return <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-emerald-500" />;
+      case 'REJECTED':
+        return <XCircle className="w-3.5 h-3.5 mr-1 text-rose-500" />;
       default:
         return <AlertCircle className="w-3.5 h-3.5 mr-1" />;
     }
@@ -54,7 +54,7 @@ export function ComplaintPriorityBadge({
   priority,
   className,
 }: ComplaintPriorityBadgeProps) {
-  const config = PRIORITY_CONFIG[priority] || PRIORITY_CONFIG.Medium;
+  const config = PRIORITY_CONFIG[priority] || PRIORITY_CONFIG.MEDIUM;
 
   return (
     <span
