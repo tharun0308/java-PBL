@@ -24,9 +24,20 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# local env files
+# local env files (never commit secrets)
+.env
 .env*.local
+.env.*
+!.env.example
 !.env.local.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# backend build & java
+**/target/
+*.class
+*.jar
 
 # vercel
 .vercel
