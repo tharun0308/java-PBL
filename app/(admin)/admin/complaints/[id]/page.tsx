@@ -43,7 +43,7 @@ export default function AdminComplaintDetailPage() {
   const queryClient = useQueryClient();
   const id = params.id as string;
 
-  const [status, setStatus] = useState<Status>('Pending');
+  const [status, setStatus] = useState<Status>('PENDING');
   const [assignedTo, setAssignedTo] = useState<string>('');
   const [resolutionNote, setResolutionNote] = useState<string>('');
   const [auditNote, setAuditNote] = useState<string>('');
@@ -466,10 +466,10 @@ export default function AdminComplaintDetailPage() {
                       <div className="bg-slate-50/80 dark:bg-slate-800/60 rounded-lg p-3.5 border border-slate-200/80 dark:border-slate-700 space-y-1">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
-                            <ComplaintStatusBadge status={event.new_status} showIcon={false} />
-                            {event.old_status && (
+                            <ComplaintStatusBadge status={event.new_status || event.newStatus || 'PENDING'} showIcon={false} />
+                            {(event.old_status || event.oldStatus) && (
                               <span className="text-xs text-slate-400">
-                                (from {event.old_status})
+                                (from {event.old_status || event.oldStatus})
                               </span>
                             )}
                           </div>

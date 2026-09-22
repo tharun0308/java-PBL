@@ -3,18 +3,18 @@ import { CATEGORIES, PRIORITIES, STATUSES } from '../constants';
 
 export const complaintCreateSchema = z.object({
   category: z.enum(CATEGORIES, {
-    errorMap: () => ({ message: 'Please select a valid category' }),
+    errorMap: () => ({ message: 'Please select a valid department category' }),
   }),
   location: z
     .string()
     .min(3, 'Location must be at least 3 characters')
-    .max(120, 'Location cannot exceed 120 characters'),
+    .max(255, 'Location cannot exceed 255 characters'),
   description: z
     .string()
     .min(10, 'Description must be at least 10 characters')
-    .max(2000, 'Description cannot exceed 2000 characters'),
+    .max(5000, 'Description cannot exceed 5000 characters'),
   priority: z.enum(PRIORITIES, {
-    errorMap: () => ({ message: 'Please select a valid priority' }),
+    errorMap: () => ({ message: 'Please select a valid priority (LOW, MEDIUM, HIGH)' }),
   }),
   image_url: z.string().optional().nullable(),
 });
@@ -46,6 +46,7 @@ export const registerSchema = z.object({
     .min(2, 'Full name must be at least 2 characters')
     .max(80, 'Full name cannot exceed 80 characters'),
   email: z.string().email('Please enter a valid email address'),
+  userTitle: z.enum(['Student', 'Teacher']).optional().default('Student'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string().min(6, 'Please confirm your password'),
 }).refine((data) => data.password === data.confirmPassword, {

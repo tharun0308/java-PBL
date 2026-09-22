@@ -9,36 +9,36 @@ interface AiClassificationResult {
 }
 
 const CATEGORY_KEYWORDS: Record<Category, string[]> = {
-  Electrical: [
+  ELECTRICAL: [
     'spark', 'shock', 'short circuit', 'wire', 'fan', 'light', 'tube light', 'bulb',
     'switch', 'socket', 'plug', 'mcb', 'power', 'fuse', 'blackout', 'electricity',
     'voltage', 'surge', 'generator', 'ac unit', 'air conditioner',
   ],
-  'Water Supply': [
+  WATER_SUPPLY: [
     'leak', 'pipe', 'tap', 'faucet', 'water', 'cooler', 'filter', 'overflow',
     'sewage', 'drain', 'choked', 'flush', 'washroom water', 'tank', 'plumbing',
   ],
-  Cleanliness: [
+  CLEANLINESS: [
     'dust', 'garbage', 'trash', 'waste', 'bin', 'smell', 'odor', 'stain',
     'dirty', 'mop', 'sweep', 'washroom dirty', 'hygiene', 'cockroach', 'pest',
   ],
-  'Hostel Maintenance': [
+  HOSTEL_MAINTENANCE: [
     'bed', 'cupboard', 'almirah', 'window', 'door', 'lock', 'key', 'latch',
     'hostel room', 'balcony', 'curtain', 'mattress', 'room ceiling', 'wardrobe',
   ],
-  'Internet/IT': [
+  INTERNET_IT: [
     'wifi', 'wi-fi', 'internet', 'network', 'lan', 'ethernet', 'router', 'switch',
     'ap-', 'access point', 'port', 'dns', 'signal', 'speed', 'portal', 'server',
   ],
-  'Laboratory Equipment': [
+  LABORATORY_EQUIPMENT: [
     'oscilloscope', 'multimeter', 'microscope', 'bunsen', 'sensor', 'workbench',
     'instrument', 'apparatus', 'fume hood', 'chemical', 'pipette', 'centrifuge',
   ],
-  Infrastructure: [
+  INFRASTRUCTURE: [
     'ramp', 'pothole', 'road', 'pathway', 'tile', 'plaster', 'crack', 'staircase',
     'handrail', 'roof leak', 'wall paint', 'bench', 'auditorium seat', 'pillar',
   ],
-  Other: [
+  OTHER: [
     'vending machine', 'canteen', 'lost', 'noise', 'parking', 'notice board',
   ],
 };
@@ -56,14 +56,14 @@ export function aiClassifyComplaint(description: string, location: string = ''):
   const text = `${description} ${location}`.toLowerCase();
 
   const scores: Record<Category, number> = {
-    Electrical: 0,
-    'Water Supply': 0,
-    Cleanliness: 0,
-    'Hostel Maintenance': 0,
-    'Internet/IT': 0,
-    'Laboratory Equipment': 0,
-    Infrastructure: 0,
-    Other: 0,
+    ELECTRICAL: 0,
+    WATER_SUPPLY: 0,
+    CLEANLINESS: 0,
+    HOSTEL_MAINTENANCE: 0,
+    INTERNET_IT: 0,
+    LABORATORY_EQUIPMENT: 0,
+    INFRASTRUCTURE: 0,
+    OTHER: 0,
   };
 
   for (const cat of CATEGORIES) {
@@ -74,7 +74,7 @@ export function aiClassifyComplaint(description: string, location: string = ''):
     }
   }
 
-  let bestCat: Category = 'Other';
+  let bestCat: Category = 'OTHER';
   let maxScore = 0;
   for (const cat of CATEGORIES) {
     if (scores[cat] > maxScore) {
@@ -84,17 +84,17 @@ export function aiClassifyComplaint(description: string, location: string = ''):
   }
 
   // Priority detection
-  let priority: Priority = 'Medium';
+  let priority: Priority = 'MEDIUM';
   if (HIGH_PRIORITY_KEYWORDS.some((kw) => text.includes(kw))) {
-    priority = 'High';
+    priority = 'HIGH';
   } else if (LOW_PRIORITY_KEYWORDS.some((kw) => text.includes(kw)) && maxScore < 4) {
-    priority = 'Low';
+    priority = 'LOW';
   }
 
   const confidence = maxScore > 0 ? Math.min(0.95, 0.6 + maxScore * 0.08) : 0.5;
 
   let rationale = `Matched facility patterns for ${bestCat}.`;
-  if (priority === 'High') {
+  if (priority === 'HIGH') {
     rationale += ' High urgency flagged due to critical risk keywords.';
   }
 
@@ -121,7 +121,7 @@ export function findPotentialDuplicates(
 
   return activeComplaints.filter((c) => {
     // Only check active (non-resolved) complaints
-    if (c.status === 'Resolved' || c.status === 'Rejected') return false;
+    if (c.status === 'RESOLVED' || c.status === 'REJECTED') return false;
     if (c.category !== category) return false;
 
     const existingLoc = c.location.toLowerCase();

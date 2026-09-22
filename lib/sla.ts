@@ -1,5 +1,5 @@
 import { Complaint } from './types';
-import { Priority } from './constants';
+import { Priority, Status } from './constants';
 
 export interface SlaInfo {
   isOverdue: boolean;
@@ -11,27 +11,29 @@ export interface SlaInfo {
 
 export function getSlaDurationHours(priority: Priority): number {
   switch (priority) {
-    case 'High':
+    case 'HIGH':
       return 24; // 24 hours
-    case 'Medium':
+    case 'MEDIUM':
       return 48; // 48 hours
-    case 'Low':
+    case 'LOW':
       return 120; // 5 days (120 hours)
     default:
       return 48;
   }
 }
 
-export function getComplaintSla(complaint: Pick<Complaint, 'priority' | 'status' | 'created_at' | 'updated_at'>): SlaInfo {
-  const created = new Date(complaint.created_at).getTime();
+export function getComplaintSla(complaint: Partial<Complaint> & { priority: Priority; status: Status }): SlaInfo {
+  const createdDateStr = complaint.createdAt || complaint.created_at || new Date().toISOString();
+  const created = new Date(createdDateStr).getTime();
   const durationMs = getSlaDurationHours(complaint.priority) * 3600 * 1000;
   const deadlineMs = created + durationMs;
   const deadline = new Date(deadlineMs);
 
-  const isCompleted = complaint.status === 'Resolved' || complaint.status === 'Rejected';
+  const isCompleted = complaint.status === 'RESOLVED' || complaint.status === 'REJECTED';
 
   if (isCompleted) {
-    const resolvedAt = new Date(complaint.updated_at).getTime();
+    const resolvedDateStr = complaint.updatedAt || complaint.updated_at || new Date().toISOString();
+    const resolvedAt = new Date(resolvedDateStr).getTime();
     const metSla = resolvedAt <= deadlineMs;
     return {
       isOverdue: !metSla,
@@ -39,8 +41,8 @@ export function getComplaintSla(complaint: Pick<Complaint, 'priority' | 'status'
       label: metSla ? 'Resolved in SLA' : 'Resolved (Breached SLA)',
       deadline,
       badgeClass: metSla
-        ? 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800'
-        : 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800',
+        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+        : 'bg-amber-500/10 text-amber-400 border-amber-500/20',
     };
   }
 
@@ -58,7 +60,7 @@ export function getComplaintSla(complaint: Pick<Complaint, 'priority' | 'status'
       isCompleted: false,
       label: `🚨 ${overdueText}`,
       deadline,
-      badgeClass: 'bg-rose-100 text-rose-800 border-rose-300 animate-pulse font-bold dark:bg-rose-950 dark:text-rose-300 dark:border-rose-800',
+      badgeClass: 'bg-rose-500/15 text-rose-400 border-rose-500/30 animate-pulse font-semibold',
     };
   }
 
@@ -75,7 +77,7 @@ export function getComplaintSla(complaint: Pick<Complaint, 'priority' | 'status'
     label: `⏳ ${remainingText}`,
     deadline,
     badgeClass: isUrgent
-      ? 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950 dark:text-amber-300'
-      : 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300',
+      ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+      : 'bg-slate-800 text-slate-300 border-slate-700',
   };
 }

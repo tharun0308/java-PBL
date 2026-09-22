@@ -7,7 +7,7 @@ export default function NewComplaintPage() {
   const profile = getCurrentProfile();
 
   // Administrators manage complaints and cannot file new complaints
-  if (profile?.role === 'admin') {
+  if (profile?.role === 'MAIN_ADMIN' || profile?.role === 'STAFF_ADMIN') {
     redirect('/admin/dashboard');
   }
 

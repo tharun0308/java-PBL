@@ -1,34 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiClient, ApiException } from '@/lib/api/client';
-import { getAccessToken } from '@/lib/auth';
+import { getAccessToken, getCurrentUser } from '@/lib/auth';
 
-export async function GET(
+export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const user = getCurrentUser();
     const token = getAccessToken();
-    if (!token) {
+
+    if (!user || !token) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });
     }
 
-    const { id } = params;
-    if (!id) {
-      return NextResponse.json({ error: 'Complaint ID is required' }, { status: 400 });
+    if (user.role !== 'MAIN_ADMIN') {
+      return NextResponse.json({ error: 'Forbidden. Main Administrator access required.' }, { status: 403 });
     }
 
-    const response = await apiClient<any>(`/api/v1/complaints/${id}`, {
+    const { id } = params;
+    const response = await apiClient<any>(`/api/v1/admin/staff-requests/${id}/approve`, {
+      method: 'POST',
       token,
     });
 
     return NextResponse.json({
       success: true,
+      message: 'Staff Admin access approved successfully',
       data: response,
     });
   } catch (err: any) {
     const status = err instanceof ApiException ? err.status : 500;
     return NextResponse.json(
-      { error: err.message || 'Failed to fetch complaint details' },
+      { error: err.message || 'Failed to approve staff admin request' },
       { status }
     );
   }
