@@ -1,47 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { localStore } from '@/lib/db/local-store';
-import { setSessionCookie } from '@/lib/auth';
-import { registerSchema } from '@/lib/validations/complaint';
+import { API_BASE_URL } from '@/lib/api/client';
+import { setAuthCookies } from '@/lib/auth';
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json();
-    const validation = registerSchema.safeParse(body);
+    const body = await req.json();
 
-    if (!validation.success) {
+    const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: body.email,
+        password: body.password,
+        fullName: body.fullName || body.full_name,
+        userTitle: body.userTitle || 'Student',
+      }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
       return NextResponse.json(
-        { error: validation.error.issues[0].message },
-        { status: 400 }
+        { error: data.message || 'Registration failed' },
+        { status: response.status }
       );
     }
 
-    const { email, password, fullName } = validation.data;
-    const existing = localStore.findUserByEmail(email);
+    const { accessToken, refreshToken, user } = data.data || {};
 
-    if (existing) {
-      return NextResponse.json(
-        { error: 'An account with this email already exists' },
-        { status: 400 }
-      );
+    if (accessToken) {
+      setAuthCookies(accessToken, refreshToken);
     }
-
-    const newUser = localStore.createUser(email, password, fullName);
-
-    const sessionUser = {
-      id: newUser.id,
-      email: newUser.email,
-      full_name: newUser.full_name,
-      role: newUser.role,
-    };
-
-    setSessionCookie(sessionUser);
 
     return NextResponse.json({
-      data: sessionUser,
+      success: true,
       message: 'Account created successfully',
+      user,
     });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Server error';
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: err.message || 'An unexpected error occurred' },
+      { status: 500 }
+    );
   }
 }

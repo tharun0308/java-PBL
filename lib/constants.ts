@@ -1,60 +1,88 @@
+export const ROLES = ['STUDENT_TEACHER', 'STAFF_ADMIN', 'MAIN_ADMIN'] as const;
+export type Role = (typeof ROLES)[number];
+
+export const STAFF_ADMIN_STATUSES = ['NONE', 'PENDING', 'APPROVED', 'REJECTED'] as const;
+export type StaffAdminStatus = (typeof STAFF_ADMIN_STATUSES)[number];
+
 export const CATEGORIES = [
-  'Electrical',
-  'Water Supply',
-  'Cleanliness',
-  'Hostel Maintenance',
-  'Internet/IT',
-  'Laboratory Equipment',
-  'Infrastructure',
-  'Other',
+  'ELECTRICAL',
+  'WATER_SUPPLY',
+  'CLEANLINESS',
+  'HOSTEL_MAINTENANCE',
+  'INTERNET_IT',
+  'LABORATORY_EQUIPMENT',
+  'INFRASTRUCTURE',
+  'OTHER',
 ] as const;
-
 export type Category = (typeof CATEGORIES)[number];
+export const DEPARTMENTS = CATEGORIES;
+export type Department = Category;
 
-export const PRIORITIES = ['Low', 'Medium', 'High'] as const;
+export const CATEGORY_LABELS: Record<Category, string> = {
+  ELECTRICAL: 'Electrical',
+  WATER_SUPPLY: 'Water Supply',
+  CLEANLINESS: 'Cleanliness',
+  HOSTEL_MAINTENANCE: 'Hostel Maintenance',
+  INTERNET_IT: 'Internet/IT',
+  LABORATORY_EQUIPMENT: 'Laboratory Equipment',
+  INFRASTRUCTURE: 'Infrastructure',
+  OTHER: 'Other',
+};
+
+export const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH'] as const;
 export type Priority = (typeof PRIORITIES)[number];
 
-export const STATUSES = ['Pending', 'In Progress', 'Resolved', 'Rejected'] as const;
+export const PRIORITY_LABELS: Record<Priority, string> = {
+  LOW: 'Low',
+  MEDIUM: 'Medium',
+  HIGH: 'High',
+};
+
+export const STATUSES = ['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED'] as const;
 export type Status = (typeof STATUSES)[number];
 
-export const ROLES = ['user', 'admin'] as const;
-export type Role = (typeof ROLES)[number];
+export const STATUS_LABELS: Record<Status, string> = {
+  PENDING: 'Pending',
+  IN_PROGRESS: 'In Progress',
+  RESOLVED: 'Resolved',
+  REJECTED: 'Rejected',
+};
 
 export const STATUS_CONFIG: Record<
   Status,
   { label: string; color: string; badgeClass: string; borderClass: string; bgClass: string; textClass: string }
 > = {
-  Pending: {
+  PENDING: {
     label: 'Pending',
-    color: '#eab308',
-    badgeClass: 'bg-amber-100 text-amber-800 border-amber-200 hover:bg-amber-100/80',
-    borderClass: 'border-amber-400',
-    bgClass: 'bg-amber-50',
-    textClass: 'text-amber-700',
+    color: '#f59e0b',
+    badgeClass: 'bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20',
+    borderClass: 'border-amber-500/30',
+    bgClass: 'bg-amber-500/5',
+    textClass: 'text-amber-500',
   },
-  'In Progress': {
+  IN_PROGRESS: {
     label: 'In Progress',
     color: '#3b82f6',
-    badgeClass: 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100/80',
-    borderClass: 'border-blue-400',
-    bgClass: 'bg-blue-50',
-    textClass: 'text-blue-700',
+    badgeClass: 'bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500/20',
+    borderClass: 'border-blue-500/30',
+    bgClass: 'bg-blue-500/5',
+    textClass: 'text-blue-500',
   },
-  Resolved: {
+  RESOLVED: {
     label: 'Resolved',
     color: '#10b981',
-    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200 hover:bg-emerald-100/80',
-    borderClass: 'border-emerald-400',
-    bgClass: 'bg-emerald-50',
-    textClass: 'text-emerald-700',
+    badgeClass: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20',
+    borderClass: 'border-emerald-500/30',
+    bgClass: 'bg-emerald-500/5',
+    textClass: 'text-emerald-500',
   },
-  Rejected: {
+  REJECTED: {
     label: 'Rejected',
     color: '#ef4444',
-    badgeClass: 'bg-rose-100 text-rose-800 border-rose-200 hover:bg-rose-100/80',
-    borderClass: 'border-rose-400',
-    bgClass: 'bg-rose-50',
-    textClass: 'text-rose-700',
+    badgeClass: 'bg-rose-500/10 text-rose-500 border-rose-500/20 hover:bg-rose-500/20',
+    borderClass: 'border-rose-500/30',
+    bgClass: 'bg-rose-500/5',
+    textClass: 'text-rose-500',
   },
 };
 
@@ -62,28 +90,16 @@ export const PRIORITY_CONFIG: Record<
   Priority,
   { label: string; badgeClass: string }
 > = {
-  Low: {
+  LOW: {
     label: 'Low Priority',
-    badgeClass: 'bg-slate-100 text-slate-700 border-slate-200',
+    badgeClass: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
   },
-  Medium: {
+  MEDIUM: {
     label: 'Medium Priority',
-    badgeClass: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    badgeClass: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
   },
-  High: {
+  HIGH: {
     label: 'High Priority',
-    badgeClass: 'bg-red-100 text-red-800 border-red-200',
+    badgeClass: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
   },
 };
-
-export const DEPARTMENTS = [
-  'Maintenance - Electrical Team',
-  'Plumbing Dept',
-  'Housekeeping Supervisor',
-  'Carpentry Unit',
-  'Campus IT Network Cell',
-  'Lab Safety & Instrumentation',
-  'Estate Office - Civil Wing',
-  'Security & Transport',
-  'General Administration',
-] as const;

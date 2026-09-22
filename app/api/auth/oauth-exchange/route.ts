@@ -4,19 +4,23 @@ import { setAuthCookies } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const { code } = await req.json();
 
-    const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+    if (!code) {
+      return NextResponse.json({ error: 'Exchange code is required' }, { status: 400 });
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/v1/auth/oauth/exchange`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ code }),
     });
 
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: data.message || 'Invalid email or password' },
+        { error: data.message || 'OAuth exchange failed or code has expired' },
         { status: response.status }
       );
     }
@@ -29,12 +33,12 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Login successful',
+      message: 'OAuth login successful',
       user,
     });
   } catch (err: any) {
     return NextResponse.json(
-      { error: err.message || 'An unexpected error occurred' },
+      { error: err.message || 'Failed to exchange OAuth code' },
       { status: 500 }
     );
   }

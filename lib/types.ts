@@ -11,33 +11,49 @@ export interface Profile {
 
 export interface Complaint {
   id: string;
-  complaint_number: number;
-  user_id: string;
+  complaintNumber: string; // e.g. "#SCMS-0001"
+  complaint_number?: number | string;
+  submittedById?: string;
+  submittedByName?: string;
+  submittedByEmail?: string;
+  user_id?: string;
   category: Category;
   location: string;
   description: string;
   priority: Priority;
   status: Status;
-  assigned_to: string | null;
-  resolution_note: string | null;
+  assignedToId?: string | null;
+  assignedToName?: string | null;
+  assigned_to?: string | null;
+  resolutionNote?: string | null;
+  resolution_note?: string | null;
   image_url?: string | null;
   resolution_image_url?: string | null;
   rating?: number | null;
   feedback_note?: string | null;
   rated_at?: string | null;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
+  created_at?: string;
+  updated_at?: string;
   user?: Profile;
+  history?: ComplaintHistory[];
 }
 
 export interface ComplaintHistory {
   id: string;
-  complaint_id: string;
-  old_status: Status | null;
-  new_status: Status;
+  complaintId?: string;
+  complaint_id?: string;
+  oldStatus?: Status | null;
+  old_status?: Status | null;
+  newStatus: Status;
+  new_status?: Status;
   note: string | null;
-  updated_by: string | null;
-  updated_at: string;
+  updatedById?: string | null;
+  updatedByName?: string | null;
+  updated_by?: string | null;
+  updatedAt: string;
+  updated_at?: string;
   updater?: Profile;
 }
 
