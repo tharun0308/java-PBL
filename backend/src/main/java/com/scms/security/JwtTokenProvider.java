@@ -44,7 +44,7 @@ public class JwtTokenProvider {
                 .claim("email", userPrincipal.getEmail())
                 .claim("fullName", userPrincipal.getFullName())
                 .claim("role", userPrincipal.getRole().name())
-                .claim("staffAdminStatus", userPrincipal.getStaffAdminStatus().name())
+                .claim("staffAdminStatus", userPrincipal.getStaffAdminStatus() != null ? userPrincipal.getStaffAdminStatus().name() : "NONE")
                 .claim("userTitle", userPrincipal.getUserTitle())
                 .claim("onboardingCompleted", userPrincipal.isOnboardingCompleted())
                 .claim("academicYear", userPrincipal.getAcademicYear())

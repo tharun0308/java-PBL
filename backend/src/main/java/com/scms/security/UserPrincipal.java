@@ -43,7 +43,7 @@ public class UserPrincipal implements UserDetails, OAuth2User, OidcUser {
         this.password = password;
         this.fullName = fullName;
         this.role = role;
-        this.staffAdminStatus = staffAdminStatus;
+        this.staffAdminStatus = staffAdminStatus != null ? staffAdminStatus : StaffAdminStatus.NONE;
         this.userTitle = userTitle != null ? userTitle : "Student";
         this.onboardingCompleted = onboardingCompleted;
         this.academicYear = academicYear;

@@ -123,3 +123,313 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(99, 102, 241, 0.6);
 }
+
+/* ==========================================================================
+   Campus Illustration Keyframes & Animation Utilities
+   ========================================================================== */
+@keyframes campus-walk-1 {
+  0% {
+    transform: translate3d(1520px, 0, 0);
+  }
+  100% {
+    transform: translate3d(-80px, 0, 0);
+  }
+}
+
+@keyframes campus-walk-2 {
+  0% {
+    transform: translate3d(1520px, 0, 0);
+  }
+  100% {
+    transform: translate3d(-80px, 0, 0);
+  }
+}
+
+@keyframes campus-walk-3 {
+  0% {
+    transform: translate3d(1520px, 0, 0);
+  }
+  100% {
+    transform: translate3d(-80px, 0, 0);
+  }
+}
+
+@keyframes campus-walking-bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3.5px);
+  }
+}
+
+@keyframes campus-leg-swing-left {
+  0%, 100% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(18deg);
+  }
+}
+
+@keyframes campus-leg-swing-right {
+  0%, 100% {
+    transform: rotate(18deg);
+  }
+  50% {
+    transform: rotate(-18deg);
+  }
+}
+
+@keyframes campus-arm-swing-left {
+  0%, 100% {
+    transform: rotate(16deg);
+  }
+  50% {
+    transform: rotate(-16deg);
+  }
+}
+
+@keyframes campus-arm-swing-right {
+  0%, 100% {
+    transform: rotate(-16deg);
+  }
+  50% {
+    transform: rotate(16deg);
+  }
+}
+
+@keyframes campus-bird-fly-1 {
+  0% {
+    transform: translate3d(1520px, 110px, 0);
+  }
+  100% {
+    transform: translate3d(-80px, 110px, 0);
+  }
+}
+
+@keyframes campus-bird-fly-2 {
+  0% {
+    transform: translate3d(1520px, 180px, 0);
+  }
+  100% {
+    transform: translate3d(-80px, 180px, 0);
+  }
+}
+
+@keyframes campus-bird-fly-3 {
+  0% {
+    transform: translate3d(1520px, 145px, 0);
+  }
+  100% {
+    transform: translate3d(-80px, 145px, 0);
+  }
+}
+
+@keyframes campus-bird-bob {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-5px) scaleY(0.65);
+  }
+}
+
+.anim-campus-walk-1 {
+  animation: campus-walk-1 25s linear infinite;
+  animation-delay: -4s;
+}
+
+.anim-campus-walk-2 {
+  animation: campus-walk-2 30s linear infinite;
+  animation-delay: -13s;
+}
+
+.anim-campus-walk-3 {
+  animation: campus-walk-3 22s linear infinite;
+  animation-delay: -19s;
+}
+
+.anim-campus-bob {
+  animation: campus-walking-bob 0.6s ease-in-out infinite;
+}
+
+.anim-campus-leg-l {
+  transform-origin: 0px 716px;
+  animation: campus-leg-swing-left 0.6s ease-in-out infinite;
+}
+
+.anim-campus-leg-r {
+  transform-origin: 0px 716px;
+  animation: campus-leg-swing-right 0.6s ease-in-out infinite;
+}
+
+.anim-campus-arm-l {
+  transform-origin: 0px 698px;
+  animation: campus-arm-swing-left 0.6s ease-in-out infinite;
+}
+
+.anim-campus-arm-r {
+  transform-origin: 0px 698px;
+  animation: campus-arm-swing-right 0.6s ease-in-out infinite;
+}
+
+.anim-campus-bird-1 {
+  animation: campus-bird-fly-1 26s linear infinite;
+  animation-delay: -5s;
+}
+
+.anim-campus-bird-2 {
+  animation: campus-bird-fly-2 32s linear infinite;
+  animation-delay: -18s;
+}
+
+.anim-campus-bird-3 {
+  animation: campus-bird-fly-3 21s linear infinite;
+  animation-delay: -10s;
+}
+
+.anim-campus-bird-bob {
+  animation: campus-bird-bob 1.6s ease-in-out infinite;
+}
+
+/* ========================================================================= */
+/* Live Activity Floating Decorative Cards                                  */
+/* ========================================================================= */
+
+@keyframes float-drift-ltr-1 {
+  0% {
+    transform: translate3d(-320px, 0, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.55;
+  }
+  92% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate3d(calc(100vw + 60px), 40px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes float-drift-rtl-1 {
+  0% {
+    transform: translate3d(calc(100vw + 80px), 0, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.55;
+  }
+  92% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate3d(-340px, -35px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes float-drift-ltr-2 {
+  0% {
+    transform: translate3d(-320px, 0, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.55;
+  }
+  92% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate3d(calc(100vw + 60px), -45px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes float-drift-rtl-2 {
+  0% {
+    transform: translate3d(calc(100vw + 80px), 0, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.5;
+  }
+  92% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate3d(-340px, 30px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes float-drift-ltr-3 {
+  0% {
+    transform: translate3d(-320px, 0, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.45;
+  }
+  92% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate3d(calc(100vw + 60px), 25px, 0);
+    opacity: 0;
+  }
+}
+
+.anim-drift-1 {
+  animation: float-drift-ltr-1 40s linear infinite;
+  animation-delay: -14s;
+  will-change: transform, opacity;
+}
+
+.anim-drift-2 {
+  animation: float-drift-rtl-1 46s linear infinite;
+  animation-delay: -24s;
+  will-change: transform, opacity;
+}
+
+.anim-drift-3 {
+  animation: float-drift-ltr-2 42s linear infinite;
+  animation-delay: -8s;
+  will-change: transform, opacity;
+}
+
+.anim-drift-4 {
+  animation: float-drift-rtl-2 50s linear infinite;
+  animation-delay: -30s;
+  will-change: transform, opacity;
+}
+
+.anim-drift-5 {
+  animation: float-drift-ltr-3 54s linear infinite;
+  animation-delay: -36s;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-campus-walk-1,
+  .anim-campus-walk-2,
+  .anim-campus-walk-3,
+  .anim-campus-bob,
+  .anim-campus-leg-l,
+  .anim-campus-leg-r,
+  .anim-campus-arm-l,
+  .anim-campus-arm-r,
+  .anim-campus-bird-1,
+  .anim-campus-bird-2,
+  .anim-campus-bird-3,
+  .anim-campus-bird-bob,
+  .anim-drift-1,
+  .anim-drift-2,
+  .anim-drift-3,
+  .anim-drift-4,
+  .anim-drift-5 {
+    animation: none !important;
+  }
+}

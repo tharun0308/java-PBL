@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, AlertCircle, LogIn, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { FloatingCards } from '@/components/floating-cards';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -74,8 +75,16 @@ function LoginForm() {
         description: `Welcome back, ${resData.user?.fullName || 'User'}!`,
       });
 
-      const userRole = resData.user?.role;
-      if ((userRole === 'MAIN_ADMIN' || userRole === 'STAFF_ADMIN') && redirectTo === '/dashboard') {
+      const user = resData.user;
+      const userRole = user?.role;
+      const staffStatus = user?.staffAdminStatus;
+      const onboardingDone = user?.onboardingCompleted;
+
+      if (onboardingDone === false && userRole !== 'MAIN_ADMIN') {
+        router.push('/onboarding');
+      } else if (staffStatus === 'PENDING') {
+        router.push('/pending-approval');
+      } else if ((userRole === 'MAIN_ADMIN' || (userRole === 'STAFF_ADMIN' && staffStatus === 'APPROVED')) && redirectTo === '/dashboard') {
         router.push('/admin/dashboard');
       } else {
         router.push(redirectTo);
@@ -238,14 +247,17 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense
-      fallback={
-        <Card className="shadow-2xl border-white/10 bg-slate-900/80 p-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-400" />
-        </Card>
-      }
-    >
-      <LoginForm />
-    </Suspense>
+    <>
+      <FloatingCards />
+      <Suspense
+        fallback={
+          <Card className="shadow-2xl border-white/10 bg-slate-900/80 p-8 text-center">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-400" />
+          </Card>
+        }
+      >
+        <LoginForm />
+      </Suspense>
+    </>
   );
 }

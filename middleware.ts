@@ -23,14 +23,21 @@ export async function middleware(request: NextRequest) {
 
   const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/register');
   const isOnboardingRoute = pathname.startsWith('/onboarding');
+  const isPendingApprovalRoute = pathname.startsWith('/pending-approval');
   const isAdminRoute = pathname.startsWith('/admin');
   const isUserRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/complaints');
 
   const token = request.cookies.get('scms_access_token')?.value;
   const user = token ? decodeJwtPayload(token) : null;
 
-  // 1. If unauthenticated user attempts to access onboarding or protected user/admin routes, redirect to /login
-  if (!user && (isOnboardingRoute || isAdminRoute || isUserRoute)) {
+  const isStaffOrAdmin =
+    user &&
+    (user.role === 'MAIN_ADMIN' ||
+      (user.role === 'STAFF_ADMIN' && user.staffAdminStatus === 'APPROVED'));
+  const isPending = user && user.staffAdminStatus === 'PENDING';
+
+  // 1. If unauthenticated user attempts to access protected routes, redirect to /login
+  if (!user && (isOnboardingRoute || isPendingApprovalRoute || isAdminRoute || isUserRoute)) {
     const redirectUrl = new URL('/login', request.url);
     redirectUrl.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(redirectUrl);
@@ -38,36 +45,61 @@ export async function middleware(request: NextRequest) {
 
   // 2. If authenticated non-admin user has NOT completed onboarding:
   if (user && user.role !== 'MAIN_ADMIN' && user.onboardingCompleted === false) {
-    // Force redirect to /onboarding for any other route
     if (!isOnboardingRoute) {
       return NextResponse.redirect(new URL('/onboarding', request.url));
     }
-    // Allow user on /onboarding
     return NextResponse.next();
   }
 
-  // 3. If authenticated user HAS completed onboarding and attempts to visit /onboarding:
-  if (user && user.onboardingCompleted !== false && isOnboardingRoute) {
-    const role = user.role;
-    const isStaffOrAdmin = role === 'MAIN_ADMIN' || (role === 'STAFF_ADMIN' && user.staffAdminStatus === 'APPROVED');
-    return NextResponse.redirect(new URL(isStaffOrAdmin ? '/admin/dashboard' : '/dashboard', request.url));
-  }
-
-  // 4. If authenticated user attempts to visit /login or /register, redirect to their dashboard
-  if (user && isAuthRoute) {
-    const role = user.role;
-    const isStaffOrAdmin = role === 'MAIN_ADMIN' || (role === 'STAFF_ADMIN' && user.staffAdminStatus === 'APPROVED');
-    return NextResponse.redirect(new URL(isStaffOrAdmin ? '/admin/dashboard' : '/dashboard', request.url));
-  }
-
-  // 5. If non-admin attempts to access /admin routes, redirect to user /dashboard
-  if (user && isAdminRoute) {
-    const role = user.role;
-    const isStaffOrAdmin = role === 'MAIN_ADMIN' || (role === 'STAFF_ADMIN' && user.staffAdminStatus === 'APPROVED');
-
-    if (!isStaffOrAdmin) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+  // 3. If authenticated user has PENDING staff admin status:
+  if (user && isPending) {
+    if (!isPendingApprovalRoute) {
+      return NextResponse.redirect(new URL('/pending-approval', request.url));
     }
+    return NextResponse.next();
+  }
+
+  // 4. If non-pending user attempts to visit /pending-approval:
+  if (user && !isPending && isPendingApprovalRoute) {
+    return NextResponse.redirect(
+      new URL(isStaffOrAdmin ? '/admin/dashboard' : '/dashboard', request.url)
+    );
+  }
+
+  // 5. If authenticated user HAS completed onboarding and attempts to visit /onboarding:
+  if (user && user.onboardingCompleted !== false && isOnboardingRoute) {
+    if (isPending) {
+      return NextResponse.redirect(new URL('/pending-approval', request.url));
+    }
+    return NextResponse.redirect(
+      new URL(isStaffOrAdmin ? '/admin/dashboard' : '/dashboard', request.url)
+    );
+  }
+
+  // 6. If authenticated user attempts to visit /login or /register, redirect to appropriate destination
+  if (user && isAuthRoute) {
+    if (user.role !== 'MAIN_ADMIN' && user.onboardingCompleted === false) {
+      return NextResponse.redirect(new URL('/onboarding', request.url));
+    }
+    if (isPending) {
+      return NextResponse.redirect(new URL('/pending-approval', request.url));
+    }
+    return NextResponse.redirect(
+      new URL(isStaffOrAdmin ? '/admin/dashboard' : '/dashboard', request.url)
+    );
+  }
+
+  // 7. If non-admin attempts to access /admin routes:
+  if (user && isAdminRoute && !isStaffOrAdmin) {
+    if (isPending) {
+      return NextResponse.redirect(new URL('/pending-approval', request.url));
+    }
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
+  // 8. If approved Admin explicitly navigates to /dashboard, redirect to /admin/dashboard
+  if (user && isStaffOrAdmin && pathname === '/dashboard') {
+    return NextResponse.redirect(new URL('/admin/dashboard', request.url));
   }
 
   return NextResponse.next();

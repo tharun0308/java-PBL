@@ -4,19 +4,13 @@ import React from 'react';
 import Link from 'next/link';
 import { motion, Variants, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/navbar';
+import { CampusIllustration } from '@/components/campus-illustration';
 import {
-  ShieldCheck,
   Zap,
   Activity,
-  Layers,
   ArrowRight,
-  CheckCircle2,
-  Clock,
   Sparkles,
-  Users,
-  Building2,
   Lock,
   ChevronRight,
   TrendingUp,
@@ -42,15 +36,6 @@ export default function HomePage() {
       opacity: 1,
       y: 0,
       transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
-    },
-  };
-
-  const cardEntranceVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 24 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
     },
   };
 
@@ -102,230 +87,148 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col relative overflow-x-hidden selection:bg-indigo-500 selection:text-white">
-      <Navbar user={null} />
+      {/* ================================================================= */}
+      {/* PERSISTENT FIXED FULL-PAGE BACKGROUND LAYER (z-0)                 */}
+      {/* ================================================================= */}
+      <div className="fixed inset-0 w-full h-full pointer-events-none overflow-hidden select-none z-0">
+        {/* Ambient Animated Gradient Mesh */}
+        <div className="absolute top-0 inset-x-0 w-full h-[850px] overflow-hidden opacity-50">
+          <motion.div
+            animate={
+              shouldReduceMotion
+                ? {}
+                : {
+                    x: [-30, 30, -30],
+                    y: [-20, 25, -20],
+                    scale: [1, 1.15, 1],
+                  }
+            }
+            transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute -top-36 left-1/4 w-[400px] sm:w-[650px] h-[400px] sm:h-[650px] bg-gradient-to-br from-indigo-600/30 via-indigo-900/20 to-transparent rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={
+              shouldReduceMotion
+                ? {}
+                : {
+                    x: [30, -30, 30],
+                    y: [25, -20, 25],
+                    scale: [1.12, 0.95, 1.12],
+                  }
+            }
+            transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+            className="absolute -top-24 right-1/4 w-[380px] sm:w-[600px] h-[380px] sm:h-[600px] bg-gradient-to-bl from-cyan-500/25 via-sky-800/15 to-transparent rounded-full blur-3xl"
+          />
+        </div>
 
-      {/* Background Animated Gradient Mesh - Smooth Continuous Drift */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[700px] overflow-hidden pointer-events-none -z-10">
-        <motion.div
-          animate={
-            shouldReduceMotion
-              ? {}
-              : {
-                  x: [-25, 25, -25],
-                  y: [-15, 20, -15],
-                  scale: [1, 1.12, 1],
-                }
-          }
-          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -top-32 left-1/4 w-[350px] sm:w-[550px] h-[350px] sm:h-[550px] bg-gradient-to-br from-indigo-600/30 via-indigo-900/20 to-transparent rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={
-            shouldReduceMotion
-              ? {}
-              : {
-                  x: [25, -25, 25],
-                  y: [20, -15, 20],
-                  scale: [1.1, 0.95, 1.1],
-                }
-          }
-          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-          className="absolute -top-20 right-1/4 w-[320px] sm:w-[500px] h-[320px] sm:h-[500px] bg-gradient-to-bl from-cyan-500/25 via-sky-800/15 to-transparent rounded-full blur-3xl"
-        />
+        {/* Radial Dot Matrix Texture */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-25" />
+
+        {/* Campus Illustration - Pure SVG with vibrant indigo/cyan strokes */}
+        <div className="absolute inset-0 w-full h-full">
+          <CampusIllustration />
+        </div>
       </div>
 
-      {/* Radial Dot Matrix Texture - Subpixel & Zoom Safe */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-35 pointer-events-none -z-10" />
+      {/* ================================================================= */}
+      {/* FOREGROUND PAGE CONTENT (relative z-10, scrolls over background)  */}
+      {/* ================================================================= */}
+      <div className="relative z-10 flex flex-col min-h-screen w-full">
+        <Navbar user={null} />
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-20 flex flex-col items-center">
         {/* Hero Section */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="text-center max-w-3xl mx-auto space-y-4 sm:space-y-6 pt-2 sm:pt-6"
-        >
-          <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] sm:text-xs font-medium backdrop-blur-md shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-            <span>Next-Generation Campus Facility Management</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-          </motion.div>
-
-          <motion.h1
-            variants={itemVariants}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12]"
-          >
-            Swift, Transparent{' '}
-            <span className="bg-gradient-to-r from-indigo-400 via-sky-300 to-cyan-400 bg-clip-text text-transparent">
-              Campus Resolutions
-            </span>
-          </motion.h1>
-
-          <motion.p
-            variants={itemVariants}
-            className="text-xs sm:text-sm md:text-base lg:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed"
-          >
-            The centralized institutional platform for students, faculty, and facility staff. File complaints with instant routing, track live resolution timelines, and maintain campus standards.
-          </motion.p>
-
-          {/* Call to Actions */}
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-3.5 pt-1 sm:pt-2"
-          >
-            <Link href="/register" className="w-full sm:w-auto">
-              <Button size="lg" variant="glow" className="w-full sm:w-auto px-6 h-11 sm:h-12 text-sm sm:text-base font-semibold group">
-                <span>Register Complaint</span>
-                <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-
-            <Link href="/login" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto px-6 h-11 sm:h-12 text-sm sm:text-base font-semibold">
-                <span>Sign In to Portal</span>
-              </Button>
-            </Link>
-          </motion.div>
-
-          {/* Google Quick Action */}
-          <motion.div variants={itemVariants} className="pt-1">
-            <a
-              href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/oauth2/authorization/google`}
-              className="inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 hover:text-white transition-all backdrop-blur-md"
-            >
-              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                <path
-                  fill="#EA4335"
-                  d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
-                />
-                <path
-                  fill="#4285F4"
-                  d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M5.6 14.8c-.3-.8-.4-1.8-.4-2.8s.1-2 .4-2.8L1.9 6.3C.7 8.7 0 10.8 0 12s.7 3.3 1.9 5.7l3.7-2.9z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16c1.8 3.7 5.6 7 10.1 7z"
-                />
-              </svg>
-              <span>Instant access with Institutional Google Account</span>
-            </a>
-          </motion.div>
-        </motion.div>
-
-        {/* Live Interactive Complaint Tracker Mockup */}
-        <motion.div
-          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-4xl mt-8 sm:mt-12 md:mt-14 relative"
-        >
-          {/* Animated subtle ambient glow */}
-          <motion.div
-            animate={
-              shouldReduceMotion
-                ? {}
-                : {
-                    scale: [1, 1.03, 1],
-                    opacity: [0.45, 0.7, 0.45],
-                  }
-            }
-            transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500/20 via-sky-500/20 to-indigo-500/20 blur-xl pointer-events-none -z-10"
+        <section className="w-full relative pt-10 sm:pt-16 pb-16 sm:pb-24 flex flex-col items-center">
+          {/* Subtle Radial Text-Protection Gradient (ensures 100% heading/paragraph contrast) */}
+          <div
+            className="absolute top-2 sm:top-6 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[460px] pointer-events-none rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(2,6,23,0.92)_0%,_rgba(2,6,23,0.65)_48%,_transparent_78%)] blur-2xl z-0"
+            aria-hidden="true"
           />
 
-          {/* Floating Card Container */}
+          <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center relative z-10">
+          {/* Hero Header & CTAs */}
           <motion.div
-            animate={
-              shouldReduceMotion
-                ? {}
-                : {
-                    y: [0, -6, 0],
-                  }
-            }
-            transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-            className="relative rounded-2xl glass-panel p-4 sm:p-6 md:p-8 shadow-2xl border border-white/10 hover:border-indigo-500/30 transition-colors"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="text-center max-w-3xl sm:max-w-4xl mx-auto space-y-5 sm:space-y-7 pt-2 sm:pt-4"
           >
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 sm:pb-6 border-b border-white/[0.08]">
-              <div className="flex items-center gap-3">
-                <div className="relative flex items-center justify-center">
-                  <div className="w-3 h-3 rounded-full bg-emerald-400" />
-                  <div className="absolute w-5 h-5 rounded-full bg-emerald-400/40 animate-ping" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-mono text-xs sm:text-sm font-bold text-white tracking-wider">#SCMS-0042</span>
-                    <Badge variant="cyan" className="text-[10px] sm:text-xs">Electrical</Badge>
-                  </div>
-                  <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">Reported in Engineering Block C — Microelectronics Lab</p>
-                </div>
-              </div>
+            <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] sm:text-xs font-medium backdrop-blur-md shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              <span>Next-Generation Campus Facility Management</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            </motion.div>
 
-              <Badge variant="warning" className="px-2.5 py-1 text-[11px] sm:text-xs shadow-sm shadow-amber-500/10">
-                <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 animate-spin" />
-                In Progress
-              </Badge>
-            </div>
-
-            {/* Timeline Progress - Mobile 2x2, Desktop 1x4 */}
-            <div className="py-4 sm:py-6 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-              <div className="flex items-start gap-2.5 sm:gap-3">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-white">Ticket Filed</p>
-                  <p className="text-[10px] sm:text-[11px] text-slate-400">Automatic priority check</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5 sm:gap-3">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-white">Auto-Assigned</p>
-                  <p className="text-[10px] sm:text-[11px] text-slate-400">Electrical Unit</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5 sm:gap-3">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0 shadow-sm shadow-blue-500/20">
-                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-white">Technician On-Site</p>
-                  <p className="text-[10px] sm:text-[11px] text-slate-400">Power supply check</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5 sm:gap-3 opacity-50">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-500 shrink-0">
-                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-slate-300">Resolved</p>
-                  <p className="text-[10px] sm:text-[11px] text-slate-500">Student sign-off</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-3 sm:pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] sm:text-xs text-slate-400">
-              <span className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-400" />
-                Protected by Java Spring Boot & PostgreSQL RLS
+            <motion.h1
+              variants={itemVariants}
+              className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.12]"
+            >
+              Swift, Transparent{' '}
+              <span className="bg-gradient-to-r from-indigo-400 via-sky-300 to-cyan-400 bg-clip-text text-transparent">
+                Campus Resolutions
               </span>
-              <span className="font-mono text-[10px] sm:text-[11px] text-slate-500">Updated 8m ago</span>
-            </div>
-          </motion.div>
-        </motion.div>
+            </motion.h1>
 
+            <motion.p
+              variants={itemVariants}
+              className="text-xs sm:text-sm md:text-base lg:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed"
+            >
+              The centralized institutional platform for students, faculty, and facility staff. File complaints with instant routing, track live resolution timelines, and maintain campus standards.
+            </motion.p>
+
+            {/* Call to Actions */}
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-3.5 pt-2"
+            >
+              <Link href="/register" className="w-full sm:w-auto">
+                <Button size="lg" variant="glow" className="w-full sm:w-auto px-6 h-11 sm:h-12 text-sm sm:text-base font-semibold group">
+                  <span>Register Complaint</span>
+                  <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+
+              <Link href="/login" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto px-6 h-11 sm:h-12 text-sm sm:text-base font-semibold">
+                  <span>Sign In to Portal</span>
+                </Button>
+              </Link>
+            </motion.div>
+
+            {/* Google Quick Action */}
+            <motion.div variants={itemVariants} className="pt-1">
+              <a
+                href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/oauth2/authorization/google`}
+                className="inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 hover:text-white transition-all backdrop-blur-md"
+              >
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                  <path
+                    fill="#EA4335"
+                    d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
+                  />
+                  <path
+                    fill="#4285F4"
+                    d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.6 14.8c-.3-.8-.4-1.8-.4-2.8s.1-2 .4-2.8L1.9 6.3C.7 8.7 0 10.8 0 12s.7 3.3 1.9 5.7l3.7-2.9z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16c1.8 3.7 5.6 7 10.1 7z"
+                  />
+                </svg>
+                <span>Instant access with Institutional Google Account</span>
+              </a>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Main Content (Stats Ribbon, Features Grid, Facility Units) */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 flex flex-col items-center">
         {/* Stats Ribbon */}
-        <div className="w-full max-w-5xl mt-20 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="w-full max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map((stat, idx) => (
             <motion.div
               key={idx}
@@ -420,6 +323,7 @@ export default function HomePage() {
           <p>© {new Date().getFullYear()} Campus Infrastructure & Facility Services. All rights reserved.</p>
         </div>
       </footer>
+      </div>
     </div>
   );
 }

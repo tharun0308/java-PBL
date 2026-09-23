@@ -182,27 +182,6 @@ export default function UserDashboardPage() {
         </div>
       </div>
 
-      {/* Pending Staff Admin Banner */}
-      {userData?.staffAdminStatus === 'PENDING' && (
-        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0">
-              <Clock className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h4 className="text-sm font-bold text-amber-200">Staff Admin Access: Pending Review</h4>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  Awaiting Main Admin
-                </span>
-              </div>
-              <p className="text-xs text-amber-300/80 mt-0.5">
-                Your request for Staff Admin privileges has been submitted. Once approved by the administrator, you will gain access to complaint management tools.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Summary Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">

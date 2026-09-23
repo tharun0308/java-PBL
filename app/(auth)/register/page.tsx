@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, AlertCircle, UserPlus, Eye, EyeOff, CheckCircle2, ShieldCheck, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { FloatingCards } from '@/components/floating-cards';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -114,11 +115,13 @@ export default function RegisterPage() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: 'easeOut' }}
-    >
+    <>
+      <FloatingCards />
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
+      >
       <Card className="shadow-2xl border-white/10 bg-slate-900/80 backdrop-blur-xl">
         <CardHeader className="space-y-1.5 pb-6 border-b border-white/[0.08]">
           <CardTitle className="text-2xl font-bold text-white tracking-tight">
@@ -341,5 +344,6 @@ export default function RegisterPage() {
         </CardContent>
       </Card>
     </motion.div>
+  </>
   );
 }

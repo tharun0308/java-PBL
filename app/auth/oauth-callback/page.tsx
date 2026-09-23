@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
 
 export default function OAuthCallbackPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
+  const hasExchanged = useRef(false);
 
   useEffect(() => {
     const code = searchParams.get('code');
@@ -18,6 +18,11 @@ export default function OAuthCallbackPage() {
       return;
     }
 
+    if (hasExchanged.current) {
+      return;
+    }
+    hasExchanged.current = true;
+
     async function handleExchange() {
       try {
         const res = await fetch('/api/auth/oauth-exchange', {
@@ -26,20 +31,27 @@ export default function OAuthCallbackPage() {
           body: JSON.stringify({ code }),
         });
 
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
 
         if (!res.ok) {
           setError(data.error || 'Failed to authenticate with Google.');
           return;
         }
 
-        const role = data.user?.role;
-        if (data.user?.onboardingCompleted === false) {
-          router.replace('/onboarding');
-        } else if (role === 'MAIN_ADMIN' || role === 'STAFF_ADMIN') {
-          router.replace('/admin/dashboard');
+        const user = data.user;
+        const role = user?.role;
+        const staffStatus = user?.staffAdminStatus;
+        const onboardingDone = user?.onboardingCompleted;
+
+        // Perform clean browser navigation with newly set auth cookies
+        if (onboardingDone === false && role !== 'MAIN_ADMIN') {
+          window.location.href = '/onboarding';
+        } else if (staffStatus === 'PENDING') {
+          window.location.href = '/pending-approval';
+        } else if (role === 'MAIN_ADMIN' || (role === 'STAFF_ADMIN' && staffStatus === 'APPROVED')) {
+          window.location.href = '/admin/dashboard';
         } else {
-          router.replace('/dashboard');
+          window.location.href = '/dashboard';
         }
       } catch (err: any) {
         setError(err.message || 'An error occurred during authentication.');
@@ -47,7 +59,7 @@ export default function OAuthCallbackPage() {
     }
 
     handleExchange();
-  }, [searchParams, router]);
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
@@ -70,7 +82,7 @@ export default function OAuthCallbackPage() {
             <button
               onClick={async () => {
                 await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
-                router.replace('/login');
+                window.location.href = '/login';
               }}
               className="mt-4 inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-colors cursor-pointer"
             >
