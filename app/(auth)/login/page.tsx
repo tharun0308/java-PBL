@@ -44,6 +44,12 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  React.useEffect(() => {
+    router.prefetch('/admin/dashboard');
+    router.prefetch('/dashboard');
+    router.prefetch('/onboarding');
+  }, [router]);
+
   const {
     register,
     handleSubmit,
@@ -84,12 +90,14 @@ function LoginForm() {
         router.push('/onboarding');
       } else if (staffStatus === 'PENDING') {
         router.push('/pending-approval');
-      } else if ((userRole === 'MAIN_ADMIN' || (userRole === 'STAFF_ADMIN' && staffStatus === 'APPROVED')) && redirectTo === '/dashboard') {
+      } else if (
+        (userRole === 'MAIN_ADMIN' || (userRole === 'STAFF_ADMIN' && staffStatus === 'APPROVED')) &&
+        redirectTo === '/dashboard'
+      ) {
         router.push('/admin/dashboard');
       } else {
         router.push(redirectTo);
       }
-      router.refresh();
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Invalid email or password';
       toast.error('Authentication Failed', {

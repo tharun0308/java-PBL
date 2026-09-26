@@ -22,26 +22,39 @@ public class ReportService {
 
     @Transactional(readOnly = true)
     public ReportSummaryDto getSummaryReport() {
-        long total = complaintRepository.count();
-        long pending = complaintRepository.countByStatus(ComplaintStatus.PENDING);
-        long inProgress = complaintRepository.countByStatus(ComplaintStatus.IN_PROGRESS);
-        long resolved = complaintRepository.countByStatus(ComplaintStatus.RESOLVED);
-        long rejected = complaintRepository.countByStatus(ComplaintStatus.REJECTED);
+        // 1. Single aggregate query for all statuses
+        Map<ComplaintStatus, Long> statusMap = new EnumMap<>(ComplaintStatus.class);
+        for (ComplaintStatus s : ComplaintStatus.values()) {
+            statusMap.put(s, 0L);
+        }
+        long total = 0;
+        for (Object[] row : complaintRepository.countGroupByStatus()) {
+            if (row[0] instanceof ComplaintStatus cs && row[1] instanceof Long count) {
+                statusMap.put(cs, count);
+                total += count;
+            }
+        }
+
+        long pending = statusMap.getOrDefault(ComplaintStatus.PENDING, 0L);
+        long inProgress = statusMap.getOrDefault(ComplaintStatus.IN_PROGRESS, 0L);
+        long resolved = statusMap.getOrDefault(ComplaintStatus.RESOLVED, 0L);
+        long rejected = statusMap.getOrDefault(ComplaintStatus.REJECTED, 0L);
 
         double resolutionRate = total > 0 ? ((double) resolved / total) * 100.0 : 0.0;
         resolutionRate = Math.round(resolutionRate * 10.0) / 10.0; // Round to 1 decimal place
 
+        // 2. Single aggregate query for all categories
         Map<ComplaintCategory, Long> categoryMap = new EnumMap<>(ComplaintCategory.class);
         for (ComplaintCategory cat : ComplaintCategory.values()) {
-            categoryMap.put(cat, complaintRepository.countByCategory(cat));
+            categoryMap.put(cat, 0L);
+        }
+        for (Object[] row : complaintRepository.countGroupByCategory()) {
+            if (row[0] instanceof ComplaintCategory cc && row[1] instanceof Long count) {
+                categoryMap.put(cc, count);
+            }
         }
 
-        Map<ComplaintStatus, Long> statusMap = new EnumMap<>(ComplaintStatus.class);
-        statusMap.put(ComplaintStatus.PENDING, pending);
-        statusMap.put(ComplaintStatus.IN_PROGRESS, inProgress);
-        statusMap.put(ComplaintStatus.RESOLVED, resolved);
-        statusMap.put(ComplaintStatus.REJECTED, rejected);
-
+        // 3. Single aggregate query for all priorities
         Map<ComplaintPriority, Long> priorityMap = new EnumMap<>(ComplaintPriority.class);
         for (ComplaintPriority p : ComplaintPriority.values()) {
             priorityMap.put(p, 0L);
