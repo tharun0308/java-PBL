@@ -33,11 +33,11 @@ export function AdminFilterBar({
   const hasActiveFilters = search !== '' || status !== 'all' || category !== 'all' || priority !== 'all';
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors">
+    <div className="bg-white p-4 rounded-xl border border-border shadow-sm space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         {/* Search */}
         <div className="relative lg:col-span-2">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate" />
           <Input
             placeholder="Search by ID, location, or keyword..."
             value={search}
@@ -93,13 +93,13 @@ export function AdminFilterBar({
       </div>
 
       {hasActiveFilters && (
-        <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex items-center justify-between pt-2 border-t border-border text-xs text-slate">
           <span>Active filters applied</span>
           <Button
             variant="ghost"
             size="sm"
             onClick={onReset}
-            className="h-7 text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+            className="h-7 text-xs text-slate hover:text-charcoal"
           >
             <RotateCcw className="w-3 h-3 mr-1" />
             Reset Filters

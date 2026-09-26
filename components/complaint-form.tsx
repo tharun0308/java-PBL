@@ -103,16 +103,16 @@ export function ComplaintForm() {
       transition={{ duration: 0.35, ease: 'easeOut' }}
       className="max-w-3xl mx-auto"
     >
-      <Card className="shadow-2xl border-white/10 bg-slate-900/80 backdrop-blur-xl">
-        <CardHeader className="space-y-1.5 border-b border-white/[0.08] pb-6">
-          <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
+      <Card className="shadow-md border-border bg-white">
+        <CardHeader className="space-y-1.5 border-b border-border pb-6">
+          <div className="flex items-center gap-2 text-lavender text-xs font-semibold uppercase tracking-wider">
             <PlusCircle className="w-4 h-4" />
             <span>Campus Grievance Filing</span>
           </div>
-          <CardTitle className="text-2xl font-bold text-white tracking-tight">
+          <CardTitle className="text-2xl font-bold text-charcoal tracking-tight">
             Register New Complaint
           </CardTitle>
-          <CardDescription className="text-slate-400 text-sm">
+          <CardDescription className="text-slate text-sm">
             Provide precise location details and a clear description to ensure fast dispatch to campus facilities.
           </CardDescription>
         </CardHeader>
@@ -123,24 +123,24 @@ export function ComplaintForm() {
             <div className="space-y-2">
               <label
                 htmlFor="category"
-                className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-300"
+                className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-charcoal"
               >
-                <Layers className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Department Category <span className="text-rose-400">*</span></span>
+                <Layers className="w-3.5 h-3.5 text-lavender" />
+                <span>Department Category <span className="text-danger">*</span></span>
               </label>
               <select
                 id="category"
                 {...register('category')}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/70 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-border text-charcoal text-sm focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-colors"
               >
                 {CATEGORIES.map((cat: Category) => (
-                  <option key={cat} value={cat} className="bg-slate-900 text-white">
+                  <option key={cat} value={cat}>
                     {CATEGORY_LABELS[cat]}
                   </option>
                 ))}
               </select>
               {errors.category && (
-                <p className="text-xs text-rose-400 flex items-center gap-1.5 mt-1">
+                <p className="text-xs text-danger flex items-center gap-1.5 mt-1">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   {errors.category.message}
                 </p>
@@ -151,19 +151,18 @@ export function ComplaintForm() {
             <div className="space-y-2">
               <label
                 htmlFor="location"
-                className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-300"
+                className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-charcoal"
               >
-                <MapPin className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Campus Location <span className="text-rose-400">*</span></span>
+                <MapPin className="w-3.5 h-3.5 text-lavender" />
+                <span>Campus Location <span className="text-danger">*</span></span>
               </label>
               <Input
                 id="location"
                 placeholder="e.g. Science Block, 2nd Floor, Lab 204 or Hostel B Room 112"
-                className="bg-slate-950/70 border-white/10 text-white placeholder:text-slate-500"
                 {...register('location')}
               />
               {errors.location && (
-                <p className="text-xs text-rose-400 flex items-center gap-1.5 mt-1">
+                <p className="text-xs text-danger flex items-center gap-1.5 mt-1">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   {errors.location.message}
                 </p>
@@ -172,22 +171,22 @@ export function ComplaintForm() {
 
             {/* Priority Radio Cards */}
             <div className="space-y-2">
-              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-300">
-                <ShieldAlert className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Urgency / Priority Level <span className="text-rose-400">*</span></span>
+              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-charcoal">
+                <ShieldAlert className="w-3.5 h-3.5 text-lavender" />
+                <span>Urgency / Priority Level <span className="text-danger">*</span></span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {PRIORITIES.map((p: Priority) => {
                   const isSelected = selectedPriority === p;
-                  let borderBadge = 'border-white/10 bg-slate-950/50 text-slate-300 hover:border-white/20';
+                  let borderBadge = 'border-border bg-white text-charcoal hover:border-lavender/40';
 
                   if (isSelected) {
                     if (p === 'HIGH') {
-                      borderBadge = 'border-rose-500 bg-rose-500/15 text-rose-300 ring-1 ring-rose-500 shadow-md shadow-rose-500/10';
+                      borderBadge = 'border-danger bg-pale-danger text-danger ring-1 ring-danger shadow-sm';
                     } else if (p === 'MEDIUM') {
-                      borderBadge = 'border-amber-500 bg-amber-500/15 text-amber-300 ring-1 ring-amber-500 shadow-md shadow-amber-500/10';
+                      borderBadge = 'border-[#FDE68A] bg-pale-warning text-warning ring-1 ring-[#FDE68A] shadow-sm';
                     } else {
-                      borderBadge = 'border-indigo-500 bg-indigo-500/15 text-indigo-300 ring-1 ring-indigo-500 shadow-md shadow-indigo-500/10';
+                      borderBadge = 'border-lavender bg-pale-lavender text-lavender-strong ring-1 ring-lavender shadow-sm';
                     }
                   }
 
@@ -208,11 +207,11 @@ export function ComplaintForm() {
                           className="sr-only"
                           {...register('priority')}
                         />
-                        <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/10">
+                        <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-charcoal/10">
                           {p === 'HIGH' ? '24h SLA' : p === 'MEDIUM' ? '48h SLA' : '5d SLA'}
                         </span>
                       </div>
-                      <span className="text-[11px] text-slate-400 mt-1">
+                      <span className="text-[11px] text-slate mt-1">
                         {p === 'HIGH'
                           ? 'Safety risk or immediate disruption'
                           : p === 'MEDIUM'
@@ -224,7 +223,7 @@ export function ComplaintForm() {
                 })}
               </div>
               {errors.priority && (
-                <p className="text-xs text-rose-400 flex items-center gap-1.5 mt-1">
+                <p className="text-xs text-danger flex items-center gap-1.5 mt-1">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   {errors.priority.message}
                 </p>
@@ -236,12 +235,12 @@ export function ComplaintForm() {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="description"
-                  className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-300"
+                  className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-charcoal"
                 >
-                  <FileText className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>Issue Description <span className="text-rose-400">*</span></span>
+                  <FileText className="w-3.5 h-3.5 text-lavender" />
+                  <span>Issue Description <span className="text-danger">*</span></span>
                 </label>
-                <span className="text-[11px] text-slate-400 font-mono">
+                <span className="text-[11px] text-slate font-mono">
                   {watchedDescription.length} / 5000
                 </span>
               </div>
@@ -249,11 +248,11 @@ export function ComplaintForm() {
                 id="description"
                 rows={5}
                 placeholder="Describe what is broken or required in detail (min 10 characters)..."
-                className="bg-slate-950/70 border-white/10 text-white placeholder:text-slate-500 resize-y"
+                className="resize-y"
                 {...register('description')}
               />
               {errors.description && (
-                <p className="text-xs text-rose-400 flex items-center gap-1.5 mt-1">
+                <p className="text-xs text-danger flex items-center gap-1.5 mt-1">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   {errors.description.message}
                 </p>

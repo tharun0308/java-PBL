@@ -27,49 +27,49 @@ export function StatsCards({
       title: 'Total Complaints',
       value: total,
       icon: ClipboardList,
-      color: 'text-indigo-600 dark:text-indigo-400',
-      bg: 'bg-indigo-50 dark:bg-indigo-950/60',
-      border: 'border-indigo-100 dark:border-indigo-900',
+      color: 'text-lavender-strong',
+      bg: 'bg-pale-lavender',
+      border: 'border-lavender/30',
     },
     {
       title: 'Pending Triage',
       value: pending,
       icon: Clock,
-      color: 'text-amber-600 dark:text-amber-400',
-      bg: 'bg-amber-50 dark:bg-amber-950/60',
-      border: 'border-amber-100 dark:border-amber-900',
+      color: 'text-warning',
+      bg: 'bg-pale-warning',
+      border: 'border-[#FDE68A]',
     },
     {
       title: 'In Progress',
       value: inProgress,
       icon: Loader2,
-      color: 'text-blue-600 dark:text-blue-400',
-      bg: 'bg-blue-50 dark:bg-blue-950/60',
-      border: 'border-blue-100 dark:border-blue-900',
+      color: 'text-lavender',
+      bg: 'bg-pale-lavender',
+      border: 'border-lavender/30',
     },
     {
       title: 'Resolved',
       value: resolved,
       icon: CheckCircle2,
-      color: 'text-emerald-600 dark:text-emerald-400',
-      bg: 'bg-emerald-50 dark:bg-emerald-950/60',
-      border: 'border-emerald-100 dark:border-emerald-900',
+      color: 'text-mint-strong',
+      bg: 'bg-pale-mint',
+      border: 'border-mint/30',
     },
     {
       title: 'SLA Overdue',
       value: overdue,
       icon: AlertTriangle,
-      color: 'text-rose-600 dark:text-rose-400',
-      bg: 'bg-rose-50 dark:bg-rose-950/60',
-      border: 'border-rose-200 dark:border-rose-900',
+      color: 'text-danger',
+      bg: 'bg-pale-danger',
+      border: 'border-[#FECDD3]',
     },
     {
       title: 'Rejected',
       value: rejected,
       icon: XCircle,
-      color: 'text-slate-600 dark:text-slate-400',
-      bg: 'bg-slate-100 dark:bg-slate-800',
-      border: 'border-slate-200 dark:border-slate-800',
+      color: 'text-slate',
+      bg: 'bg-surface-muted',
+      border: 'border-border',
     },
   ];
 
@@ -77,7 +77,7 @@ export function StatsCards({
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Card key={i} className="p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+          <Card key={i} className="p-4 bg-white border-border">
             <Skeleton className="h-4 w-20 mb-2" />
             <Skeleton className="h-8 w-12 mb-2" />
             <Skeleton className="h-3 w-24" />
@@ -94,15 +94,15 @@ export function StatsCards({
         return (
           <Card
             key={card.title}
-            className={`border ${card.border} bg-white dark:bg-slate-900 hover:shadow-md transition-shadow`}
+            className={`border ${card.border} bg-white hover:shadow-md transition-shadow`}
           >
             <CardContent className="p-4 sm:p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate">
                     {card.title}
                   </p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+                  <p className="text-2xl font-bold text-charcoal mt-1">
                     {card.value}
                   </p>
                 </div>

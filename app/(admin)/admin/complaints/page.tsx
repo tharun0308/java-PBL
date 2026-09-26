@@ -105,12 +105,12 @@ function AdminComplaintsContent() {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-charcoal tracking-tight">
             Facility Complaints Management
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-sm text-slate mt-1">
             Review, inspect attached defect evidence, reassign technicians, and verify resolution proof.
           </p>
         </div>
@@ -121,9 +121,8 @@ function AdminComplaintsContent() {
             size="sm"
             onClick={handleExportCsv}
             disabled={complaints.length === 0}
-            className="text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
-            <Download className="w-4 h-4 mr-1.5 text-indigo-600 dark:text-indigo-400" />
+            <Download className="w-4 h-4 mr-1.5 text-lavender" />
             Export CSV ({complaints.length})
           </Button>
 
@@ -132,7 +131,6 @@ function AdminComplaintsContent() {
             size="sm"
             onClick={() => refetch()}
             disabled={isFetching}
-            className="text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             <RefreshCw className={`w-4 h-4 mr-1.5 ${isFetching ? 'animate-spin' : ''}`} />
             Refresh
@@ -154,7 +152,7 @@ function AdminComplaintsContent() {
       />
 
       {/* Complaints Table Container */}
-      <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden transition-colors">
+      <Card className="shadow-sm border-border bg-white overflow-hidden">
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-6 space-y-4">
@@ -168,9 +166,9 @@ function AdminComplaintsContent() {
             </div>
           ) : isError ? (
             <div className="p-12 text-center">
-              <AlertCircle className="w-10 h-10 text-rose-500 mx-auto mb-3" />
-              <h3 className="text-base font-semibold text-slate-900 dark:text-white">Failed to load complaints</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              <AlertCircle className="w-10 h-10 text-danger mx-auto mb-3" />
+              <h3 className="text-base font-semibold text-charcoal">Failed to load complaints</h3>
+              <p className="text-xs text-slate mt-1">
                 {error instanceof Error ? error.message : 'Unknown error'}
               </p>
               <Button variant="outline" size="sm" onClick={() => refetch()} className="mt-4">
@@ -179,9 +177,9 @@ function AdminComplaintsContent() {
             </div>
           ) : complaints.length === 0 ? (
             <div className="p-12 text-center">
-              <Inbox className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">No complaints found</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
+              <Inbox className="w-12 h-12 text-slate mx-auto mb-3" />
+              <h3 className="text-base font-bold text-charcoal">No complaints found</h3>
+              <p className="text-xs text-slate mt-1 max-w-sm mx-auto">
                 No facility issues matched your current filter criteria. Try resetting or adjusting
                 your search query.
               </p>
@@ -193,18 +191,18 @@ function AdminComplaintsContent() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-slate-200 dark:border-slate-800 hover:bg-transparent">
-                    <TableHead className="w-[110px]">ID</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Reported By</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Attachments / Evidence</TableHead>
-                    <TableHead>SLA Timer</TableHead>
-                    <TableHead>Assigned To</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
+                  <TableRow className="border-border hover:bg-transparent bg-surface-muted">
+                    <TableHead className="w-[110px] text-slate font-semibold">ID</TableHead>
+                    <TableHead className="text-slate font-semibold">Category</TableHead>
+                    <TableHead className="text-slate font-semibold">Location</TableHead>
+                    <TableHead className="text-slate font-semibold">Reported By</TableHead>
+                    <TableHead className="text-slate font-semibold">Priority</TableHead>
+                    <TableHead className="text-slate font-semibold">Status</TableHead>
+                    <TableHead className="text-slate font-semibold">Attachments / Evidence</TableHead>
+                    <TableHead className="text-slate font-semibold">SLA Timer</TableHead>
+                    <TableHead className="text-slate font-semibold">Assigned To</TableHead>
+                    <TableHead className="text-slate font-semibold">Date</TableHead>
+                    <TableHead className="text-right text-slate font-semibold">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -219,9 +217,9 @@ function AdminComplaintsContent() {
                     return (
                       <TableRow
                         key={complaint.id}
-                        className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 border-slate-200 dark:border-slate-800"
+                        className="hover:bg-pale-lavender border-border"
                       >
-                        <TableCell className="font-mono font-bold text-indigo-600 dark:text-indigo-400 text-xs">
+                        <TableCell className="font-mono font-bold text-lavender-strong text-xs">
                           <Link
                             href={`/admin/complaints/${complaint.id}`}
                             className="hover:underline flex items-center gap-1.5"
@@ -229,31 +227,31 @@ function AdminComplaintsContent() {
                             <span>{formattedId}</span>
                             {hasPhotos && (
                               <span title="Contains photo attachment">
-                                <Camera className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                                <Camera className="w-3.5 h-3.5 text-lavender shrink-0" />
                               </span>
                             )}
                           </Link>
                         </TableCell>
                         <TableCell>
-                          <span className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                          <span className="text-xs font-semibold uppercase tracking-wider text-charcoal bg-surface-muted px-2 py-0.5 rounded">
                             {complaint.category}
                           </span>
                         </TableCell>
-                        <TableCell className="max-w-[170px] truncate text-xs font-medium text-slate-800 dark:text-slate-200">
+                        <TableCell className="max-w-[170px] truncate text-xs font-medium text-charcoal">
                           {complaint.location}
                         </TableCell>
                         <TableCell className="text-xs">
                           {complaint.user ? (
                             <div className="flex flex-col">
-                              <span className="font-semibold text-slate-900 dark:text-white">
+                              <span className="font-semibold text-charcoal">
                                 {complaint.user.full_name}
                               </span>
-                              <span className="text-[11px] text-slate-400 truncate max-w-[130px]">
+                              <span className="text-[11px] text-slate truncate max-w-[130px]">
                                 {complaint.user.email}
                               </span>
                             </div>
                           ) : (
-                            <span className="text-slate-400 italic">Student</span>
+                            <span className="text-slate italic">Student</span>
                           )}
                         </TableCell>
                         <TableCell>
@@ -263,7 +261,7 @@ function AdminComplaintsContent() {
                           <div className="space-y-1">
                             <ComplaintStatusBadge status={complaint.status} />
                             {complaint.rating && (
-                              <div className="flex items-center gap-1 text-[11px] text-amber-500 font-semibold">
+                              <div className="flex items-center gap-1 text-[11px] text-amber-600 font-semibold">
                                 <Star className="w-3 h-3 fill-amber-400" />
                                 {complaint.rating}/5
                               </div>
@@ -288,7 +286,7 @@ function AdminComplaintsContent() {
                                     downloadName: `defect-${complaint.complaint_number}.jpg`,
                                   })
                                 }
-                                className="relative group w-9 h-9 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 hover:ring-2 hover:ring-indigo-500 transition-all cursor-pointer shrink-0 bg-slate-100 dark:bg-slate-800 shadow-sm"
+                                className="relative group w-9 h-9 rounded-lg overflow-hidden border border-border hover:ring-2 hover:ring-lavender transition-all cursor-pointer shrink-0 bg-surface-muted shadow-sm"
                               >
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
@@ -316,7 +314,7 @@ function AdminComplaintsContent() {
                                     downloadName: `resolution-proof-${complaint.complaint_number}.jpg`,
                                   })
                                 }
-                                className="relative group w-9 h-9 rounded-lg overflow-hidden border-2 border-emerald-500 hover:ring-2 hover:ring-emerald-400 transition-all cursor-pointer shrink-0 bg-emerald-50 dark:bg-emerald-950/40 shadow-sm"
+                                className="relative group w-9 h-9 rounded-lg overflow-hidden border-2 border-mint hover:ring-2 hover:ring-mint-strong transition-all cursor-pointer shrink-0 bg-pale-mint shadow-sm"
                               >
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
@@ -324,7 +322,7 @@ function AdminComplaintsContent() {
                                   alt="Resolution thumbnail"
                                   className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                                 />
-                                <div className="absolute top-0 right-0 bg-emerald-600 text-white p-0.5 rounded-bl">
+                                <div className="absolute top-0 right-0 bg-mint-strong text-white p-0.5 rounded-bl">
                                   <Check className="w-2.5 h-2.5" />
                                 </div>
                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white">
@@ -334,7 +332,7 @@ function AdminComplaintsContent() {
                             ) : null}
 
                             {!complaint.image_url && !complaint.resolution_image_url && (
-                              <span className="text-[11px] text-slate-400 dark:text-slate-500 italic">No media</span>
+                              <span className="text-[11px] text-slate italic">No media</span>
                             )}
                           </div>
                         </TableCell>
@@ -344,12 +342,12 @@ function AdminComplaintsContent() {
                             {sla.label}
                           </span>
                         </TableCell>
-                        <TableCell className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+                        <TableCell className="text-xs text-charcoal font-medium">
                           {complaint.assigned_to || (
-                            <span className="text-amber-600 dark:text-amber-400 font-normal italic">Unassigned</span>
+                            <span className="text-warning font-normal italic">Unassigned</span>
                           )}
                         </TableCell>
-                        <TableCell className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                        <TableCell className="text-xs text-slate whitespace-nowrap">
                           {formatRelativeTime(complaint.created_at)}
                         </TableCell>
                         <TableCell className="text-right">
@@ -357,7 +355,7 @@ function AdminComplaintsContent() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-8 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 font-semibold text-xs"
+                              className="h-8 text-lavender-strong hover:text-charcoal hover:bg-pale-lavender font-semibold text-xs"
                             >
                               Triage
                               <ArrowRight className="w-3 h-3 ml-1" />
@@ -377,20 +375,20 @@ function AdminComplaintsContent() {
       {/* Attachment Inspection Modal */}
       {photoPreview && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
           onClick={() => setPhotoPreview(null)}
         >
           <div
-            className="relative max-w-4xl w-full bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-700"
+            className="relative max-w-4xl w-full bg-charcoal rounded-2xl overflow-hidden shadow-2xl border border-charcoal/80"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 bg-slate-800 flex items-center justify-between text-white border-b border-slate-700">
+            <div className="p-4 bg-[#374151] flex items-center justify-between text-white border-b border-[#4B5563]">
               <div>
                 <h3 className="text-sm font-bold flex items-center gap-2">
-                  <Camera className="w-4 h-4 text-indigo-400" />
+                  <Camera className="w-4 h-4 text-lavender" />
                   {photoPreview.title}
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-300 mt-0.5">
                   {photoPreview.subtitle} • {photoPreview.uploader}
                 </p>
               </div>
@@ -398,7 +396,7 @@ function AdminComplaintsContent() {
                 <a
                   href={photoPreview.url}
                   download={photoPreview.downloadName}
-                  className="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs flex items-center gap-1.5 font-medium transition-colors"
+                  className="px-2.5 py-1.5 rounded-lg bg-[#4B5563] hover:bg-[#6B7280] text-slate-200 text-xs flex items-center gap-1.5 font-medium transition-colors"
                 >
                   <Download className="w-3.5 h-3.5" />
                   Download
@@ -406,7 +404,7 @@ function AdminComplaintsContent() {
                 <button
                   type="button"
                   onClick={() => setPhotoPreview(null)}
-                  className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  className="p-1.5 rounded-lg hover:bg-[#4B5563] text-slate-400 hover:text-white transition-colors cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>

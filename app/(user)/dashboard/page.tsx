@@ -149,15 +149,15 @@ export default function UserDashboardPage() {
   return (
     <div className="space-y-8">
       {/* Top Banner & Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-white/[0.08]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-border">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-2.5">
+          <h1 className="text-2xl sm:text-3xl font-bold text-charcoal tracking-tight flex items-center gap-2.5">
             <span>My Complaints</span>
-            <span className="text-xs uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+            <span className="text-xs uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-pale-lavender text-lavender-strong border border-lavender/30">
               Student / Faculty Portal
             </span>
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate mt-1">
             Track real-time resolution status and communication logs for your submitted grievances.
           </p>
         </div>
@@ -168,9 +168,9 @@ export default function UserDashboardPage() {
             size="sm"
             onClick={() => refetch()}
             disabled={isFetching}
-            className="flex items-center gap-2 border-white/10 text-slate-300 hover:text-white"
+            className="flex items-center gap-2"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isFetching ? 'animate-spin text-indigo-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isFetching ? 'animate-spin text-lavender' : ''}`} />
             <span className="hidden sm:inline">Refresh</span>
           </Button>
           <Link href="/complaints/new">
@@ -185,89 +185,89 @@ export default function UserDashboardPage() {
 
       {/* Summary Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
-        <Card className="bg-slate-900/60 border-white/10 backdrop-blur-md">
+        <Card className="bg-white border-border shadow-sm">
           <CardContent className="p-4 flex flex-col">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate">
               Total Filed
             </span>
             <div className="flex items-center justify-between mt-2">
-              <span className="text-2xl font-extrabold text-white">
+              <span className="text-2xl font-extrabold text-charcoal">
                 {isLoading ? <Skeleton className="h-7 w-8" /> : metrics.total}
               </span>
-              <ClipboardList className="w-5 h-5 text-slate-400" />
+              <ClipboardList className="w-5 h-5 text-slate" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-amber-500/5 border-amber-500/20 backdrop-blur-md">
+        <Card className="bg-pale-warning border-[#FDE68A] shadow-sm">
           <CardContent className="p-4 flex flex-col">
-            <span className="text-xs font-semibold uppercase tracking-wider text-amber-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-warning">
               Pending
             </span>
             <div className="flex items-center justify-between mt-2">
-              <span className="text-2xl font-extrabold text-amber-300">
+              <span className="text-2xl font-extrabold text-warning">
                 {isLoading ? <Skeleton className="h-7 w-8" /> : metrics.pending}
               </span>
-              <Clock className="w-5 h-5 text-amber-400" />
+              <Clock className="w-5 h-5 text-warning" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-blue-500/5 border-blue-500/20 backdrop-blur-md">
+        <Card className="bg-pale-lavender border-lavender/30 shadow-sm">
           <CardContent className="p-4 flex flex-col">
-            <span className="text-xs font-semibold uppercase tracking-wider text-blue-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-lavender-strong">
               In Progress
             </span>
             <div className="flex items-center justify-between mt-2">
-              <span className="text-2xl font-extrabold text-blue-300">
+              <span className="text-2xl font-extrabold text-lavender-strong">
                 {isLoading ? <Skeleton className="h-7 w-8" /> : metrics.inProgress}
               </span>
-              <Loader2 className="w-5 h-5 text-blue-400" />
+              <Loader2 className="w-5 h-5 text-lavender" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-emerald-500/5 border-emerald-500/20 backdrop-blur-md">
+        <Card className="bg-pale-mint border-mint/30 shadow-sm">
           <CardContent className="p-4 flex flex-col">
-            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-mint-strong">
               Resolved
             </span>
             <div className="flex items-center justify-between mt-2">
-              <span className="text-2xl font-extrabold text-emerald-300">
+              <span className="text-2xl font-extrabold text-mint-strong">
                 {isLoading ? <Skeleton className="h-7 w-8" /> : metrics.resolved}
               </span>
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              <CheckCircle2 className="w-5 h-5 text-mint-strong" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-rose-500/5 border-rose-500/20 backdrop-blur-md col-span-2 sm:col-span-1">
+        <Card className="bg-pale-danger border-[#FECDD3] shadow-sm col-span-2 sm:col-span-1">
           <CardContent className="p-4 flex flex-col">
-            <span className="text-xs font-semibold uppercase tracking-wider text-rose-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-danger">
               Rejected
             </span>
             <div className="flex items-center justify-between mt-2">
-              <span className="text-2xl font-extrabold text-rose-300">
+              <span className="text-2xl font-extrabold text-danger">
                 {isLoading ? <Skeleton className="h-7 w-8" /> : metrics.rejected}
               </span>
-              <XCircle className="w-5 h-5 text-rose-400" />
+              <XCircle className="w-5 h-5 text-danger" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Filter and Search Bar */}
-      <Card className="bg-slate-900/60 border-white/10 backdrop-blur-md">
+      <Card className="bg-white border-border shadow-sm">
         <CardContent className="p-4">
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
             {/* Search Input */}
             <div className="sm:col-span-5 relative">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate pointer-events-none" />
               <Input
                 placeholder="Search ticket #, location, description..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 bg-slate-950/70 border-white/10 text-white placeholder:text-slate-500"
+                className="pl-9"
               />
             </div>
 
@@ -276,7 +276,7 @@ export default function UserDashboardPage() {
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-950/70 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-white border border-border text-charcoal text-sm focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender"
               >
                 <option value="ALL">All Statuses</option>
                 {STATUSES.map((st: Status) => (
@@ -292,7 +292,7 @@ export default function UserDashboardPage() {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-950/70 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-white border border-border text-charcoal text-sm focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender"
               >
                 <option value="ALL">All Categories</option>
                 {CATEGORIES.map((cat: Category) => (
@@ -308,7 +308,7 @@ export default function UserDashboardPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-950/70 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-white border border-border text-charcoal text-sm focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender"
               >
                 <option value="NEWEST">Newest First</option>
                 <option value="OLDEST">Oldest First</option>
@@ -324,7 +324,7 @@ export default function UserDashboardPage() {
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <Card key={i} className="bg-slate-900/60 border-white/10 p-5">
+              <Card key={i} className="bg-white border-border p-5">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <Skeleton className="h-5 w-32" />
@@ -340,10 +340,10 @@ export default function UserDashboardPage() {
             ))}
           </div>
         ) : isError ? (
-          <Card className="bg-rose-500/10 border-rose-500/30 p-8 text-center">
-            <AlertCircle className="w-10 h-10 text-rose-400 mx-auto mb-3" />
-            <h3 className="text-base font-bold text-white">Failed to Load Complaints</h3>
-            <p className="text-xs text-rose-300 mt-1 mb-4">
+          <Card className="bg-pale-danger border-[#FECDD3] p-8 text-center">
+            <AlertCircle className="w-10 h-10 text-danger mx-auto mb-3" />
+            <h3 className="text-base font-bold text-charcoal">Failed to Load Complaints</h3>
+            <p className="text-xs text-danger mt-1 mb-4">
               {error instanceof Error ? error.message : 'An unexpected error occurred.'}
             </p>
             <Button variant="outline" size="sm" onClick={() => refetch()}>
@@ -352,14 +352,14 @@ export default function UserDashboardPage() {
           </Card>
         ) : filteredComplaints.length === 0 ? (
           /* Empty State */
-          <Card className="bg-slate-900/40 border-white/10 p-12 text-center backdrop-blur-md">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mx-auto mb-4">
+          <Card className="bg-white border-border p-12 text-center shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-pale-lavender border border-lavender/30 flex items-center justify-center text-lavender mx-auto mb-4">
               <Inbox className="w-7 h-7" />
             </div>
-            <h3 className="text-lg font-bold text-white">
+            <h3 className="text-lg font-bold text-charcoal">
               {complaints.length === 0 ? 'No Complaints Submitted Yet' : 'No Matching Complaints'}
             </h3>
-            <p className="text-xs text-slate-400 max-w-md mx-auto mt-1.5 mb-6 leading-relaxed">
+            <p className="text-xs text-slate max-w-md mx-auto mt-1.5 mb-6 leading-relaxed">
               {complaints.length === 0
                 ? 'When you encounter facility, electrical, cleanliness, or IT issues on campus, file a complaint to initiate instant tracking.'
                 : 'No complaints matched your current search filters. Try resetting the filters above.'}
@@ -398,15 +398,15 @@ export default function UserDashboardPage() {
                 href={`/complaints/${c.id}`}
                 className="block group transition-all"
               >
-                <Card className="bg-slate-900/70 hover:bg-slate-900 border-white/10 hover:border-indigo-500/40 transition-all shadow-md hover:shadow-indigo-500/5">
+                <Card className="bg-white hover:bg-pale-lavender border-border hover:border-lavender/40 transition-all shadow-sm hover:shadow-md">
                   <CardContent className="p-5">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border">
                       <div className="flex items-center gap-2.5 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                        <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-pale-lavender text-lavender-strong border border-lavender/30">
                           {ticketNumber}
                         </span>
-                        <span className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
-                          <Layers className="w-3.5 h-3.5 text-indigo-400" />
+                        <span className="text-xs font-semibold text-charcoal flex items-center gap-1.5">
+                          <Layers className="w-3.5 h-3.5 text-lavender" />
                           {categoryLabel}
                         </span>
                         <ComplaintPriorityBadge priority={c.priority} />
@@ -419,21 +419,21 @@ export default function UserDashboardPage() {
 
                     <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="space-y-1.5 flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 text-xs font-medium text-slate-300">
-                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <div className="flex items-center gap-1.5 text-xs font-medium text-charcoal">
+                          <MapPin className="w-3.5 h-3.5 text-slate shrink-0" />
                           <span className="truncate">{c.location}</span>
                         </div>
-                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-slate line-clamp-2 leading-relaxed">
                           {c.description}
                         </p>
                       </div>
 
-                      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/[0.04]">
-                        <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
-                          <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border">
+                        <div className="flex items-center gap-1.5 text-[11px] text-slate font-medium">
+                          <Calendar className="w-3.5 h-3.5 text-slate" />
                           <span>{createdDate ? formatRelativeTime(createdDate) : 'Recently'}</span>
                         </div>
-                        <div className="w-8 h-8 rounded-lg bg-slate-800/80 group-hover:bg-indigo-600/20 text-slate-400 group-hover:text-indigo-400 flex items-center justify-center transition-colors">
+                        <div className="w-8 h-8 rounded-lg bg-surface-muted group-hover:bg-pale-lavender text-slate group-hover:text-lavender flex items-center justify-center transition-colors">
                           <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                         </div>
                       </div>
@@ -452,10 +452,10 @@ export default function UserDashboardPage() {
         userData?.staffAdminStatus !== 'PENDING' &&
         userData?.staffAdminStatus !== 'APPROVED' && (
           <Card
-            className={`border backdrop-blur-md transition-all ${
+            className={`border shadow-sm transition-all ${
               (userData?.staffAdminAppealCount || 0) >= 3
-                ? 'bg-slate-900/40 border-white/10 opacity-75'
-                : 'bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-purple-950/30 border-indigo-500/25'
+                ? 'bg-surface-muted border-border opacity-75'
+                : 'bg-pale-lavender border-lavender/30'
             }`}
           >
             <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -463,8 +463,8 @@ export default function UserDashboardPage() {
                 <div
                   className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 mt-0.5 ${
                     (userData?.staffAdminAppealCount || 0) >= 3
-                      ? 'bg-slate-800 border-slate-700 text-slate-400'
-                      : 'bg-indigo-500/15 border-indigo-500/30 text-indigo-300'
+                      ? 'bg-white border-border text-slate'
+                      : 'bg-white border-lavender/30 text-lavender'
                   }`}
                 >
                   {(userData?.staffAdminAppealCount || 0) >= 3 ? (
@@ -475,20 +475,20 @@ export default function UserDashboardPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="text-sm font-bold text-white">
+                    <h4 className="text-sm font-bold text-charcoal">
                       Appeal for Manager (Staff Admin) Access
                     </h4>
                     {(userData?.staffAdminAppealCount || 0) >= 3 ? (
-                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-pale-danger text-danger border border-[#FECDD3]">
                         Max Appeals (3/3) Reached
                       </span>
                     ) : (
-                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white text-lavender-strong border border-lavender/30">
                         {Math.max(0, 3 - (userData?.staffAdminAppealCount || 0))} of 3 appeals remaining
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-400 mt-1 max-w-xl leading-relaxed">
+                  <p className="text-xs text-slate mt-1 max-w-xl leading-relaxed">
                     {(userData?.staffAdminAppealCount || 0) >= 3
                       ? 'You have used all 3 appeal attempts for Staff Admin manager access. If you still require administrative elevation, please contact the campus Main Administrator directly.'
                       : 'As faculty, you can appeal for Manager access to triage departmental grievances, assign technicians, and update resolution statuses. Requires Main Admin verification.'}
@@ -501,7 +501,7 @@ export default function UserDashboardPage() {
                   variant="outline"
                   size="sm"
                   disabled
-                  className="border-slate-800 bg-slate-900/50 text-slate-500 cursor-not-allowed shrink-0 self-start sm:self-auto"
+                  className="cursor-not-allowed shrink-0 self-start sm:self-auto"
                 >
                   <Lock className="w-3.5 h-3.5 mr-2" />
                   Appeal Limit Reached
@@ -512,7 +512,7 @@ export default function UserDashboardPage() {
                   size="sm"
                   onClick={handleRequestStaffAdmin}
                   disabled={isRequestingStaff}
-                  className="border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/10 hover:text-white shrink-0 self-start sm:self-auto cursor-pointer"
+                  className="border-lavender/30 text-lavender-strong hover:bg-white shrink-0 self-start sm:self-auto cursor-pointer"
                 >
                   {isRequestingStaff ? (
                     <>

@@ -20,21 +20,23 @@ interface CategoryChartProps {
   isLoading?: boolean;
 }
 
+// Adjacent-distinct palette: Lavender → Amber → Mint → Rose → Sky → Charcoal → Violet → Teal
+// No two adjacent bars share similar hue/lightness.
 const COLORS = [
-  '#6366f1', // Indigo
-  '#0ea5e9', // Sky
-  '#10b981', // Emerald
-  '#f59e0b', // Amber
-  '#8b5cf6', // Violet
-  '#ec4899', // Pink
-  '#14b8a6', // Teal
-  '#64748b', // Slate
+  '#A78BFA', // Lavender (accent 1)
+  '#F59E0B', // Amber (warm)
+  '#86EFAC', // Mint (accent 2)
+  '#F43F5E', // Rose (danger)
+  '#0EA5E9', // Sky (cool blue)
+  '#1F2937', // Charcoal (dark)
+  '#8B5CF6', // Violet (purple)
+  '#14B8A6', // Teal (cool green)
 ];
 
 export function CategoryChart({ data, isLoading = false }: CategoryChartProps) {
   if (isLoading) {
     return (
-      <Card className="shadow-sm">
+      <Card className="shadow-sm border-border bg-white">
         <CardHeader>
           <Skeleton className="h-6 w-48 mb-2" />
           <Skeleton className="h-4 w-72" />
@@ -49,18 +51,18 @@ export function CategoryChart({ data, isLoading = false }: CategoryChartProps) {
   const hasData = data && data.length > 0 && data.some((d) => d.count > 0);
 
   return (
-    <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors">
+    <Card className="shadow-sm border-border bg-white">
       <CardHeader>
-        <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">
+        <CardTitle className="text-lg font-bold text-charcoal">
           Complaints by Facility Category
         </CardTitle>
-        <CardDescription className="text-slate-500 dark:text-slate-400">
+        <CardDescription className="text-slate">
           Distribution of reported issues across college facilities and services.
         </CardDescription>
       </CardHeader>
       <CardContent>
         {!hasData ? (
-          <div className="h-[300px] flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+          <div className="h-[300px] flex flex-col items-center justify-center text-slate">
             <p className="text-sm">No complaints recorded across categories yet.</p>
           </div>
         ) : (
@@ -70,10 +72,10 @@ export function CategoryChart({ data, isLoading = false }: CategoryChartProps) {
                 data={data}
                 margin={{ top: 20, right: 20, left: -10, bottom: 60 }}
               >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#64748b" strokeOpacity={0.2} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#64748B" strokeOpacity={0.15} />
                 <XAxis
                   dataKey="category"
-                  stroke="#94a3b8"
+                  stroke="#64748B"
                   fontSize={11}
                   interval={0}
                   angle={-35}
@@ -81,21 +83,21 @@ export function CategoryChart({ data, isLoading = false }: CategoryChartProps) {
                   tickLine={false}
                 />
                 <YAxis
-                  stroke="#94a3b8"
+                  stroke="#64748B"
                   fontSize={12}
                   allowDecimals={false}
                   tickLine={false}
                   axisLine={false}
                 />
                 <Tooltip
-                  cursor={{ fill: 'currentColor', opacity: 0.05 }}
+                  cursor={{ fill: '#A78BFA', opacity: 0.05 }}
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       const item = payload[0];
                       return (
-                        <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 shadow-md text-xs">
-                          <p className="font-semibold text-slate-800 dark:text-slate-200">{item.payload.category}</p>
-                          <p className="text-indigo-600 dark:text-indigo-400 font-bold mt-1">
+                        <div className="rounded-lg border border-border bg-white p-2.5 shadow-md text-xs">
+                          <p className="font-semibold text-charcoal">{item.payload.category}</p>
+                          <p className="text-lavender-strong font-bold mt-1">
                             {item.value} {item.value === 1 ? 'complaint' : 'complaints'}
                           </p>
                         </div>

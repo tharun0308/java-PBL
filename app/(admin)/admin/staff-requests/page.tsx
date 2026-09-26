@@ -136,15 +136,15 @@ export default function StaffRequestsAdminPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-white/[0.08]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-border">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-2.5">
+          <h1 className="text-2xl sm:text-3xl font-bold text-charcoal tracking-tight flex items-center gap-2.5">
             <span>Staff Admin Requests</span>
-            <span className="text-xs uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/30">
+            <span className="text-xs uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-pale-lavender text-lavender-strong border border-lavender/30">
               Main Admin Review
             </span>
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate mt-1">
             Review and grant elevated Staff Administrator permissions to verified campus faculty and department coordinators.
           </p>
         </div>
@@ -155,23 +155,23 @@ export default function StaffRequestsAdminPage() {
             size="sm"
             onClick={() => refetch()}
             disabled={isFetching}
-            className="flex items-center gap-2 border-white/10 text-slate-300 hover:text-white"
+            className="flex items-center gap-2"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isFetching ? 'animate-spin text-purple-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isFetching ? 'animate-spin text-lavender' : ''}`} />
             <span>Refresh</span>
           </Button>
         </div>
       </div>
 
       {/* Main Request List Container */}
-      <Card className="bg-slate-900/60 border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden">
-        <CardHeader className="pb-4 border-b border-white/[0.06] flex flex-row items-center justify-between">
+      <Card className="bg-white border-border shadow-md overflow-hidden">
+        <CardHeader className="pb-4 border-b border-border flex flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <UserCheck className="w-4 h-4 text-purple-400" />
+            <CardTitle className="text-base font-bold text-charcoal flex items-center gap-2">
+              <UserCheck className="w-4 h-4 text-lavender" />
               <span>Pending Authorization Requests</span>
             </CardTitle>
-            <CardDescription className="text-xs text-slate-400 mt-0.5">
+            <CardDescription className="text-xs text-slate mt-0.5">
               {requests.length === 1
                 ? '1 user currently awaiting verification'
                 : `${requests.length} users currently awaiting verification`}
@@ -179,7 +179,7 @@ export default function StaffRequestsAdminPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
+            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-pale-warning text-warning border border-[#FDE68A] flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5" />
               <span>{requests.length} Pending</span>
             </span>
@@ -190,7 +190,7 @@ export default function StaffRequestsAdminPage() {
           {isLoading ? (
             <div className="p-6 space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-slate-950/40 border border-white/5">
+                <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-surface-muted border border-border">
                   <div className="flex items-center gap-3">
                     <Skeleton className="w-10 h-10 rounded-xl" />
                     <div className="space-y-1.5">
@@ -207,9 +207,9 @@ export default function StaffRequestsAdminPage() {
             </div>
           ) : isError ? (
             <div className="p-10 text-center space-y-3">
-              <AlertCircle className="w-10 h-10 text-rose-400 mx-auto" />
-              <h3 className="text-base font-bold text-white">Failed to load requests</h3>
-              <p className="text-xs text-rose-300 max-w-sm mx-auto">
+              <AlertCircle className="w-10 h-10 text-danger mx-auto" />
+              <h3 className="text-base font-bold text-charcoal">Failed to load requests</h3>
+              <p className="text-xs text-slate max-w-sm mx-auto">
                 {error instanceof Error ? error.message : 'An error occurred while loading pending staff requests.'}
               </p>
               <Button size="sm" variant="outline" onClick={() => refetch()}>
@@ -219,17 +219,17 @@ export default function StaffRequestsAdminPage() {
           ) : requests.length === 0 ? (
             /* Empty State */
             <div className="p-16 text-center space-y-3">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-2">
+              <div className="w-14 h-14 rounded-2xl bg-pale-mint border border-mint/30 text-mint-strong flex items-center justify-center mx-auto mb-2">
                 <CheckCircle2 className="w-7 h-7" />
               </div>
-              <h3 className="text-base font-bold text-white">No Pending Staff Requests</h3>
-              <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+              <h3 className="text-base font-bold text-charcoal">No Pending Staff Requests</h3>
+              <p className="text-xs text-slate max-w-md mx-auto leading-relaxed">
                 All campus members requesting Staff Administrator privileges have been reviewed and processed.
               </p>
             </div>
           ) : (
             /* Requests Table / List */
-            <div className="divide-y divide-white/[0.06]">
+            <div className="divide-y divide-border">
               <AnimatePresence initial={false}>
                 {requests.map((req) => {
                   const isBusy = processingId === req.id;
@@ -244,35 +244,35 @@ export default function StaffRequestsAdminPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.2 }}
-                      className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors"
+                      className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-pale-lavender/50 transition-colors"
                     >
                       {/* User Information */}
                       <div className="flex items-start sm:items-center gap-3.5">
-                        <div className="w-11 h-11 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 flex items-center justify-center shrink-0">
+                        <div className="w-11 h-11 rounded-xl bg-pale-lavender border border-lavender/30 text-lavender flex items-center justify-center shrink-0">
                           <UserIcon className="w-5 h-5" />
                         </div>
 
                         <div className="space-y-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-semibold text-white text-sm">
+                            <span className="font-semibold text-charcoal text-sm">
                               {req.fullName}
                             </span>
-                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-surface-muted text-charcoal border border-border">
                               {req.userTitle || 'Member'}
                             </span>
-                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/25 flex items-center gap-1">
+                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-pale-warning text-warning border border-[#FDE68A] flex items-center gap-1">
                               <Clock className="w-3 h-3" />
                               <span>Pending Review</span>
                             </span>
                           </div>
 
-                          <div className="flex items-center gap-4 text-xs text-slate-400 flex-wrap">
+                          <div className="flex items-center gap-4 text-xs text-slate flex-wrap">
                             <span className="flex items-center gap-1.5">
-                              <Mail className="w-3.5 h-3.5 text-slate-500" />
-                              <span className="text-slate-300">{req.email}</span>
+                              <Mail className="w-3.5 h-3.5 text-slate" />
+                              <span className="text-charcoal">{req.email}</span>
                             </span>
                             {requestedTime && (
-                              <span className="flex items-center gap-1.5 text-slate-500 text-[11px]">
+                              <span className="flex items-center gap-1.5 text-slate text-[11px]">
                                 <Calendar className="w-3 h-3" />
                                 <span>Requested {formatRelativeTime(requestedTime)}</span>
                               </span>
@@ -282,13 +282,13 @@ export default function StaffRequestsAdminPage() {
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="flex items-center gap-2.5 sm:self-center shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/[0.04]">
+                      <div className="flex items-center gap-2.5 sm:self-center shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleReject(req.id)}
                           disabled={isBusy}
-                          className="border-rose-500/30 text-rose-300 hover:bg-rose-500/10 hover:text-rose-200"
+                          className="border-[#FECDD3] text-danger hover:bg-pale-danger"
                         >
                           {isRejecting ? (
                             <>
@@ -308,7 +308,7 @@ export default function StaffRequestsAdminPage() {
                           size="sm"
                           onClick={() => handleApprove(req.id)}
                           disabled={isBusy}
-                          className="bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/20"
+                          className="bg-mint-strong hover:bg-mint text-white shadow-sm"
                         >
                           {isApproving ? (
                             <>

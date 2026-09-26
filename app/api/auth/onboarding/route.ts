@@ -24,6 +24,15 @@ export async function PATCH(req: NextRequest) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
+      // If user has already completed onboarding, allow graceful progression
+      if (data.message && data.message.toLowerCase().includes('already been completed')) {
+        return NextResponse.json({
+          success: true,
+          message: 'Onboarding already completed.',
+          user: { onboardingCompleted: true },
+        });
+      }
+
       return NextResponse.json(
         { error: data.message || 'Failed to complete onboarding' },
         { status: response.status }
