@@ -11,7 +11,7 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: 'system',
+  theme: 'light',
   setTheme: () => {},
   resolvedTheme: 'light',
 });
@@ -26,17 +26,21 @@ export interface ThemeProviderProps {
 
 export function ThemeProvider({
   children,
-  defaultTheme = 'system',
+  defaultTheme = 'light',
   storageKey = 'scms-theme',
+  enableSystem = false,
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(defaultTheme);
+  const [theme, setThemeState] = useState<Theme>('light');
   const [resolvedTheme, setResolvedTheme] = useState<'dark' | 'light'>('light');
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(storageKey) as Theme | null;
-      if (stored) {
+      if (stored && stored !== 'dark') {
         setThemeState(stored);
+      } else {
+        setThemeState('light');
+        localStorage.setItem(storageKey, 'light');
       }
     } catch {
       // localStorage may be unavailable

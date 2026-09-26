@@ -54,35 +54,35 @@ export const STATUS_CONFIG: Record<
 > = {
   PENDING: {
     label: 'Pending',
-    color: '#f59e0b',
-    badgeClass: 'bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20',
-    borderClass: 'border-amber-500/30',
-    bgClass: 'bg-amber-500/5',
-    textClass: 'text-amber-500',
+    color: '#B45309',
+    badgeClass: 'bg-warning-soft text-warning border-[#FDE68A] hover:bg-warning-soft/80',
+    borderClass: 'border-[#FDE68A]',
+    bgClass: 'bg-warning-soft',
+    textClass: 'text-warning',
   },
   IN_PROGRESS: {
     label: 'In Progress',
-    color: '#3b82f6',
-    badgeClass: 'bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500/20',
-    borderClass: 'border-blue-500/30',
-    bgClass: 'bg-blue-500/5',
-    textClass: 'text-blue-500',
+    color: '#6D28D9',
+    badgeClass: 'bg-lavender-soft text-lavender-strong border-[#DDD6FE] hover:bg-lavender-soft/80',
+    borderClass: 'border-[#DDD6FE]',
+    bgClass: 'bg-lavender-soft',
+    textClass: 'text-lavender-strong',
   },
   RESOLVED: {
     label: 'Resolved',
-    color: '#10b981',
-    badgeClass: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20',
-    borderClass: 'border-emerald-500/30',
-    bgClass: 'bg-emerald-500/5',
-    textClass: 'text-emerald-500',
+    color: '#15803D',
+    badgeClass: 'bg-mint-soft text-mint-strong border-[#BBF7D0] hover:bg-mint-soft/80',
+    borderClass: 'border-[#BBF7D0]',
+    bgClass: 'bg-mint-soft',
+    textClass: 'text-mint-strong',
   },
   REJECTED: {
     label: 'Rejected',
-    color: '#ef4444',
-    badgeClass: 'bg-rose-500/10 text-rose-500 border-rose-500/20 hover:bg-rose-500/20',
-    borderClass: 'border-rose-500/30',
-    bgClass: 'bg-rose-500/5',
-    textClass: 'text-rose-500',
+    color: '#E11D48',
+    badgeClass: 'bg-danger-soft text-danger border-[#FECDD3] hover:bg-danger-soft/80',
+    borderClass: 'border-[#FECDD3]',
+    bgClass: 'bg-danger-soft',
+    textClass: 'text-danger',
   },
 };
 
@@ -92,14 +92,14 @@ export const PRIORITY_CONFIG: Record<
 > = {
   LOW: {
     label: 'Low Priority',
-    badgeClass: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
+    badgeClass: 'bg-surface-muted text-slate border-border',
   },
   MEDIUM: {
     label: 'Medium Priority',
-    badgeClass: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+    badgeClass: 'bg-warning-soft text-warning border-[#FDE68A]',
   },
   HIGH: {
     label: 'High Priority',
-    badgeClass: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
+    badgeClass: 'bg-danger-soft text-danger border-[#FECDD3]',
   },
 };

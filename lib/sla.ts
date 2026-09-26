@@ -41,8 +41,8 @@ export function getComplaintSla(complaint: Partial<Complaint> & { priority: Prio
       label: metSla ? 'Resolved in SLA' : 'Resolved (Breached SLA)',
       deadline,
       badgeClass: metSla
-        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-        : 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+        ? 'bg-mint-soft text-mint-strong border-[#BBF7D0]'
+        : 'bg-warning-soft text-warning border-[#FDE68A]',
     };
   }
 
@@ -60,7 +60,7 @@ export function getComplaintSla(complaint: Partial<Complaint> & { priority: Prio
       isCompleted: false,
       label: `🚨 ${overdueText}`,
       deadline,
-      badgeClass: 'bg-rose-500/15 text-rose-400 border-rose-500/30 animate-pulse font-semibold',
+      badgeClass: 'bg-danger-soft text-danger border-[#FECDD3] animate-pulse font-semibold',
     };
   }
 
@@ -77,7 +77,7 @@ export function getComplaintSla(complaint: Partial<Complaint> & { priority: Prio
     label: `⏳ ${remainingText}`,
     deadline,
     badgeClass: isUrgent
-      ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-      : 'bg-slate-800 text-slate-300 border-slate-700',
+      ? 'bg-warning-soft text-warning border-[#FDE68A]'
+      : 'bg-surface-muted text-slate border-border',
   };
 }

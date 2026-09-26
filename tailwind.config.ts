@@ -20,7 +20,7 @@ const config: Config = {
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
+        ring: "var(--ring)",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
@@ -50,6 +50,37 @@ const config: Config = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+
+        /* Semantic Minimal Dark & Soft Pastel tokens */
+        bg: "var(--bg)",
+        cream: "var(--bg)",
+        surface: {
+          DEFAULT: "var(--surface)",
+          muted: "var(--surface-muted)",
+        },
+        charcoal: {
+          DEFAULT: "var(--charcoal)",
+          hover: "var(--charcoal-hover)",
+        },
+        lavender: {
+          DEFAULT: "var(--lavender)",
+          strong: "var(--lavender-strong)",
+          soft: "var(--lavender-soft)",
+          hover: "var(--lavender-hover)",
+        },
+        mint: {
+          DEFAULT: "var(--mint)",
+          strong: "var(--mint-strong)",
+          soft: "var(--mint-soft)",
+        },
+        danger: {
+          DEFAULT: "var(--danger)",
+          soft: "var(--danger-soft)",
+        },
+        warning: {
+          DEFAULT: "var(--warning)",
+          soft: "var(--warning-soft)",
         },
       },
       borderRadius: {
