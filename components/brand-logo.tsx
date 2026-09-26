@@ -13,13 +13,12 @@ export function BrandIcon({ className = 'w-5 h-5' }: { className?: string }) {
     >
       <defs>
         <linearGradient id="scms-logo-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#6366f1" />
-          <stop offset="0.5" stopColor="#38bdf8" />
-          <stop offset="1" stopColor="#06b6d4" />
+          <stop stopColor="#A78BFA" />
+          <stop offset="1" stopColor="#86EFAC" />
         </linearGradient>
         <linearGradient id="scms-inner-grad" x1="7" y1="7" x2="17" y2="17" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#a5b4fc" />
-          <stop offset="1" stopColor="#38bdf8" />
+          <stop stopColor="#C4B5FD" />
+          <stop offset="1" stopColor="#86EFAC" />
         </linearGradient>
       </defs>
       {/* Outer Institutional Shield Contour */}
@@ -39,7 +38,7 @@ export function BrandIcon({ className = 'w-5 h-5' }: { className?: string }) {
         strokeLinejoin="round"
       />
       {/* Status Active Pulse Apex Node */}
-      <circle cx="12" cy="6" r="1.25" fill="#38bdf8" />
+      <circle cx="12" cy="6" r="1.25" fill="#86EFAC" />
     </svg>
   );
 }
@@ -57,8 +56,8 @@ export function BrandLogo({
 }: BrandLogoProps) {
   return (
     <Link href={href} className="inline-flex items-center gap-3 group">
-      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-[1px] shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-all duration-300 group-hover:scale-105">
-        <div className="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center p-2">
+      <div className="w-10 h-10 rounded-xl bg-charcoal border border-slate-700/80 p-[1px] shadow-sm transition-all duration-300 group-hover:scale-105">
+        <div className="w-full h-full bg-charcoal rounded-[11px] flex items-center justify-center p-2">
           <BrandIcon className="w-full h-full group-hover:rotate-6 transition-transform duration-300" />
         </div>
       </div>
@@ -67,12 +66,12 @@ export function BrandLogo({
           <span className="font-extrabold text-white tracking-tight text-lg leading-tight">
             SCMS
           </span>
-          <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-lavender text-charcoal">
             Campus
           </span>
         </div>
         {showTagline && (
-          <span className="hidden sm:inline text-[11px] text-slate-400 font-normal leading-tight">
+          <span className="hidden sm:inline text-[11px] text-slate-300 font-normal leading-tight">
             {tagline}
           </span>
         )}

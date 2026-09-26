@@ -87,7 +87,7 @@ export function Navbar({ user }: NavbarProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-charcoal/40 bg-charcoal text-white shadow-sm transition-colors">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-charcoal text-white shadow-[0_4px_16px_rgba(31,41,55,0.08)] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
@@ -96,7 +96,7 @@ export function Navbar({ user }: NavbarProps) {
               href={user ? (isAdmin ? '/admin/dashboard' : '/dashboard') : '/'}
               className="flex items-center gap-3 group"
             >
-              <div className="w-10 h-10 rounded-xl bg-charcoal border border-lavender/40 shadow-sm transition-all group-hover:scale-105 flex items-center justify-center p-2">
+              <div className="w-10 h-10 rounded-xl bg-charcoal border border-slate-700/80 shadow-sm transition-all group-hover:scale-105 flex items-center justify-center p-2">
                 <BrandIcon className="w-full h-full group-hover:rotate-6 transition-transform duration-300" />
               </div>
               <div className="flex flex-col">

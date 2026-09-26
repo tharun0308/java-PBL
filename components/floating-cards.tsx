@@ -18,14 +18,14 @@ export function FloatingCards({ className = '' }: FloatingCardsProps) {
   const shouldReduceMotion = useReducedMotion();
 
   if (shouldReduceMotion) {
-    // Accessible Static Scattered Layout for prefers-reduced-motion
+    // Accessible Static Flanking Layout for prefers-reduced-motion
     return (
       <div
-        className={`fixed inset-0 pointer-events-none overflow-hidden select-none z-0 ${className}`}
+        className={`fixed inset-0 pointer-events-none overflow-hidden select-none -z-10 ${className}`}
         aria-hidden="true"
       >
-        {/* Card 1: Top Left */}
-        <div className="hidden md:block absolute top-[12%] left-[4%] xl:left-[8%] opacity-85">
+        {/* Card 1: Top Left Flank */}
+        <div className="hidden lg:block absolute top-[12%] left-[2%] xl:left-[6%] opacity-90 pointer-events-none select-none">
           <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white/85 backdrop-blur-md border border-border shadow-sm shadow-slate-200/50">
             <div className="w-7 h-7 rounded-lg bg-pale-mint border border-mint/40 text-mint-strong flex items-center justify-center shrink-0">
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -43,8 +43,8 @@ export function FloatingCards({ className = '' }: FloatingCardsProps) {
           </div>
         </div>
 
-        {/* Card 2: Top Right */}
-        <div className="hidden md:block absolute top-[18%] right-[4%] xl:right-[8%] opacity-85">
+        {/* Card 2: Top Right Flank */}
+        <div className="hidden lg:block absolute top-[16%] right-[2%] xl:right-[6%] opacity-90 pointer-events-none select-none">
           <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white/85 backdrop-blur-md border border-border shadow-sm shadow-slate-200/50">
             <div className="w-7 h-7 rounded-lg bg-pale-warning border border-warning/40 text-warning flex items-center justify-center shrink-0">
               <Clock className="w-3.5 h-3.5" />
@@ -56,8 +56,8 @@ export function FloatingCards({ className = '' }: FloatingCardsProps) {
           </div>
         </div>
 
-        {/* Card 3: Bottom Left */}
-        <div className="hidden md:block absolute bottom-[20%] left-[5%] xl:left-[9%] opacity-85">
+        {/* Card 3: Bottom Left Flank */}
+        <div className="hidden lg:block absolute bottom-[18%] left-[2%] xl:left-[6%] opacity-90 pointer-events-none select-none">
           <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white/85 backdrop-blur-md border border-border shadow-sm shadow-slate-200/50">
             <div className="w-7 h-7 rounded-lg bg-pale-lavender border border-lavender/40 text-lavender-strong flex items-center justify-center shrink-0">
               <Wrench className="w-3.5 h-3.5" />
@@ -72,8 +72,8 @@ export function FloatingCards({ className = '' }: FloatingCardsProps) {
           </div>
         </div>
 
-        {/* Card 4: Bottom Right */}
-        <div className="hidden lg:block absolute bottom-[14%] right-[5%] xl:right-[9%] opacity-85">
+        {/* Card 4: Bottom Right Flank */}
+        <div className="hidden lg:block absolute bottom-[14%] right-[2%] xl:right-[6%] opacity-90 pointer-events-none select-none">
           <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white/85 backdrop-blur-md border border-border shadow-sm shadow-slate-200/50">
             <div className="w-7 h-7 rounded-lg bg-pale-lavender border border-lavender/40 text-lavender-strong flex items-center justify-center shrink-0">
               <GraduationCap className="w-3.5 h-3.5" />
@@ -85,8 +85,8 @@ export function FloatingCards({ className = '' }: FloatingCardsProps) {
           </div>
         </div>
 
-        {/* Card 5: Mid Left */}
-        <div className="hidden lg:block absolute top-[48%] left-[3%] xl:left-[6%] opacity-80">
+        {/* Card 5: Mid Left Flank */}
+        <div className="hidden xl:block absolute top-[48%] left-[1.5%] xl:left-[4%] opacity-85 pointer-events-none select-none">
           <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white/85 backdrop-blur-md border border-border shadow-sm shadow-slate-200/50">
             <div className="w-7 h-7 rounded-lg bg-pale-mint border border-mint/40 text-mint-strong flex items-center justify-center shrink-0">
               <ShieldCheck className="w-3.5 h-3.5" />
@@ -101,14 +101,14 @@ export function FloatingCards({ className = '' }: FloatingCardsProps) {
     );
   }
 
-  // Live Activity Drifting Ambient Animation
+  // Constrained Perimeter Ambient Floating Animation (Never crosses center content)
   return (
     <div
-      className={`fixed inset-0 pointer-events-none overflow-hidden select-none z-0 ${className}`}
+      className={`fixed inset-0 pointer-events-none overflow-hidden select-none -z-10 ${className}`}
       aria-hidden="true"
     >
-      {/* Card 1: Resolved Complaint Snippet (Drifting Left-to-Right in upper lane) */}
-      <div className="hidden md:block absolute top-[13%] left-0 anim-drift-1">
+      {/* Card 1: Top Left Flank */}
+      <div className="hidden lg:block absolute top-[12%] left-[2%] xl:left-[6%] opacity-90 pointer-events-none select-none anim-drift-1">
         <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white/85 backdrop-blur-md border border-border shadow-sm shadow-slate-200/50">
           <div className="w-7 h-7 rounded-lg bg-pale-mint border border-mint/40 text-mint-strong flex items-center justify-center shrink-0">
             <CheckCircle2 className="w-3.5 h-3.5" />
@@ -126,8 +126,8 @@ export function FloatingCards({ className = '' }: FloatingCardsProps) {
         </div>
       </div>
 
-      {/* Card 2: SLA & Turnaround Stat (Drifting Right-to-Left in mid-upper lane) */}
-      <div className="hidden md:block absolute top-[27%] left-0 anim-drift-2">
+      {/* Card 2: Top Right Flank */}
+      <div className="hidden lg:block absolute top-[16%] right-[2%] xl:right-[6%] opacity-90 pointer-events-none select-none anim-drift-2">
         <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white/85 backdrop-blur-md border border-border shadow-sm shadow-slate-200/50">
           <div className="w-7 h-7 rounded-lg bg-pale-warning border border-warning/40 text-warning flex items-center justify-center shrink-0">
             <Clock className="w-3.5 h-3.5" />
@@ -139,8 +139,8 @@ export function FloatingCards({ className = '' }: FloatingCardsProps) {
         </div>
       </div>
 
-      {/* Card 3: Live Dispatch Notification (Drifting Left-to-Right in lower-mid lane) */}
-      <div className="hidden md:block absolute top-[62%] left-0 anim-drift-3">
+      {/* Card 3: Bottom Left Flank */}
+      <div className="hidden lg:block absolute bottom-[18%] left-[2%] xl:left-[6%] opacity-90 pointer-events-none select-none anim-drift-3">
         <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white/85 backdrop-blur-md border border-border shadow-sm shadow-slate-200/50">
           <div className="w-7 h-7 rounded-lg bg-pale-lavender border border-lavender/40 text-lavender-strong flex items-center justify-center shrink-0">
             <Wrench className="w-3.5 h-3.5" />
@@ -155,8 +155,8 @@ export function FloatingCards({ className = '' }: FloatingCardsProps) {
         </div>
       </div>
 
-      {/* Card 4: Role / User Snippet (Drifting Right-to-Left in lower lane) */}
-      <div className="hidden lg:block absolute top-[77%] left-0 anim-drift-4">
+      {/* Card 4: Bottom Right Flank */}
+      <div className="hidden lg:block absolute bottom-[14%] right-[2%] xl:right-[6%] opacity-90 pointer-events-none select-none anim-drift-4">
         <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white/85 backdrop-blur-md border border-border shadow-sm shadow-slate-200/50">
           <div className="w-7 h-7 rounded-lg bg-pale-lavender border border-lavender/40 text-lavender-strong flex items-center justify-center shrink-0">
             <GraduationCap className="w-3.5 h-3.5" />
@@ -168,8 +168,8 @@ export function FloatingCards({ className = '' }: FloatingCardsProps) {
         </div>
       </div>
 
-      {/* Card 5: Tamper-Proof Audit Snippet (Drifting Left-to-Right in center-lane) */}
-      <div className="hidden lg:block absolute top-[44%] left-0 anim-drift-5">
+      {/* Card 5: Mid Left Flank */}
+      <div className="hidden xl:block absolute top-[48%] left-[1.5%] xl:left-[4%] opacity-85 pointer-events-none select-none anim-drift-5">
         <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white/85 backdrop-blur-md border border-border shadow-sm shadow-slate-200/50">
           <div className="w-7 h-7 rounded-lg bg-pale-mint border border-mint/40 text-mint-strong flex items-center justify-center shrink-0">
             <ShieldCheck className="w-3.5 h-3.5" />

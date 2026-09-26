@@ -306,119 +306,78 @@ body {
 /* Live Activity Floating Decorative Cards                                  */
 /* ========================================================================= */
 
-@keyframes float-drift-ltr-1 {
-  0% {
-    transform: translate3d(-320px, 0, 0);
-    opacity: 0;
+@keyframes float-ambient-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
   }
-  6% {
-    opacity: 0.55;
-  }
-  92% {
-    opacity: 0.55;
-  }
-  100% {
-    transform: translate3d(calc(100vw + 60px), 40px, 0);
-    opacity: 0;
+  50% {
+    transform: translate3d(8px, -18px, 0);
   }
 }
 
-@keyframes float-drift-rtl-1 {
-  0% {
-    transform: translate3d(calc(100vw + 80px), 0, 0);
-    opacity: 0;
+@keyframes float-ambient-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
   }
-  6% {
-    opacity: 0.55;
-  }
-  92% {
-    opacity: 0.55;
-  }
-  100% {
-    transform: translate3d(-340px, -35px, 0);
-    opacity: 0;
+  50% {
+    transform: translate3d(-10px, 16px, 0);
   }
 }
 
-@keyframes float-drift-ltr-2 {
-  0% {
-    transform: translate3d(-320px, 0, 0);
-    opacity: 0;
+@keyframes float-ambient-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
   }
-  6% {
-    opacity: 0.55;
-  }
-  92% {
-    opacity: 0.55;
-  }
-  100% {
-    transform: translate3d(calc(100vw + 60px), -45px, 0);
-    opacity: 0;
+  50% {
+    transform: translate3d(10px, 14px, 0);
   }
 }
 
-@keyframes float-drift-rtl-2 {
-  0% {
-    transform: translate3d(calc(100vw + 80px), 0, 0);
-    opacity: 0;
+@keyframes float-ambient-4 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
   }
-  6% {
-    opacity: 0.5;
-  }
-  92% {
-    opacity: 0.5;
-  }
-  100% {
-    transform: translate3d(-340px, 30px, 0);
-    opacity: 0;
+  50% {
+    transform: translate3d(-8px, -16px, 0);
   }
 }
 
-@keyframes float-drift-ltr-3 {
-  0% {
-    transform: translate3d(-320px, 0, 0);
-    opacity: 0;
+@keyframes float-ambient-5 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
   }
-  6% {
-    opacity: 0.45;
-  }
-  92% {
-    opacity: 0.45;
-  }
-  100% {
-    transform: translate3d(calc(100vw + 60px), 25px, 0);
-    opacity: 0;
+  50% {
+    transform: translate3d(8px, -12px, 0);
   }
 }
 
 .anim-drift-1 {
-  animation: float-drift-ltr-1 40s linear infinite;
-  animation-delay: -14s;
-  will-change: transform, opacity;
+  animation: float-ambient-1 8s ease-in-out infinite;
+  will-change: transform;
 }
 
 .anim-drift-2 {
-  animation: float-drift-rtl-1 46s linear infinite;
-  animation-delay: -24s;
-  will-change: transform, opacity;
+  animation: float-ambient-2 9.5s ease-in-out infinite;
+  animation-delay: -2s;
+  will-change: transform;
 }
 
 .anim-drift-3 {
-  animation: float-drift-ltr-2 42s linear infinite;
-  animation-delay: -8s;
-  will-change: transform, opacity;
+  animation: float-ambient-3 8.5s ease-in-out infinite;
+  animation-delay: -4s;
+  will-change: transform;
 }
 
 .anim-drift-4 {
-  animation: float-drift-rtl-2 50s linear infinite;
-  animation-delay: -30s;
-  will-change: transform, opacity;
+  animation: float-ambient-4 10s ease-in-out infinite;
+  animation-delay: -1.5s;
+  will-change: transform;
 }
 
 .anim-drift-5 {
-  animation: float-drift-ltr-3 54s linear infinite;
-  animation-delay: -36s;
-  will-change: transform, opacity;
+  animation: float-ambient-5 9s ease-in-out infinite;
+  animation-delay: -5s;
+  will-change: transform;
 }
 
 @media (prefers-reduced-motion: reduce) {

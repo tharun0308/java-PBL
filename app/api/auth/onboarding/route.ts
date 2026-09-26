@@ -72,3 +72,6 @@ export async function PATCH(req: NextRequest) {
     );
   }
 }
+
+export const POST = PATCH;
+

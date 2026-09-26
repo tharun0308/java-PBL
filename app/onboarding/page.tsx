@@ -98,24 +98,13 @@ export default function OnboardingPage() {
 
     setIsSubmitting(true);
     try {
-      const payload: {
-        role: 'STUDENT' | 'TEACHER';
-        academicYear?: number;
-        teacherIntent?: 'REGULAR' | 'MANAGER';
-      } = {
-        role: selectedRole === 'Student' ? 'STUDENT' : 'TEACHER',
-      };
+      const payload =
+        selectedRole === 'Student'
+          ? { userTitle: 'Student', academicYear }
+          : { userTitle: 'Teacher', teacherIntent };
 
-      if (selectedRole === 'Student' && academicYear) {
-        payload.academicYear = academicYear;
-      }
-
-      if (selectedRole === 'Teacher' && teacherIntent) {
-        payload.teacherIntent = teacherIntent;
-      }
-
-      const response = await fetch('/api/user/onboarding', {
-        method: 'POST',
+      const response = await fetch('/api/auth/onboarding', {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
