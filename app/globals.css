@@ -308,75 +308,75 @@ body {
 
 @keyframes float-ambient-1 {
   0%, 100% {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translate3d(8px, -18px, 0);
+    transform: translate3d(6px, -15px, 0) rotate(0.8deg);
   }
 }
 
 @keyframes float-ambient-2 {
   0%, 100% {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translate3d(-10px, 16px, 0);
+    transform: translate3d(-6px, 16px, 0) rotate(-0.8deg);
   }
 }
 
 @keyframes float-ambient-3 {
   0%, 100% {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translate3d(10px, 14px, 0);
+    transform: translate3d(8px, -12px, 0) rotate(0.6deg);
   }
 }
 
 @keyframes float-ambient-4 {
   0%, 100% {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translate3d(-8px, -16px, 0);
+    transform: translate3d(-7px, 14px, 0) rotate(-0.6deg);
   }
 }
 
 @keyframes float-ambient-5 {
   0%, 100% {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translate3d(8px, -12px, 0);
+    transform: translate3d(6px, -10px, 0) rotate(0.5deg);
   }
 }
 
 .anim-drift-1 {
-  animation: float-ambient-1 8s ease-in-out infinite;
+  animation: float-ambient-1 4.5s ease-in-out infinite !important;
   will-change: transform;
 }
 
 .anim-drift-2 {
-  animation: float-ambient-2 9.5s ease-in-out infinite;
-  animation-delay: -2s;
+  animation: float-ambient-2 5.5s ease-in-out infinite !important;
+  animation-delay: -1.5s !important;
   will-change: transform;
 }
 
 .anim-drift-3 {
-  animation: float-ambient-3 8.5s ease-in-out infinite;
-  animation-delay: -4s;
+  animation: float-ambient-3 5s ease-in-out infinite !important;
+  animation-delay: -3s !important;
   will-change: transform;
 }
 
 .anim-drift-4 {
-  animation: float-ambient-4 10s ease-in-out infinite;
-  animation-delay: -1.5s;
+  animation: float-ambient-4 6s ease-in-out infinite !important;
+  animation-delay: -2s !important;
   will-change: transform;
 }
 
 .anim-drift-5 {
-  animation: float-ambient-5 9s ease-in-out infinite;
-  animation-delay: -5s;
+  animation: float-ambient-5 5.2s ease-in-out infinite !important;
+  animation-delay: -4s !important;
   will-change: transform;
 }
 
@@ -392,12 +392,7 @@ body {
   .anim-campus-bird-1,
   .anim-campus-bird-2,
   .anim-campus-bird-3,
-  .anim-campus-bird-bob,
-  .anim-drift-1,
-  .anim-drift-2,
-  .anim-drift-3,
-  .anim-drift-4,
-  .anim-drift-5 {
+  .anim-campus-bird-bob {
     animation: none !important;
   }
 }

@@ -87,7 +87,7 @@ export function Navbar({ user }: NavbarProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-charcoal text-white shadow-[0_4px_16px_rgba(31,41,55,0.08)] transition-colors">
+    <header className="sticky top-0 z-50 w-full bg-[#1F2937]/95 backdrop-blur-md border-b border-[#374151]/90 text-white shadow-[0_4px_20px_-2px_rgba(0,0,0,0.12)] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
@@ -96,19 +96,19 @@ export function Navbar({ user }: NavbarProps) {
               href={user ? (isAdmin ? '/admin/dashboard' : '/dashboard') : '/'}
               className="flex items-center gap-3 group"
             >
-              <div className="w-10 h-10 rounded-xl bg-charcoal border border-slate-700/80 shadow-sm transition-all group-hover:scale-105 flex items-center justify-center p-2">
+              <div className="w-10 h-10 rounded-xl bg-[#111827] border border-slate-700/80 shadow-inner transition-all group-hover:scale-105 group-hover:border-lavender/50 flex items-center justify-center p-2">
                 <BrandIcon className="w-full h-full group-hover:rotate-6 transition-transform duration-300" />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-white tracking-tight text-lg">
+                  <span className="font-extrabold text-white tracking-tight text-lg leading-tight">
                     SCMS
                   </span>
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-lavender text-charcoal">
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-lavender/15 text-lavender border border-lavender/30">
                     Campus
                   </span>
                 </div>
-                <span className="hidden sm:inline text-[11px] text-slate-300 font-normal">
+                <span className="hidden sm:inline text-[11px] text-slate-400 font-normal leading-tight">
                   Smart Complaint System
                 </span>
               </div>
@@ -131,8 +131,8 @@ export function Navbar({ user }: NavbarProps) {
                       href={link.href}
                       className={`inline-flex items-center px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
                         isActive
-                          ? 'bg-lavender-soft text-charcoal font-semibold shadow-sm'
-                          : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                          ? 'bg-pale-lavender text-charcoal font-semibold shadow-sm'
+                          : 'text-slate-300 hover:bg-white/10 hover:text-white'
                       }`}
                     >
                       <Icon className={`w-4 h-4 mr-2 ${isActive ? 'text-charcoal' : 'text-lavender'}`} />
@@ -146,7 +146,7 @@ export function Navbar({ user }: NavbarProps) {
           {/* User Controls / Actions */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
-              <div className="flex items-center gap-3 pl-3 border-l border-white/20">
+              <div className="flex items-center gap-3 pl-3 border-l border-slate-700">
                 <div className="flex flex-col text-right">
                   <span
                     className="text-xs font-semibold text-white truncate max-w-[200px] sm:max-w-[260px]"
@@ -156,12 +156,12 @@ export function Navbar({ user }: NavbarProps) {
                   </span>
                   <div className="flex items-center justify-end gap-1">
                     <span
-                      className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                      className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
                         user.role === 'MAIN_ADMIN'
-                          ? 'bg-lavender text-charcoal'
+                          ? 'bg-lavender/20 text-lavender border-lavender/30'
                           : user.role === 'STAFF_ADMIN'
-                          ? 'bg-lavender-soft text-charcoal'
-                          : 'bg-mint text-charcoal'
+                          ? 'bg-lavender/20 text-lavender border-lavender/30'
+                          : 'bg-mint/20 text-mint border-mint/30'
                       }`}
                     >
                       {roleDisplay}
@@ -174,7 +174,7 @@ export function Navbar({ user }: NavbarProps) {
                   size="sm"
                   onClick={handleSignOut}
                   disabled={isLoggingOut}
-                  className="text-slate-300 hover:text-rose-300 hover:bg-white/10 rounded-xl"
+                  className="text-slate-400 hover:text-rose-300 hover:bg-white/10 rounded-xl"
                   title="Sign out"
                 >
                   <LogOut className="w-4 h-4" />
@@ -183,12 +183,15 @@ export function Navbar({ user }: NavbarProps) {
             ) : (
               <div className="flex items-center gap-2.5">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
+                  <span className="inline-flex items-center text-sm font-medium text-slate-300 hover:text-white px-3.5 py-2 rounded-xl hover:bg-white/10 transition-colors cursor-pointer">
                     Sign In
-                  </Button>
+                  </span>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm" variant="glow">
+                  <Button
+                    size="sm"
+                    className="bg-lavender hover:bg-lavender-hover text-charcoal font-semibold text-xs sm:text-sm px-4 h-9 rounded-xl shadow-md shadow-lavender/20 transition-all active:scale-[0.98] border border-lavender/50 cursor-pointer"
+                  >
                     Get Started
                   </Button>
                 </Link>
@@ -201,7 +204,7 @@ export function Navbar({ user }: NavbarProps) {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/10 cursor-pointer"
+              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 cursor-pointer"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -211,19 +214,19 @@ export function Navbar({ user }: NavbarProps) {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-charcoal/40 bg-charcoal px-4 pt-3 pb-5 space-y-3">
+        <div className="md:hidden border-t border-slate-700 bg-charcoal px-4 pt-3 pb-5 space-y-3">
           {user && (
-            <div className="py-2.5 border-b border-white/15 flex items-center justify-between">
+            <div className="py-2.5 border-b border-slate-700 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-lavender">
                   <UserIcon className="w-4 h-4" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">{user.fullName || 'Campus Member'}</p>
-                  <p className="text-xs text-slate-300">{user.email}</p>
+                  <p className="text-xs text-slate-400">{user.email}</p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-lavender text-charcoal">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-lavender/20 text-lavender border border-lavender/30">
                 {roleDisplay}
               </span>
             </div>
@@ -243,8 +246,8 @@ export function Navbar({ user }: NavbarProps) {
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center px-3.5 py-2.5 rounded-xl text-sm font-medium ${
                         isActive
-                          ? 'bg-lavender-soft text-charcoal font-semibold shadow-sm'
-                          : 'text-slate-200 hover:bg-white/10'
+                          ? 'bg-pale-lavender text-charcoal font-semibold shadow-sm'
+                          : 'text-slate-300 hover:bg-white/10'
                       }`}
                     >
                       <Icon className={`w-4 h-4 mr-2.5 ${isActive ? 'text-charcoal' : 'text-lavender'}`} />
@@ -253,7 +256,7 @@ export function Navbar({ user }: NavbarProps) {
                   );
                 })}
 
-              <div className="pt-2 border-t border-white/15">
+              <div className="pt-2 border-t border-slate-700">
                 <button
                   type="button"
                   onClick={handleSignOut}
@@ -268,12 +271,12 @@ export function Navbar({ user }: NavbarProps) {
           ) : (
             <div className="pt-2 flex flex-col gap-2.5">
               <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full bg-white/5 border-slate-700 text-white hover:bg-white/10">
                   Sign In
                 </Button>
               </Link>
               <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="glow" className="w-full">
+                <Button className="w-full bg-lavender text-charcoal font-semibold hover:bg-lavender-hover">
                   Get Started
                 </Button>
               </Link>
