@@ -48,6 +48,12 @@ public class User {
     @Column(name = "staff_admin_appeal_count", nullable = false)
     private int staffAdminAppealCount = 0;
 
+    @Column(name = "staff_admin_document_path")
+    private String staffAdminDocumentPath;
+
+    @Column(name = "staff_admin_department")
+    private String staffAdminDepartment;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
@@ -176,6 +182,22 @@ public class User {
 
     public void setStaffAdminAppealCount(int staffAdminAppealCount) {
         this.staffAdminAppealCount = staffAdminAppealCount;
+    }
+
+    public String getStaffAdminDocumentPath() {
+        return staffAdminDocumentPath;
+    }
+
+    public void setStaffAdminDocumentPath(String staffAdminDocumentPath) {
+        this.staffAdminDocumentPath = staffAdminDocumentPath;
+    }
+
+    public String getStaffAdminDepartment() {
+        return staffAdminDepartment;
+    }
+
+    public void setStaffAdminDepartment(String staffAdminDepartment) {
+        this.staffAdminDepartment = staffAdminDepartment;
     }
 
     public Instant getUpdatedAt() {

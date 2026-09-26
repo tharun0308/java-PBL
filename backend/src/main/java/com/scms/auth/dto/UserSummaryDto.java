@@ -19,6 +19,8 @@ public class UserSummaryDto {
     private boolean onboardingCompleted;
     private Integer academicYear;
     private int staffAdminAppealCount;
+    private String staffAdminDocumentPath;
+    private String staffAdminDepartment;
     private boolean active;
 
     public UserSummaryDto() {}
@@ -34,6 +36,8 @@ public class UserSummaryDto {
         this.onboardingCompleted = user.isOnboardingCompleted();
         this.academicYear = user.getAcademicYear();
         this.staffAdminAppealCount = user.getStaffAdminAppealCount();
+        this.staffAdminDocumentPath = user.getStaffAdminDocumentPath();
+        this.staffAdminDepartment = user.getStaffAdminDepartment();
         this.active = user.isActive();
     }
 
@@ -115,6 +119,22 @@ public class UserSummaryDto {
 
     public void setStaffAdminAppealCount(int staffAdminAppealCount) {
         this.staffAdminAppealCount = staffAdminAppealCount;
+    }
+
+    public String getStaffAdminDocumentPath() {
+        return staffAdminDocumentPath;
+    }
+
+    public void setStaffAdminDocumentPath(String staffAdminDocumentPath) {
+        this.staffAdminDocumentPath = staffAdminDocumentPath;
+    }
+
+    public String getStaffAdminDepartment() {
+        return staffAdminDepartment;
+    }
+
+    public void setStaffAdminDepartment(String staffAdminDepartment) {
+        this.staffAdminDepartment = staffAdminDepartment;
     }
 
     public boolean isActive() {

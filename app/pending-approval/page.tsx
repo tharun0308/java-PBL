@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { BrandIcon } from '@/components/brand-logo';
 import { FloatingCards } from '@/components/floating-cards';
+import { StaffIdUpload } from '@/components/staff-id-upload';
 import { motion } from 'framer-motion';
 
 export default function PendingApprovalPage() {
@@ -30,6 +31,9 @@ export default function PendingApprovalPage() {
   const [isChecking, setIsChecking] = useState(false);
   const [isAppealing, setIsAppealing] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [appealDocPath, setAppealDocPath] = useState('');
+  const [appealDepartment, setAppealDepartment] = useState('');
+  const [showAppealForm, setShowAppealForm] = useState(false);
 
   // Fetch current user details from /api/auth/me
   const { data: userData, refetch: refetchUser } = useQuery({
@@ -100,10 +104,23 @@ export default function PendingApprovalPage() {
       return;
     }
 
+    if (!appealDocPath) {
+      toast.error('Employee ID Required', {
+        description: 'Please upload your Employee ID card to submit your appeal.',
+        icon: <AlertCircle className="w-5 h-5 text-rose-500" />,
+      });
+      return;
+    }
+
     setIsAppealing(true);
     try {
       const res = await fetch('/api/user/appeal-staff', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          documentPath: appealDocPath,
+          department: appealDepartment || undefined,
+        }),
       });
       const data = await res.json().catch(() => ({}));
 
@@ -116,6 +133,8 @@ export default function PendingApprovalPage() {
         icon: <CheckCircle2 className="w-5 h-5 text-emerald-600" />,
       });
 
+      setShowAppealForm(false);
+      setAppealDocPath('');
       await refetchUser();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to submit appeal request.';
@@ -261,17 +280,57 @@ export default function PendingApprovalPage() {
               </Button>
 
               {isRejected && appealCount < 3 && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="lg"
-                  onClick={handleAppealAccess}
-                  disabled={isAppealing}
-                  className="w-full h-11 font-semibold border-amber-300 text-amber-800 hover:bg-amber-50 cursor-pointer shadow-sm"
-                >
-                  <ShieldCheck className="w-4 h-4 mr-2 text-amber-600" />
-                  <span>{isAppealing ? 'Submitting Appeal...' : `Submit Appeal (${appealCount + 1} of 3)`}</span>
-                </Button>
+                <div className="space-y-3 pt-1">
+                  {!showAppealForm ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="lg"
+                      onClick={() => setShowAppealForm(true)}
+                      className="w-full h-11 font-semibold border-amber-300 text-amber-800 hover:bg-amber-50 cursor-pointer shadow-sm"
+                    >
+                      <ShieldCheck className="w-4 h-4 mr-2 text-amber-600" />
+                      <span>Prepare Appeal ({appealCount + 1} of 3)</span>
+                    </Button>
+                  ) : (
+                    <div className="p-4 rounded-xl bg-pale-warning/50 border border-amber-200 space-y-4 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between pb-2 border-b border-amber-200">
+                        <span className="text-xs font-bold text-amber-900">
+                          Submit Appeal #{appealCount + 1} of 3
+                        </span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowAppealForm(false)}
+                          className="h-6 px-2 text-xs text-slate hover:text-charcoal"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+
+                      <StaffIdUpload
+                        onDocumentUploaded={(path) => setAppealDocPath(path)}
+                        onDepartmentChanged={(dept) => setAppealDepartment(dept)}
+                        currentDocumentPath={appealDocPath}
+                        currentDepartment={appealDepartment}
+                        required={true}
+                      />
+
+                      <Button
+                        type="button"
+                        variant="default"
+                        size="lg"
+                        onClick={handleAppealAccess}
+                        disabled={isAppealing || !appealDocPath}
+                        className="w-full h-11 font-semibold cursor-pointer shadow-sm"
+                      >
+                        <ShieldCheck className="w-4 h-4 mr-2" />
+                        <span>{isAppealing ? 'Submitting Appeal...' : `Submit Appeal (${appealCount + 1} of 3)`}</span>
+                      </Button>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
 

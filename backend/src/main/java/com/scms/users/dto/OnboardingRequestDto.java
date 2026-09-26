@@ -11,6 +11,10 @@ public class OnboardingRequestDto {
 
     private String teacherIntent; // "REGULAR" or "MANAGER" for Teacher
 
+    private String staffAdminDocumentPath; // uploaded ID document path for MANAGER intent
+
+    private String staffAdminDepartment; // optional department/designation for MANAGER intent
+
     public OnboardingRequestDto() {}
 
     public OnboardingRequestDto(String userTitle, Integer academicYear, String teacherIntent) {
@@ -41,5 +45,21 @@ public class OnboardingRequestDto {
 
     public void setTeacherIntent(String teacherIntent) {
         this.teacherIntent = teacherIntent;
+    }
+
+    public String getStaffAdminDocumentPath() {
+        return staffAdminDocumentPath;
+    }
+
+    public void setStaffAdminDocumentPath(String staffAdminDocumentPath) {
+        this.staffAdminDocumentPath = staffAdminDocumentPath;
+    }
+
+    public String getStaffAdminDepartment() {
+        return staffAdminDepartment;
+    }
+
+    public void setStaffAdminDepartment(String staffAdminDepartment) {
+        this.staffAdminDepartment = staffAdminDepartment;
     }
 }

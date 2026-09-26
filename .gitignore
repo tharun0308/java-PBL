@@ -38,6 +38,8 @@ backend/.env.*
 **/target/
 *.class
 *.jar
+backend/uploads/
+uploads/
 
 # vercel
 .vercel

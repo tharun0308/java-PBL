@@ -182,16 +182,17 @@ class OnboardingAndAppealsTest {
     void testTeacherAppealFirstAttempt() {
         teacherUser.setStaffAdminAppealCount(0);
         teacherUser.setStaffAdminStatus(StaffAdminStatus.NONE);
+        teacherUser.setStaffAdminDocumentPath("id-proof-test.png");
         UserPrincipal teacherPrincipal = UserPrincipal.create(teacherUser);
 
         when(userRepository.findById(teacherUser.getId())).thenReturn(Optional.of(teacherUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        UserResponseDto response = userService.requestStaffAdminAccess(teacherPrincipal);
+        AuthResponse response = userService.requestStaffAdminAccess(teacherPrincipal);
 
         assertNotNull(response);
-        assertEquals(StaffAdminStatus.PENDING, response.getStaffAdminStatus());
-        assertEquals(1, response.getStaffAdminAppealCount());
+        assertEquals(StaffAdminStatus.PENDING, response.getUser().getStaffAdminStatus());
+        assertEquals(1, response.getUser().getStaffAdminAppealCount());
         verify(userRepository, times(1)).save(teacherUser);
     }
 
@@ -201,20 +202,21 @@ class OnboardingAndAppealsTest {
         // Attempt 2 after rejection
         teacherUser.setStaffAdminAppealCount(1);
         teacherUser.setStaffAdminStatus(StaffAdminStatus.REJECTED);
+        teacherUser.setStaffAdminDocumentPath("id-proof-test.png");
         UserPrincipal teacherPrincipal = UserPrincipal.create(teacherUser);
 
         when(userRepository.findById(teacherUser.getId())).thenReturn(Optional.of(teacherUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        UserResponseDto response2 = userService.requestStaffAdminAccess(teacherPrincipal);
-        assertEquals(2, response2.getStaffAdminAppealCount());
-        assertEquals(StaffAdminStatus.PENDING, response2.getStaffAdminStatus());
+        AuthResponse response2 = userService.requestStaffAdminAccess(teacherPrincipal);
+        assertEquals(2, response2.getUser().getStaffAdminAppealCount());
+        assertEquals(StaffAdminStatus.PENDING, response2.getUser().getStaffAdminStatus());
 
         // Attempt 3 after another rejection
         teacherUser.setStaffAdminStatus(StaffAdminStatus.REJECTED);
-        UserResponseDto response3 = userService.requestStaffAdminAccess(teacherPrincipal);
-        assertEquals(3, response3.getStaffAdminAppealCount());
-        assertEquals(StaffAdminStatus.PENDING, response3.getStaffAdminStatus());
+        AuthResponse response3 = userService.requestStaffAdminAccess(teacherPrincipal);
+        assertEquals(3, response3.getUser().getStaffAdminAppealCount());
+        assertEquals(StaffAdminStatus.PENDING, response3.getUser().getStaffAdminStatus());
     }
 
     @Test

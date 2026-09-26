@@ -21,6 +21,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { FloatingCards } from '@/components/floating-cards';
+import { StaffIdUpload } from '@/components/staff-id-upload';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -29,6 +30,8 @@ export default function OnboardingPage() {
   const [selectedRole, setSelectedRole] = useState<'Student' | 'Teacher' | null>(null);
   const [academicYear, setAcademicYear] = useState<number | null>(null);
   const [teacherIntent, setTeacherIntent] = useState<'REGULAR' | 'MANAGER' | null>(null);
+  const [documentPath, setDocumentPath] = useState<string>('');
+  const [department, setDepartment] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -57,6 +60,8 @@ export default function OnboardingPage() {
     setSelectedRole(role);
     if (role === 'Student') {
       setTeacherIntent(null);
+      setDocumentPath('');
+      setDepartment('');
     } else {
       setAcademicYear(null);
     }
@@ -96,12 +101,25 @@ export default function OnboardingPage() {
       return;
     }
 
+    if (selectedRole === 'Teacher' && teacherIntent === 'MANAGER' && !documentPath) {
+      toast.error('Employee ID Required', {
+        description: 'Please upload your Employee ID card to request Manager access.',
+        icon: <AlertCircle className="w-5 h-5 text-rose-500" />,
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const payload =
         selectedRole === 'Student'
           ? { userTitle: 'Student', academicYear }
-          : { userTitle: 'Teacher', teacherIntent };
+          : {
+              userTitle: 'Teacher',
+              teacherIntent,
+              staffAdminDocumentPath: teacherIntent === 'MANAGER' ? documentPath : null,
+              staffAdminDepartment: teacherIntent === 'MANAGER' ? (department || null) : null,
+            };
 
       const response = await fetch('/api/auth/onboarding', {
         method: 'PATCH',
@@ -140,7 +158,8 @@ export default function OnboardingPage() {
 
   const isStep2Valid =
     (selectedRole === 'Student' && academicYear !== null) ||
-    (selectedRole === 'Teacher' && teacherIntent !== null);
+    (selectedRole === 'Teacher' && teacherIntent === 'REGULAR') ||
+    (selectedRole === 'Teacher' && teacherIntent === 'MANAGER' && !!documentPath);
 
   const stepVariants: Variants = {
     enter: (dir: number) => ({
@@ -454,6 +473,19 @@ export default function OnboardingPage() {
                           </div>
                         </button>
                       </div>
+
+                      {/* Employee ID Upload Form (Required for Manager Mode) */}
+                      {teacherIntent === 'MANAGER' && (
+                        <div className="p-4 rounded-xl bg-pale-mint/30 border border-mint/40 animate-in fade-in duration-200">
+                          <StaffIdUpload
+                            onDocumentUploaded={(path) => setDocumentPath(path)}
+                            onDepartmentChanged={(dept) => setDepartment(dept)}
+                            currentDocumentPath={documentPath}
+                            currentDepartment={department}
+                            required={true}
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
 

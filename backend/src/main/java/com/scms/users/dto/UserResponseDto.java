@@ -20,6 +20,8 @@ public class UserResponseDto {
     private boolean onboardingCompleted;
     private Integer academicYear;
     private int staffAdminAppealCount;
+    private String staffAdminDocumentPath;
+    private String staffAdminDepartment;
     private boolean active;
     private Instant createdAt;
     private Instant updatedAt;
@@ -37,6 +39,8 @@ public class UserResponseDto {
         this.onboardingCompleted = user.isOnboardingCompleted();
         this.academicYear = user.getAcademicYear();
         this.staffAdminAppealCount = user.getStaffAdminAppealCount();
+        this.staffAdminDocumentPath = user.getStaffAdminDocumentPath();
+        this.staffAdminDepartment = user.getStaffAdminDepartment();
         this.active = user.isActive();
         this.createdAt = user.getCreatedAt();
         this.updatedAt = user.getUpdatedAt();
@@ -128,6 +132,22 @@ public class UserResponseDto {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getStaffAdminDocumentPath() {
+        return staffAdminDocumentPath;
+    }
+
+    public void setStaffAdminDocumentPath(String staffAdminDocumentPath) {
+        this.staffAdminDocumentPath = staffAdminDocumentPath;
+    }
+
+    public String getStaffAdminDepartment() {
+        return staffAdminDepartment;
+    }
+
+    public void setStaffAdminDepartment(String staffAdminDepartment) {
+        this.staffAdminDepartment = staffAdminDepartment;
     }
 
     public Instant getCreatedAt() {

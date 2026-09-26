@@ -42,6 +42,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { StaffIdUpload } from '@/components/staff-id-upload';
 
 export default function UserDashboardPage() {
   const [search, setSearch] = useState('');
@@ -49,6 +50,8 @@ export default function UserDashboardPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<'NEWEST' | 'OLDEST' | 'PRIORITY'>('NEWEST');
   const [isRequestingStaff, setIsRequestingStaff] = useState(false);
+  const [teacherDocPath, setTeacherDocPath] = useState('');
+  const [teacherDept, setTeacherDept] = useState('');
 
   const { data: userData, refetch: refetchUser } = useQuery({
     queryKey: ['auth-me'],
@@ -60,19 +63,35 @@ export default function UserDashboardPage() {
     },
   });
 
-  const handleRequestStaffAdmin = async () => {
+  const handleRequestStaffAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!teacherDocPath) {
+      toast.error('Employee ID Required', {
+        description: 'Please upload your Employee ID card to submit your request.',
+        icon: <AlertCircle className="w-5 h-5 text-rose-500" />,
+      });
+      return;
+    }
+
     setIsRequestingStaff(true);
     try {
-      const res = await fetch('/api/users/request-staff-admin', { method: 'POST' });
+      const res = await fetch('/api/user/request-staff-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          documentPath: teacherDocPath,
+          department: teacherDept || undefined,
+        }),
+      });
       const json = await res.json();
       if (!res.ok) {
         throw new Error(json.error || 'Failed to request staff admin access');
       }
       toast.success('Request Submitted', {
-        description: 'Your request for Staff Admin access has been sent to the Main Administrator.',
-        icon: <CheckCircle2 className="w-5 h-5 text-emerald-400" />,
+        description: 'Your request for Manager access has been sent. Redirecting to status page...',
+        icon: <CheckCircle2 className="w-5 h-5 text-emerald-600" />,
       });
-      await refetchUser();
+      window.location.href = '/pending-approval';
     } catch (err: any) {
       toast.error('Request Failed', {
         description: err.message,
@@ -446,89 +465,111 @@ export default function UserDashboardPage() {
         )}
       </div>
 
-      {/* Teacher Manager Access Appeal Feature (Teachers only, max 3 attempts) */}
+      {/* Teacher Manager Access Card (Faculty only) */}
       {userData?.userTitle === 'Teacher' &&
         userData?.role === 'STUDENT_TEACHER' &&
         userData?.staffAdminStatus !== 'PENDING' &&
         userData?.staffAdminStatus !== 'APPROVED' && (
-          <Card
-            className={`border shadow-sm transition-all ${
-              (userData?.staffAdminAppealCount || 0) >= 3
-                ? 'bg-surface-muted border-border opacity-75'
-                : 'bg-pale-lavender border-lavender/30'
-            }`}
-          >
-            <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-start gap-3.5">
-                <div
-                  className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 mt-0.5 ${
-                    (userData?.staffAdminAppealCount || 0) >= 3
-                      ? 'bg-white border-border text-slate'
-                      : 'bg-white border-lavender/30 text-lavender'
-                  }`}
-                >
-                  {(userData?.staffAdminAppealCount || 0) >= 3 ? (
-                    <Lock className="w-5 h-5" />
-                  ) : (
-                    <ShieldAlert className="w-5 h-5" />
-                  )}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="text-sm font-bold text-charcoal">
-                      Appeal for Manager (Staff Admin) Access
-                    </h4>
-                    {(userData?.staffAdminAppealCount || 0) >= 3 ? (
-                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-pale-danger text-danger border border-[#FECDD3]">
-                        Max Appeals (3/3) Reached
-                      </span>
-                    ) : (
-                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white text-lavender-strong border border-lavender/30">
-                        {Math.max(0, 3 - (userData?.staffAdminAppealCount || 0))} of 3 appeals remaining
-                      </span>
-                    )}
+          <>
+            {(userData?.staffAdminAppealCount || 0) >= 3 ? (
+              <Card className="border border-border bg-surface-muted opacity-80 shadow-sm">
+                <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3.5">
+                    <div className="w-10 h-10 rounded-xl border border-border bg-white text-slate flex items-center justify-center shrink-0 mt-0.5">
+                      <Lock className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="text-sm font-bold text-charcoal">
+                          Manager Access Appeal Limit Reached
+                        </h4>
+                        <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-pale-danger text-danger border border-[#FECDD3]">
+                          Max Attempts (3/3) Reached
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate mt-1 max-w-xl leading-relaxed">
+                        You have used all 3 appeal attempts for Staff Admin manager access. If you still require administrative elevation, please contact the campus Main Administrator directly.
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs text-slate mt-1 max-w-xl leading-relaxed">
-                    {(userData?.staffAdminAppealCount || 0) >= 3
-                      ? 'You have used all 3 appeal attempts for Staff Admin manager access. If you still require administrative elevation, please contact the campus Main Administrator directly.'
-                      : 'As faculty, you can appeal for Manager access to triage departmental grievances, assign technicians, and update resolution statuses. Requires Main Admin verification.'}
-                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled
+                    className="cursor-not-allowed shrink-0 self-start sm:self-auto text-xs"
+                  >
+                    <Lock className="w-3.5 h-3.5 mr-2" />
+                    Appeal Limit Reached
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border border-lavender/30 bg-card rounded-2xl shadow-sm overflow-hidden">
+                <div className="p-5 sm:p-6 bg-gradient-to-r from-pale-lavender/60 via-pale-lavender/30 to-transparent border-b border-lavender/20">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3.5">
+                      <div className="w-10 h-10 rounded-xl bg-white border border-lavender/30 text-lavender-strong flex items-center justify-center shrink-0 shadow-xs">
+                        <Sparkles className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="text-base font-bold text-charcoal">
+                            Request Manager (Staff Admin) Access
+                          </h3>
+                          <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-white text-lavender-strong border border-lavender/30 shadow-2xs">
+                            Faculty Feature
+                          </span>
+                          {(userData?.staffAdminAppealCount || 0) > 0 && (
+                            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                              Attempt {(userData?.staffAdminAppealCount || 0) + 1} of 3
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs sm:text-sm text-slate mt-1 max-w-2xl leading-relaxed">
+                          As faculty, you can request Manager access to triage departmental grievances, assign technicians, and coordinate issue resolutions. Upload your Employee ID card to submit your request for Main Admin review.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              {(userData?.staffAdminAppealCount || 0) >= 3 ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled
-                  className="cursor-not-allowed shrink-0 self-start sm:self-auto"
-                >
-                  <Lock className="w-3.5 h-3.5 mr-2" />
-                  Appeal Limit Reached
-                </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRequestStaffAdmin}
-                  disabled={isRequestingStaff}
-                  className="border-lavender/30 text-lavender-strong hover:bg-white shrink-0 self-start sm:self-auto cursor-pointer"
-                >
-                  {isRequestingStaff ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
-                      Submitting Appeal...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-3.5 h-3.5 mr-2" />
-                      Submit Appeal (Attempt {(userData?.staffAdminAppealCount || 0) + 1} of 3)
-                    </>
-                  )}
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+                <CardContent className="p-5 sm:p-6 space-y-4">
+                  <form onSubmit={handleRequestStaffAdmin} className="space-y-4">
+                    <StaffIdUpload
+                      onDocumentUploaded={setTeacherDocPath}
+                      onDepartmentChanged={setTeacherDept}
+                      currentDocumentPath={teacherDocPath}
+                      currentDepartment={teacherDept}
+                      required={true}
+                    />
+
+                    <div className="flex items-center justify-between pt-2 border-t border-border">
+                      <p className="text-[11px] text-slate">
+                        Your request will be routed directly to the Main Administrator.
+                      </p>
+                      <Button
+                        type="submit"
+                        disabled={isRequestingStaff || !teacherDocPath}
+                        className="bg-charcoal text-white hover:bg-charcoal/90 rounded-xl font-medium text-xs sm:text-sm shadow-sm"
+                      >
+                        {isRequestingStaff ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Submitting Request...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            Submit Manager Request
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            )}
+          </>
         )}
     </div>
   );

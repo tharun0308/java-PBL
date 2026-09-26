@@ -39,6 +39,28 @@ public class AdminStaffRequestController {
         return ResponseEntity.ok(ApiResponse.success(requests));
     }
 
+    @GetMapping("/staff-requests/{id}/document")
+    @Operation(summary = "Download/View Employee ID proof document", description = "Streams the uploaded Employee ID document for Main Admin inspection")
+    public ResponseEntity<org.springframework.core.io.Resource> getStaffRequestDocument(@PathVariable UUID id) {
+        org.springframework.core.io.Resource document = userService.getStaffIdDocument(id);
+        String filename = document.getFilename();
+        String contentType = "application/octet-stream";
+        if (filename != null) {
+            String lower = filename.toLowerCase();
+            if (lower.endsWith(".pdf")) {
+                contentType = "application/pdf";
+            } else if (lower.endsWith(".png")) {
+                contentType = "image/png";
+            } else if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) {
+                contentType = "image/jpeg";
+            }
+        }
+        return ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                .body(document);
+    }
+
     @PostMapping("/staff-requests/{id}/approve")
     @Operation(summary = "Approve staff admin request", description = "Promotes the user to STAFF_ADMIN with APPROVED status")
     public ResponseEntity<ApiResponse<UserResponseDto>> approveStaffRequest(

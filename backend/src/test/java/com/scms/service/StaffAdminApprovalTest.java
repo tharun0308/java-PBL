@@ -1,5 +1,6 @@
 package com.scms.service;
 
+import com.scms.auth.dto.AuthResponse;
 import com.scms.exception.BadRequestException;
 import com.scms.exception.ResourceNotFoundException;
 import com.scms.security.UserPrincipal;
@@ -60,16 +61,17 @@ class StaffAdminApprovalTest {
     @Test
     @DisplayName("User should be able to request staff admin access, setting status to PENDING")
     void testRequestStaffAdminAccessSuccess() {
+        studentUser.setStaffAdminDocumentPath("id-proof-test.png");
         UserPrincipal studentPrincipal = UserPrincipal.create(studentUser);
 
         when(userRepository.findById(studentUser.getId())).thenReturn(Optional.of(studentUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        UserResponseDto response = userService.requestStaffAdminAccess(studentPrincipal);
+        AuthResponse response = userService.requestStaffAdminAccess(studentPrincipal);
 
         assertNotNull(response);
-        assertEquals(StaffAdminStatus.PENDING, response.getStaffAdminStatus());
-        assertEquals(Role.STUDENT_TEACHER, response.getRole());
+        assertEquals(StaffAdminStatus.PENDING, response.getUser().getStaffAdminStatus());
+        assertEquals(Role.STUDENT_TEACHER, response.getUser().getRole());
         verify(userRepository, times(1)).save(studentUser);
     }
 
