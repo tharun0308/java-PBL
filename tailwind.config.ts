@@ -55,6 +55,10 @@ const config: Config = {
         /* Semantic Minimal Dark & Soft Pastel tokens */
         bg: "var(--bg)",
         cream: "var(--bg)",
+        body: "var(--text)",
+        slate: {
+          DEFAULT: "var(--text-muted)",
+        },
         surface: {
           DEFAULT: "var(--surface)",
           muted: "var(--surface-muted)",
@@ -82,6 +86,10 @@ const config: Config = {
           DEFAULT: "var(--warning)",
           soft: "var(--warning-soft)",
         },
+        "pale-lavender": "var(--lavender-soft)",
+        "pale-mint": "var(--mint-soft)",
+        "pale-warning": "var(--warning-soft)",
+        "pale-danger": "var(--danger-soft)",
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -98,45 +98,50 @@ export default function OnboardingPage() {
 
     setIsSubmitting(true);
     try {
-      const payload =
-        selectedRole === 'Student'
-          ? { userTitle: 'Student', academicYear }
-          : { userTitle: 'Teacher', teacherIntent };
+      const payload: {
+        role: 'STUDENT' | 'TEACHER';
+        academicYear?: number;
+        teacherIntent?: 'REGULAR' | 'MANAGER';
+      } = {
+        role: selectedRole === 'Student' ? 'STUDENT' : 'TEACHER',
+      };
 
-      console.log('[Onboarding] Submitting payload:', payload);
+      if (selectedRole === 'Student' && academicYear) {
+        payload.academicYear = academicYear;
+      }
 
-      const response = await fetch('/api/auth/onboarding', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+      if (selectedRole === 'Teacher' && teacherIntent) {
+        payload.teacherIntent = teacherIntent;
+      }
+
+      const response = await fetch('/api/user/onboarding', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(payload),
       });
 
       const data = await response.json();
-      console.log('[Onboarding] Response status:', response.status, 'data:', data);
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to complete profile setup.');
+        throw new Error(data.error || 'Failed to complete profile onboarding.');
       }
 
-      toast.success('Profile Setup Complete!', {
-        description:
-          selectedRole === 'Teacher' && teacherIntent === 'MANAGER'
-            ? 'Manager access request submitted for Main Admin approval. Redirecting to portal...'
-            : 'Welcome to the Smart Complaint Management System.',
-        icon: <CheckCircle2 className="w-5 h-5 text-emerald-400" />,
+      toast.success('Welcome to SCMS!', {
+        description: data.message || 'Your campus profile has been configured successfully.',
+        icon: <CheckCircle2 className="w-5 h-5 text-emerald-600" />,
       });
 
       if (selectedRole === 'Teacher' && teacherIntent === 'MANAGER') {
-        console.log('[Onboarding] Navigating to /pending-approval');
         window.location.href = '/pending-approval';
       } else {
-        console.log('[Onboarding] Navigating to /dashboard');
         window.location.href = '/dashboard';
       }
-    } catch (err: any) {
-      console.error('[Onboarding] Error submitting onboarding:', err);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
       toast.error('Onboarding Failed', {
-        description: err.message || 'Something went wrong. Please try again.',
+        description: msg,
         icon: <AlertCircle className="w-5 h-5 text-rose-500" />,
       });
     } finally {
@@ -175,10 +180,10 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-cream text-body flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-x-hidden selection:bg-pale-lavender selection:text-charcoal">
       {/* Background ambient gradient glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-gradient-to-tr from-indigo-600/15 via-cyan-500/10 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none -z-10" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-gradient-to-tr from-lavender/20 via-mint/15 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute inset-0 bg-grid-pattern opacity-15 pointer-events-none -z-10" />
 
       {/* Floating decorative cards in background */}
       <FloatingCards />
@@ -191,15 +196,15 @@ export default function OnboardingPage() {
       >
         {/* Header / Brand */}
         <div className="text-center mb-6 space-y-2">
-          <div className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-1 backdrop-blur-md">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+          <div className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-pale-lavender border border-lavender/30 text-lavender-strong text-xs font-medium mb-1 backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5 text-lavender-strong shrink-0" />
             <span>Campus Identity Setup</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-charcoal tracking-tight">
             Complete Your Profile
           </h1>
-          <p className="text-sm text-slate-400 max-w-md mx-auto">
+          <p className="text-sm text-slate max-w-md mx-auto">
             {currentStep === 1
               ? 'Tell us your campus role to personalize your dashboard and routing permissions.'
               : selectedRole === 'Student'
@@ -209,15 +214,15 @@ export default function OnboardingPage() {
         </div>
 
         {/* Wizard Card Container */}
-        <div className="rounded-2xl glass-panel p-6 sm:p-8 border border-white/10 shadow-2xl bg-slate-900/80 backdrop-blur-xl relative overflow-hidden">
+        <div className="rounded-2xl p-6 sm:p-8 border border-border shadow-xl bg-surface relative overflow-hidden">
           {/* Progress Header */}
-          <div className="pb-6 mb-6 border-b border-white/[0.08] flex items-center justify-between">
+          <div className="pb-6 mb-6 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-300">
+              <span className="text-xs font-semibold text-charcoal">
                 Step {currentStep} of 2
               </span>
-              <span className="text-xs text-slate-500">•</span>
-              <span className="text-xs text-indigo-300 font-medium">
+              <span className="text-xs text-slate">•</span>
+              <span className="text-xs text-lavender-strong font-medium">
                 {currentStep === 1
                   ? 'Role Selection'
                   : selectedRole === 'Student'
@@ -230,12 +235,12 @@ export default function OnboardingPage() {
             <div className="flex items-center gap-1.5 w-24">
               <div
                 className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                  currentStep >= 1 ? 'bg-indigo-500 shadow-sm shadow-indigo-500/50' : 'bg-slate-800'
+                  currentStep >= 1 ? 'bg-charcoal' : 'bg-slate-200'
                 }`}
               />
               <div
                 className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                  currentStep === 2 ? 'bg-indigo-500 shadow-sm shadow-indigo-500/50' : 'bg-slate-800'
+                  currentStep === 2 ? 'bg-charcoal' : 'bg-slate-200'
                 }`}
               />
             </div>
@@ -255,10 +260,10 @@ export default function OnboardingPage() {
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal">
                       1. Select Your Campus Role
                     </label>
-                    <span className="text-[11px] text-slate-400">Click a card to continue</span>
+                    <span className="text-[11px] text-slate">Click a card to continue</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -268,28 +273,28 @@ export default function OnboardingPage() {
                       onClick={() => handleSelectRole('Student')}
                       className={`p-5 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer group hover:scale-[1.01] active:scale-[0.99] ${
                         selectedRole === 'Student'
-                          ? 'bg-indigo-600/20 border-indigo-500 ring-2 ring-indigo-500/30 shadow-lg shadow-indigo-500/10'
-                          : 'bg-slate-950/40 border-white/10 hover:border-indigo-500/40 hover:bg-slate-950/70'
+                          ? 'bg-pale-lavender border-lavender-strong ring-2 ring-lavender-strong/30 shadow-md'
+                          : 'bg-white border-border hover:border-lavender hover:bg-slate-50/80 shadow-sm'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 group-hover:scale-105 transition-transform">
+                        <div className="w-10 h-10 rounded-xl bg-pale-lavender border border-lavender/40 flex items-center justify-center text-lavender-strong group-hover:scale-105 transition-transform">
                           <GraduationCap className="w-5 h-5" />
                         </div>
-                        <div className="w-6 h-6 rounded-full border border-white/10 flex items-center justify-center group-hover:border-indigo-500/50 transition-colors">
-                          <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-300 group-hover:translate-x-0.5 transition-all" />
+                        <div className="w-6 h-6 rounded-full border border-border flex items-center justify-center group-hover:border-lavender-strong transition-colors">
+                          <ArrowRight className="w-3.5 h-3.5 text-slate group-hover:text-lavender-strong group-hover:translate-x-0.5 transition-all" />
                         </div>
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-base font-bold text-white group-hover:text-indigo-200 transition-colors">
+                          <h3 className="text-base font-bold text-charcoal group-hover:text-lavender-strong transition-colors">
                             Student
                           </h3>
-                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-indigo-500/30 text-indigo-300 bg-indigo-500/10">
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-lavender/40 text-lavender-strong bg-pale-lavender">
                             Learner
                           </Badge>
                         </div>
-                        <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                        <p className="text-xs text-slate mt-1 leading-relaxed">
                           Report classroom, hostel, lab, and infrastructure grievances with live resolution tracking.
                         </p>
                       </div>
@@ -301,28 +306,28 @@ export default function OnboardingPage() {
                       onClick={() => handleSelectRole('Teacher')}
                       className={`p-5 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer group hover:scale-[1.01] active:scale-[0.99] ${
                         selectedRole === 'Teacher'
-                          ? 'bg-cyan-600/20 border-cyan-500 ring-2 ring-cyan-500/30 shadow-lg shadow-cyan-500/10'
-                          : 'bg-slate-950/40 border-white/10 hover:border-cyan-500/40 hover:bg-slate-950/70'
+                          ? 'bg-pale-mint border-mint-strong ring-2 ring-mint-strong/30 shadow-md'
+                          : 'bg-white border-border hover:border-mint hover:bg-slate-50/80 shadow-sm'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform">
+                        <div className="w-10 h-10 rounded-xl bg-pale-mint border border-mint/40 flex items-center justify-center text-mint-strong group-hover:scale-105 transition-transform">
                           <BookOpen className="w-5 h-5" />
                         </div>
-                        <div className="w-6 h-6 rounded-full border border-white/10 flex items-center justify-center group-hover:border-cyan-500/50 transition-colors">
-                          <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-cyan-300 group-hover:translate-x-0.5 transition-all" />
+                        <div className="w-6 h-6 rounded-full border border-border flex items-center justify-center group-hover:border-mint-strong transition-colors">
+                          <ArrowRight className="w-3.5 h-3.5 text-slate group-hover:text-mint-strong group-hover:translate-x-0.5 transition-all" />
                         </div>
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-base font-bold text-white group-hover:text-cyan-200 transition-colors">
+                          <h3 className="text-base font-bold text-charcoal group-hover:text-mint-strong transition-colors">
                             Teacher / Faculty
                           </h3>
-                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-cyan-500/30 text-cyan-300 bg-cyan-500/10">
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-mint/40 text-mint-strong bg-pale-mint">
                             Faculty
                           </Badge>
                         </div>
-                        <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                        <p className="text-xs text-slate mt-1 leading-relaxed">
                           Raise departmental complaints or manage facility triage and technician assignments.
                         </p>
                       </div>
@@ -331,13 +336,13 @@ export default function OnboardingPage() {
                 </div>
 
                 {/* Return to Login / Switch Account Action */}
-                <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs text-slate-400">
+                <div className="pt-4 border-t border-border flex items-center justify-between text-xs text-slate">
                   <span>Logged in with the wrong account?</span>
                   <button
                     type="button"
                     onClick={handleSignOut}
                     disabled={isSigningOut}
-                    className="font-semibold text-rose-400 hover:text-rose-300 transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="font-semibold text-rose-500 hover:text-rose-600 transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                     <span>{isSigningOut ? 'Signing out...' : 'Sign out'}</span>
@@ -361,13 +366,13 @@ export default function OnboardingPage() {
                   <button
                     type="button"
                     onClick={handleBackToStep1}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer group py-1 px-2 rounded-lg hover:bg-slate-800/50"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate hover:text-charcoal transition-colors cursor-pointer group py-1 px-2 rounded-lg hover:bg-slate-100"
                   >
                     <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
                     <span>Change role ({selectedRole})</span>
                   </button>
 
-                  <Badge variant="outline" className="text-[11px] px-2.5 py-0.5 border-white/10 bg-slate-800/40 text-slate-300">
+                  <Badge variant="outline" className="text-[11px] px-2.5 py-0.5 border-border bg-slate-100 text-charcoal">
                     {selectedRole === 'Student' ? 'Student Setup' : 'Faculty Setup'}
                   </Badge>
                 </div>
@@ -376,7 +381,7 @@ export default function OnboardingPage() {
                   {/* Step 2 Content for Student */}
                   {selectedRole === 'Student' && (
                     <div className="space-y-3">
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal">
                         2. Which Academic Year Are You In?
                       </label>
 
@@ -388,12 +393,12 @@ export default function OnboardingPage() {
                             onClick={() => setAcademicYear(ay.year)}
                             className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
                               academicYear === ay.year
-                                ? 'bg-indigo-600/25 border-indigo-500 text-indigo-200 ring-2 ring-indigo-500/40 shadow-sm'
-                                : 'bg-slate-950/40 border-white/10 text-slate-300 hover:border-white/20 hover:text-white'
+                                ? 'bg-pale-lavender border-lavender-strong text-charcoal ring-2 ring-lavender-strong/40 shadow-sm font-bold'
+                                : 'bg-white border-border text-charcoal hover:border-slate-300 hover:bg-slate-50'
                             }`}
                           >
                             <p className="text-sm font-bold">{ay.label}</p>
-                            <p className="text-[10px] text-slate-400 mt-0.5">{ay.sub}</p>
+                            <p className="text-[10px] text-slate mt-0.5">{ay.sub}</p>
                           </button>
                         ))}
                       </div>
@@ -403,7 +408,7 @@ export default function OnboardingPage() {
                   {/* Step 2 Content for Teacher */}
                   {selectedRole === 'Teacher' && (
                     <div className="space-y-3">
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal">
                         2. Choose Your Portal Access Mode
                       </label>
 
@@ -414,20 +419,20 @@ export default function OnboardingPage() {
                           onClick={() => setTeacherIntent('REGULAR')}
                           className={`p-4 rounded-xl border text-left transition-all cursor-pointer hover:scale-[1.01] active:scale-[0.99] ${
                             teacherIntent === 'REGULAR'
-                              ? 'bg-indigo-600/25 border-indigo-500 ring-2 ring-indigo-500/40 shadow-sm'
-                              : 'bg-slate-950/40 border-white/10 hover:border-white/20'
+                              ? 'bg-pale-lavender border-lavender-strong ring-2 ring-lavender-strong/40 shadow-sm'
+                              : 'bg-white border-border hover:border-slate-300'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <FileText className="w-4 h-4 text-indigo-400" />
-                              <span className="text-sm font-bold text-white">Regular Teacher</span>
+                              <FileText className="w-4 h-4 text-lavender-strong" />
+                              <span className="text-sm font-bold text-charcoal">Regular Teacher</span>
                             </div>
                             {teacherIntent === 'REGULAR' && (
-                              <CheckCircle2 className="w-4 h-4 text-indigo-400" />
+                              <CheckCircle2 className="w-4 h-4 text-lavender-strong" />
                             )}
                           </div>
-                          <p className="text-xs text-slate-400 leading-relaxed">
+                          <p className="text-xs text-slate leading-relaxed">
                             Standard faculty access to file campus tickets, follow updates, and sign off on department repairs.
                           </p>
                         </button>
@@ -438,24 +443,24 @@ export default function OnboardingPage() {
                           onClick={() => setTeacherIntent('MANAGER')}
                           className={`p-4 rounded-xl border text-left transition-all cursor-pointer hover:scale-[1.01] active:scale-[0.99] ${
                             teacherIntent === 'MANAGER'
-                              ? 'bg-cyan-600/25 border-cyan-500 ring-2 ring-cyan-500/40 shadow-sm'
-                              : 'bg-slate-950/40 border-white/10 hover:border-white/20'
+                              ? 'bg-pale-mint border-mint-strong ring-2 ring-mint-strong/40 shadow-sm'
+                              : 'bg-white border-border hover:border-slate-300'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <ShieldAlert className="w-4 h-4 text-cyan-400" />
-                              <span className="text-sm font-bold text-white">Manager Access</span>
+                              <ShieldAlert className="w-4 h-4 text-mint-strong" />
+                              <span className="text-sm font-bold text-charcoal">Manager Access</span>
                             </div>
                             {teacherIntent === 'MANAGER' && (
-                              <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                              <CheckCircle2 className="w-4 h-4 text-mint-strong" />
                             )}
                           </div>
-                          <p className="text-xs text-slate-400 leading-relaxed">
+                          <p className="text-xs text-slate leading-relaxed">
                             Request Staff Admin rights to triage issues and assign technicians.
                           </p>
-                          <div className="mt-2.5 pt-2 border-t border-white/[0.08] flex items-center gap-1.5 text-[10px] text-amber-300/90 font-medium">
-                            <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+                          <div className="mt-2.5 pt-2 border-t border-border flex items-center gap-1.5 text-[10px] text-amber-700 font-medium">
+                            <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-amber-600" />
                             <span>Requires Main Admin approval</span>
                           </div>
                         </button>
@@ -467,10 +472,10 @@ export default function OnboardingPage() {
                   <div className="pt-2">
                     <Button
                       type="submit"
-                      variant="glow"
+                      variant="default"
                       size="lg"
                       disabled={!isStep2Valid || isSubmitting}
-                      className="w-full h-12 text-sm sm:text-base font-semibold group cursor-pointer"
+                      className="w-full h-12 text-sm sm:text-base font-semibold group cursor-pointer shadow-sm"
                     >
                       {isSubmitting ? (
                         <>
@@ -487,11 +492,11 @@ export default function OnboardingPage() {
                   </div>
 
                   {/* Return to Login / Switch Account Action */}
-                  <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs text-slate-400">
+                  <div className="pt-4 border-t border-border flex items-center justify-between text-xs text-slate">
                     <button
                       type="button"
                       onClick={handleBackToStep1}
-                      className="font-semibold text-slate-400 hover:text-white transition-colors inline-flex items-center gap-1 cursor-pointer"
+                      className="font-semibold text-slate hover:text-charcoal transition-colors inline-flex items-center gap-1 cursor-pointer"
                     >
                       <ArrowLeft className="w-3 h-3" />
                       <span>Back to step 1</span>
@@ -500,7 +505,7 @@ export default function OnboardingPage() {
                       type="button"
                       onClick={handleSignOut}
                       disabled={isSigningOut}
-                      className="font-semibold text-rose-400 hover:text-rose-300 transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      className="font-semibold text-rose-500 hover:text-rose-600 transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                     >
                       <LogOut className="w-3.5 h-3.5" />
                       <span>{isSigningOut ? 'Signing out...' : 'Sign out'}</span>

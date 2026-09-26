@@ -87,7 +87,7 @@ export function Navbar({ user }: NavbarProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-slate-950/70 backdrop-blur-xl transition-colors">
+    <header className="sticky top-0 z-50 w-full border-b border-charcoal/40 bg-charcoal text-white shadow-sm transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
@@ -96,21 +96,19 @@ export function Navbar({ user }: NavbarProps) {
               href={user ? (isAdmin ? '/admin/dashboard' : '/dashboard') : '/'}
               className="flex items-center gap-3 group"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-[1px] shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-all group-hover:scale-105">
-                <div className="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center p-2">
-                  <BrandIcon className="w-full h-full group-hover:rotate-6 transition-transform duration-300" />
-                </div>
+              <div className="w-10 h-10 rounded-xl bg-charcoal border border-lavender/40 shadow-sm transition-all group-hover:scale-105 flex items-center justify-center p-2">
+                <BrandIcon className="w-full h-full group-hover:rotate-6 transition-transform duration-300" />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-white tracking-tight text-lg">
                     SCMS
                   </span>
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-lavender text-charcoal">
                     Campus
                   </span>
                 </div>
-                <span className="hidden sm:inline text-[11px] text-slate-400 font-normal">
+                <span className="hidden sm:inline text-[11px] text-slate-300 font-normal">
                   Smart Complaint System
                 </span>
               </div>
@@ -119,7 +117,7 @@ export function Navbar({ user }: NavbarProps) {
 
           {/* Desktop Nav Links */}
           {user && (
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-1.5">
               {navLinks
                 .filter((l) => l.show)
                 .map((link) => {
@@ -133,11 +131,11 @@ export function Navbar({ user }: NavbarProps) {
                       href={link.href}
                       className={`inline-flex items-center px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
                         isActive
-                          ? 'bg-indigo-500/15 text-indigo-300 font-semibold border border-indigo-500/30 shadow-sm'
-                          : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                          ? 'bg-lavender-soft text-charcoal font-semibold shadow-sm'
+                          : 'text-slate-200 hover:bg-white/10 hover:text-white'
                       }`}
                     >
-                      <Icon className="w-4 h-4 mr-2 text-indigo-400" />
+                      <Icon className={`w-4 h-4 mr-2 ${isActive ? 'text-charcoal' : 'text-lavender'}`} />
                       {link.name}
                     </Link>
                   );
@@ -148,19 +146,22 @@ export function Navbar({ user }: NavbarProps) {
           {/* User Controls / Actions */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
-              <div className="flex items-center gap-3 pl-3 border-l border-white/10">
+              <div className="flex items-center gap-3 pl-3 border-l border-white/20">
                 <div className="flex flex-col text-right">
-                  <span className="text-xs font-semibold text-white truncate max-w-[150px]">
+                  <span
+                    className="text-xs font-semibold text-white truncate max-w-[200px] sm:max-w-[260px]"
+                    title={user.fullName || user.email}
+                  >
                     {user.fullName || user.email}
                   </span>
                   <div className="flex items-center justify-end gap-1">
                     <span
                       className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
                         user.role === 'MAIN_ADMIN'
-                          ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30'
+                          ? 'bg-lavender text-charcoal'
                           : user.role === 'STAFF_ADMIN'
-                          ? 'bg-blue-500/15 text-blue-300 border border-blue-500/30'
-                          : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                          ? 'bg-lavender-soft text-charcoal'
+                          : 'bg-mint text-charcoal'
                       }`}
                     >
                       {roleDisplay}
@@ -173,7 +174,7 @@ export function Navbar({ user }: NavbarProps) {
                   size="sm"
                   onClick={handleSignOut}
                   disabled={isLoggingOut}
-                  className="text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl"
+                  className="text-slate-300 hover:text-rose-300 hover:bg-white/10 rounded-xl"
                   title="Sign out"
                 >
                   <LogOut className="w-4 h-4" />
@@ -182,7 +183,7 @@ export function Navbar({ user }: NavbarProps) {
             ) : (
               <div className="flex items-center gap-2.5">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white">
+                  <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
                     Sign In
                   </Button>
                 </Link>
@@ -200,7 +201,7 @@ export function Navbar({ user }: NavbarProps) {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 cursor-pointer"
+              className="p-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/10 cursor-pointer"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -210,19 +211,19 @@ export function Navbar({ user }: NavbarProps) {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-white/10 bg-slate-950/95 px-4 pt-3 pb-5 space-y-3 backdrop-blur-xl">
+        <div className="md:hidden border-t border-charcoal/40 bg-charcoal px-4 pt-3 pb-5 space-y-3">
           {user && (
-            <div className="py-2.5 border-b border-white/10 flex items-center justify-between">
+            <div className="py-2.5 border-b border-white/15 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-lavender">
                   <UserIcon className="w-4 h-4" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">{user.fullName || 'Campus Member'}</p>
-                  <p className="text-xs text-slate-400">{user.email}</p>
+                  <p className="text-xs text-slate-300">{user.email}</p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-lavender text-charcoal">
                 {roleDisplay}
               </span>
             </div>
@@ -242,22 +243,22 @@ export function Navbar({ user }: NavbarProps) {
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center px-3.5 py-2.5 rounded-xl text-sm font-medium ${
                         isActive
-                          ? 'bg-indigo-500/15 text-indigo-300 font-semibold border border-indigo-500/30'
-                          : 'text-slate-300 hover:bg-slate-900'
+                          ? 'bg-lavender-soft text-charcoal font-semibold shadow-sm'
+                          : 'text-slate-200 hover:bg-white/10'
                       }`}
                     >
-                      <Icon className="w-4 h-4 mr-2.5 text-indigo-400" />
+                      <Icon className={`w-4 h-4 mr-2.5 ${isActive ? 'text-charcoal' : 'text-lavender'}`} />
                       {link.name}
                     </Link>
                   );
                 })}
 
-              <div className="pt-2 border-t border-white/10">
+              <div className="pt-2 border-t border-white/15">
                 <button
                   type="button"
                   onClick={handleSignOut}
                   disabled={isLoggingOut}
-                  className="w-full flex items-center px-3.5 py-2.5 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10 cursor-pointer"
+                  className="w-full flex items-center px-3.5 py-2.5 rounded-xl text-sm font-medium text-rose-300 hover:bg-rose-500/20 cursor-pointer"
                 >
                   <LogOut className="w-4 h-4 mr-2.5" />
                   Sign Out

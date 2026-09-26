@@ -112,12 +112,12 @@ function LoginForm() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
     >
-      <Card className="shadow-2xl border-white/10 bg-slate-900/80 backdrop-blur-xl">
-        <CardHeader className="space-y-1.5 pb-6 border-b border-white/[0.08]">
-          <CardTitle className="text-2xl font-bold text-white tracking-tight">
+      <Card className="shadow-sm border-border bg-surface">
+        <CardHeader className="space-y-1.5 pb-6 border-b border-border">
+          <CardTitle className="text-2xl font-bold text-charcoal tracking-tight">
             Welcome Back
           </CardTitle>
-          <CardDescription className="text-slate-400 text-sm">
+          <CardDescription className="text-slate text-sm">
             Enter your college credentials or sign in with Google to continue.
           </CardDescription>
         </CardHeader>
@@ -128,7 +128,7 @@ function LoginForm() {
             type="button"
             variant="outline"
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 py-2.5 bg-slate-800/60 hover:bg-slate-800 border-white/10 hover:border-white/20 text-white shadow-sm"
+            className="w-full flex items-center justify-center gap-3 py-2.5 bg-surface hover:bg-surface-muted border-border text-charcoal shadow-sm"
           >
             <GoogleIcon />
             <span className="font-medium text-sm">Continue with Google</span>
@@ -137,9 +137,9 @@ function LoginForm() {
           {/* Divider */}
           <div className="relative flex items-center justify-center">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/[0.08]" />
+              <div className="w-full border-t border-border" />
             </div>
-            <span className="relative px-3 bg-slate-900 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <span className="relative px-3 bg-surface text-[11px] font-semibold uppercase tracking-wider text-slate">
               Or with email
             </span>
           </div>
@@ -149,7 +149,7 @@ function LoginForm() {
             <div className="space-y-1.5">
               <label
                 htmlFor="email"
-                className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                className="block text-xs font-semibold uppercase tracking-wider text-charcoal"
               >
                 Email Address
               </label>
@@ -158,11 +158,10 @@ function LoginForm() {
                 type="email"
                 autoComplete="email"
                 placeholder="e.g. name@campus.edu"
-                className="bg-slate-950/60 border-white/10 focus:border-indigo-500 text-white placeholder:text-slate-400"
                 {...register('email')}
               />
               {errors.email && (
-                <p className="text-xs text-rose-400 flex items-center gap-1.5 mt-1.5">
+                <p className="text-xs text-danger flex items-center gap-1.5 mt-1.5">
                   <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
                   {errors.email.message}
                 </p>
@@ -173,7 +172,7 @@ function LoginForm() {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                  className="block text-xs font-semibold uppercase tracking-wider text-charcoal"
                 >
                   Password
                 </label>
@@ -184,13 +183,13 @@ function LoginForm() {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   placeholder="••••••••"
-                  className="bg-slate-950/60 border-white/10 focus:border-indigo-500 text-white placeholder:text-slate-400 pr-10"
+                  className="pr-10"
                   {...register('password')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate hover:text-charcoal transition-colors cursor-pointer"
                   tabIndex={-1}
                 >
                   {showPassword ? (
@@ -201,7 +200,7 @@ function LoginForm() {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-rose-400 flex items-center gap-1.5 mt-1.5">
+                <p className="text-xs text-danger flex items-center gap-1.5 mt-1.5">
                   <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
                   {errors.password.message}
                 </p>
@@ -210,7 +209,7 @@ function LoginForm() {
 
             <Button
               type="submit"
-              variant="glow"
+              variant="default"
               className="w-full mt-3 py-2.5 font-medium"
               disabled={isLoading}
             >
@@ -229,11 +228,11 @@ function LoginForm() {
           </form>
 
           {/* Footer Navigation */}
-          <div className="pt-4 border-t border-white/[0.08] text-center text-xs text-slate-400">
+          <div className="pt-4 border-t border-border text-center text-xs text-slate">
             Don&apos;t have an account yet?{' '}
             <Link
               href="/register"
-              className="font-semibold text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1"
+              className="font-semibold text-lavender-strong hover:text-lavender-hover transition-colors inline-flex items-center gap-1"
             >
               Register now
               <ArrowRight className="w-3 h-3" />
@@ -251,8 +250,8 @@ export default function LoginPage() {
       <FloatingCards />
       <Suspense
         fallback={
-          <Card className="shadow-2xl border-white/10 bg-slate-900/80 p-8 text-center">
-            <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-400" />
+          <Card className="shadow-sm border-border bg-surface p-8 text-center">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto text-lavender-strong" />
           </Card>
         }
       >
