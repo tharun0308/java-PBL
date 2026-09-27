@@ -1,11 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { Complaint } from '@/lib/types';
-import { ComplaintStatusBadge, ComplaintPriorityBadge } from './complaint-status-badge';
+import { ComplaintStatusBadge, ComplaintPriorityBadge, ComplaintEscalationBadge } from './complaint-status-badge';
 import { formatRelativeTime } from '@/lib/utils';
 import { getComplaintSla } from '@/lib/sla';
 import { Card, CardContent } from './ui/card';
-import { MapPin, Calendar, ArrowRight, User, Image as ImageIcon, Star } from 'lucide-react';
+import { MapPin, Calendar, ArrowRight, User, Image as ImageIcon, Star, ThumbsUp } from 'lucide-react';
 
 interface ComplaintCardProps {
   complaint: Complaint;
@@ -17,7 +17,7 @@ export function ComplaintCard({ complaint, isAdmin = false }: ComplaintCardProps
     ? `/admin/complaints/${complaint.id}`
     : `/complaints/${complaint.id}`;
 
-  const formattedId = `#SCMS-${String(complaint.complaint_number).padStart(4, '0')}`;
+  const formattedId = complaint.complaintNumber || `#GRIV-${String(complaint.complaint_number || '0000').padStart(4, '0')}`;
   const sla = getComplaintSla(complaint);
 
   return (
@@ -28,9 +28,18 @@ export function ComplaintCard({ complaint, isAdmin = false }: ComplaintCardProps
             <span className="font-mono text-sm font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-1 rounded-md border border-indigo-100 dark:border-indigo-900">
               {formattedId}
             </span>
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
-              {complaint.category}
+            <span className="text-xs font-semibold uppercase tracking-wider text-charcoal/80 bg-pale-lavender px-2 py-0.5 rounded border border-lavender/30">
+              {complaint.category === 'OTHER' && (complaint.customCategory || complaint.custom_category)
+                ? `Other: ${complaint.customCategory || complaint.custom_category}`
+                : complaint.category}
             </span>
+            {/* Escalation Badge */}
+            {complaint.escalationLevel && complaint.escalationLevel > 0 ? (
+              <ComplaintEscalationBadge
+                escalationLevel={complaint.escalationLevel}
+                escalatedTo={complaint.escalatedTo}
+              />
+            ) : null}
             {/* SLA Badge */}
             <span
               className={`inline-flex items-center text-[11px] font-semibold px-2 py-0.5 rounded-full border ${sla.badgeClass}`}
@@ -46,13 +55,15 @@ export function ComplaintCard({ complaint, isAdmin = false }: ComplaintCardProps
         </div>
 
         <div className="mt-3 flex items-start justify-between gap-3">
-          <p className="text-sm font-medium text-slate-800 dark:text-slate-200 line-clamp-2 leading-relaxed">
+          <p className="text-sm font-medium text-charcoal line-clamp-2 leading-relaxed">
             {complaint.description}
           </p>
-          {complaint.image_url && (
-            <div className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-1 rounded border border-indigo-100 dark:border-indigo-900">
-              <ImageIcon className="w-3.5 h-3.5" />
-              <span>Photo</span>
+          {((complaint.photoPaths && complaint.photoPaths.length > 0) || (complaint.photo_paths && complaint.photo_paths.length > 0) || complaint.image_url) && (
+            <div className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-lavender-strong bg-pale-lavender px-2 py-1 rounded border border-lavender/40">
+              <ImageIcon className="w-3.5 h-3.5 text-lavender" />
+              <span>
+                {complaint.photoPaths?.length || complaint.photo_paths?.length || 1} Photo{(complaint.photoPaths?.length || complaint.photo_paths?.length || 1) > 1 ? 's' : ''}
+              </span>
             </div>
           )}
         </div>

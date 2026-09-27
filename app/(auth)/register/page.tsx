@@ -92,7 +92,7 @@ export default function RegisterPage() {
       }
 
       toast.success('Registration Successful!', {
-        description: `Welcome to SCMS, ${data.fullName}!`,
+        description: `Welcome to Grivo, ${data.fullName}!`,
         icon: <CheckCircle2 className="w-5 h-5 text-emerald-600" />,
       });
 

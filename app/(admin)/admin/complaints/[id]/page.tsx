@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ComplaintWithHistory } from '@/lib/types';
 import { STATUSES, Status, DEPARTMENTS } from '@/lib/constants';
-import { ComplaintStatusBadge, ComplaintPriorityBadge } from '@/components/complaint-status-badge';
+import { ComplaintStatusBadge, ComplaintPriorityBadge, ComplaintEscalationBadge } from '@/components/complaint-status-badge';
 import { formatDate, formatRelativeTime } from '@/lib/utils';
 import { getComplaintSla } from '@/lib/sla';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,6 +36,7 @@ import {
   Download,
   ExternalLink,
 } from 'lucide-react';
+import { fetchWithAuth } from '@/lib/api/fetch-with-auth';
 
 export default function AdminComplaintDetailPage() {
   const params = useParams();
@@ -61,7 +62,7 @@ export default function AdminComplaintDetailPage() {
   } = useQuery<ComplaintWithHistory>({
     queryKey: ['admin-complaint', id],
     queryFn: async () => {
-      const res = await fetch(`/api/complaints/${id}`);
+      const res = await fetchWithAuth(`/api/complaints/${id}`);
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || 'Failed to load complaint');
@@ -109,7 +110,7 @@ export default function AdminComplaintDetailPage() {
 
   const updateMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch(`/api/complaints/${id}/status`, {
+      const res = await fetchWithAuth(`/api/complaints/${id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -181,7 +182,7 @@ export default function AdminComplaintDetailPage() {
     );
   }
 
-  const formattedId = `#SCMS-${String(complaint.complaint_number).padStart(4, '0')}`;
+  const formattedId = complaint.complaintNumber || `#GRIV-${String(complaint.complaint_number || '0000').padStart(4, '0')}`;
   const sla = getComplaintSla(complaint);
 
   return (
@@ -212,9 +213,17 @@ export default function AdminComplaintDetailPage() {
                     <span className="font-mono text-base font-bold text-lavender-strong bg-pale-lavender px-2.5 py-0.5 rounded border border-lavender/30">
                       {formattedId}
                     </span>
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate bg-surface-muted px-2 py-0.5 rounded">
-                      {complaint.category}
+                    <span className="text-xs font-semibold uppercase tracking-wider text-charcoal bg-surface-muted px-2 py-0.5 rounded border border-border">
+                      {complaint.category === 'OTHER' && (complaint.customCategory || complaint.custom_category)
+                        ? `Other: ${complaint.customCategory || complaint.custom_category}`
+                        : complaint.category}
                     </span>
+                    {complaint.escalationLevel && complaint.escalationLevel > 0 ? (
+                      <ComplaintEscalationBadge
+                        escalationLevel={complaint.escalationLevel}
+                        escalatedTo={complaint.escalatedTo}
+                      />
+                    ) : null}
                     <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${sla.badgeClass}`}>
                       {sla.label}
                     </span>
@@ -266,23 +275,80 @@ export default function AdminComplaintDetailPage() {
                     <Camera className="w-4 h-4 text-lavender" />
                     Attached Evidence & Documentation
                   </h4>
-                  {(complaint.image_url || complaint.resolution_image_url) && (
-                    <span className="text-[11px] font-medium text-slate">
-                      {[complaint.image_url && '1 Defect Photo', complaint.resolution_image_url && '1 Proof Photo']
+                  {((complaint.photoPaths && complaint.photoPaths.length > 0) || (complaint.photo_paths && complaint.photo_paths.length > 0) || complaint.image_url || complaint.resolution_image_url) && (
+                    <span className="text-[11px] font-medium text-slate font-mono">
+                      {[
+                        (complaint.photoPaths?.length || complaint.photo_paths?.length || (complaint.image_url ? 1 : 0)) > 0 &&
+                          `${complaint.photoPaths?.length || complaint.photo_paths?.length || 1} Defect Photo(s)`,
+                        complaint.resolution_image_url && '1 Resolution Proof Photo'
+                      ]
                         .filter(Boolean)
                         .join(' • ')}
                     </span>
                   )}
                 </div>
 
-                {!complaint.image_url && !complaint.resolution_image_url ? (
+                {!complaint.photoPaths?.length && !complaint.photo_paths?.length && !complaint.image_url && !complaint.resolution_image_url ? (
                   <div className="p-4 rounded-xl border border-dashed border-border bg-surface-muted/50 text-center text-xs text-slate">
                     <Camera className="w-6 h-6 mx-auto mb-1 text-slate" />
                     No photos or media attachments were uploaded for this complaint.
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {complaint.image_url && (
+                    {/* Defect Photos */}
+                    {((complaint.photoPaths && complaint.photoPaths.length > 0) || (complaint.photo_paths && complaint.photo_paths.length > 0)) ? (
+                      (complaint.photoPaths || complaint.photo_paths || []).map((filename, pIdx) => (
+                        <div key={filename} className="border border-border rounded-xl overflow-hidden bg-white shadow-sm">
+                          <div className="p-2.5 bg-surface-muted text-xs font-semibold text-charcoal border-b border-border flex items-center justify-between">
+                            <span className="flex items-center gap-1.5 font-bold">
+                              <Camera className="w-3.5 h-3.5 text-lavender" />
+                              Student Defect Photo {pIdx + 1}
+                            </span>
+                            <span className="text-[10px] text-slate">
+                              By {complaint.user?.full_name || 'Student'}
+                            </span>
+                          </div>
+                          <div className="relative group bg-black/5">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={`/api/complaints/photos/${filename}`}
+                              alt={`Student Defect Photo ${pIdx + 1}`}
+                              onClick={() => setSelectedPhoto(`/api/complaints/photos/${filename}`)}
+                              className="w-full h-52 object-cover cursor-pointer group-hover:opacity-95 transition-opacity"
+                            />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedPhoto(`/api/complaints/photos/${filename}`)}
+                                className="px-2.5 py-1.5 rounded-lg bg-white/90 text-charcoal text-xs font-semibold flex items-center gap-1 shadow hover:bg-white transition-all"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                Inspect
+                              </button>
+                              <a
+                                href={`/api/complaints/photos/${filename}`}
+                                download={`defect-${complaint.complaint_number || 'photo'}-${pIdx + 1}.jpg`}
+                                className="px-2.5 py-1.5 rounded-lg bg-lavender/90 text-white text-xs font-semibold flex items-center gap-1 shadow hover:bg-lavender transition-all"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                Save
+                              </a>
+                            </div>
+                          </div>
+                          <div className="p-2.5 bg-white flex items-center justify-between text-[11px] text-slate border-t border-border">
+                            <span>Verified submission photo</span>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedPhoto(`/api/complaints/photos/${filename}`)}
+                              className="text-lavender-strong font-semibold hover:underline flex items-center gap-1"
+                            >
+                              <Eye className="w-3 h-3" />
+                              Zoom in
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    ) : complaint.image_url ? (
                       <div className="border border-border rounded-xl overflow-hidden bg-white shadow-sm">
                         <div className="p-2.5 bg-surface-muted text-xs font-semibold text-charcoal border-b border-border flex items-center justify-between">
                           <span className="flex items-center gap-1.5 font-bold">
@@ -332,7 +398,7 @@ export default function AdminComplaintDetailPage() {
                           </button>
                         </div>
                       </div>
-                    )}
+                    ) : null}
 
                     {complaint.resolution_image_url && (
                       <div className="border border-mint/30 rounded-xl overflow-hidden bg-pale-mint/30 shadow-sm">

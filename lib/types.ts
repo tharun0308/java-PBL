@@ -1,12 +1,29 @@
 export type { Category, Priority, Status, Role } from './constants';
 import { Category, Priority, Status, Role } from './constants';
 
+export type StaffAdminRole = 'PRINCIPAL' | 'HOD' | 'PROFESSOR' | 'OTHER';
+
+export const STAFF_ADMIN_ROLES: { value: StaffAdminRole; label: string; rank: number }[] = [
+  { value: 'PRINCIPAL', label: 'Principal', rank: 3 },
+  { value: 'HOD', label: 'Head of Department (HOD)', rank: 2 },
+  { value: 'PROFESSOR', label: 'Professor', rank: 1 },
+  { value: 'OTHER', label: 'Other Designation', rank: 0 },
+];
+
 export interface Profile {
   id: string;
   full_name: string;
   email: string;
   role: Role;
   created_at: string;
+  staffAdminRole?: StaffAdminRole | null;
+  staffAdminRoleOther?: string | null;
+  staffAdminDepartment?: string | null;
+  staffAdminDocumentPath?: string | null;
+  staff_admin_role?: StaffAdminRole | null;
+  staff_admin_role_other?: string | null;
+  staff_admin_department?: string | null;
+  staff_admin_document_path?: string | null;
 }
 
 export interface Complaint {
@@ -18,6 +35,10 @@ export interface Complaint {
   submittedByEmail?: string;
   user_id?: string;
   category: Category;
+  customCategory?: string | null;
+  custom_category?: string | null;
+  photoPaths?: string[];
+  photo_paths?: string[];
   location: string;
   description: string;
   priority: Priority;
@@ -29,6 +50,13 @@ export interface Complaint {
   resolution_note?: string | null;
   image_url?: string | null;
   resolution_image_url?: string | null;
+  escalationLevel?: number;
+  escalatedAt?: string | null;
+  escalatedTo?: string | null;
+  escalatedToId?: string | null;
+  escalatedToName?: string | null;
+  upvoteCount?: number;
+  hasUpvoted?: boolean;
   rating?: number | null;
   feedback_note?: string | null;
   rated_at?: string | null;

@@ -13,6 +13,7 @@ import com.scms.users.dto.UserResponseDto;
 import com.scms.users.dto.UserStatusUpdateDto;
 import com.scms.users.entity.RefreshToken;
 import com.scms.users.entity.Role;
+import com.scms.users.entity.StaffAdminRole;
 import com.scms.users.entity.StaffAdminStatus;
 import com.scms.users.entity.User;
 import com.scms.users.repository.RefreshTokenRepository;
@@ -217,10 +218,24 @@ public class UserService {
                     if (request.getStaffAdminDepartment() != null) {
                         user.setStaffAdminDepartment(request.getStaffAdminDepartment().trim());
                     }
+                    if (request.getStaffAdminRole() != null && !request.getStaffAdminRole().trim().isEmpty()) {
+                        try {
+                            StaffAdminRole roleEnum = StaffAdminRole.valueOf(request.getStaffAdminRole().trim().toUpperCase());
+                            user.setStaffAdminRole(roleEnum);
+                            if (roleEnum == StaffAdminRole.OTHER && request.getStaffAdminRoleOther() != null) {
+                                user.setStaffAdminRoleOther(request.getStaffAdminRoleOther().trim());
+                            } else {
+                                user.setStaffAdminRoleOther(null);
+                            }
+                        } catch (IllegalArgumentException e) {
+                            user.setStaffAdminRole(StaffAdminRole.OTHER);
+                            user.setStaffAdminRoleOther(request.getStaffAdminRole());
+                        }
+                    }
                     user.setStaffAdminStatus(StaffAdminStatus.PENDING);
                     user.setStaffAdminAppealCount(1);
-                    log.info("Teacher {} ({}) completed onboarding with MANAGER intent (appeal attempt 1/3, doc: {})",
-                            user.getFullName(), user.getEmail(), user.getStaffAdminDocumentPath());
+                    log.info("Teacher {} ({}) completed onboarding with MANAGER intent (appeal attempt 1/3, doc: {}, role: {})",
+                            user.getFullName(), user.getEmail(), user.getStaffAdminDocumentPath(), user.getStaffAdminRole());
                 }
             } else {
                 log.info("Teacher {} ({}) completed onboarding with REGULAR intent", user.getFullName(), user.getEmail());
@@ -279,6 +294,20 @@ public class UserService {
             }
             if (request.getDepartment() != null) {
                 user.setStaffAdminDepartment(request.getDepartment().trim());
+            }
+            if (request.getRole() != null && !request.getRole().trim().isEmpty()) {
+                try {
+                    StaffAdminRole roleEnum = StaffAdminRole.valueOf(request.getRole().trim().toUpperCase());
+                    user.setStaffAdminRole(roleEnum);
+                    if (roleEnum == StaffAdminRole.OTHER && request.getRoleOther() != null) {
+                        user.setStaffAdminRoleOther(request.getRoleOther().trim());
+                    } else {
+                        user.setStaffAdminRoleOther(null);
+                    }
+                } catch (IllegalArgumentException e) {
+                    user.setStaffAdminRole(StaffAdminRole.OTHER);
+                    user.setStaffAdminRoleOther(request.getRole());
+                }
             }
         }
 

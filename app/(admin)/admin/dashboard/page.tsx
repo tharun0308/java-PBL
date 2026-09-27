@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { ComplaintPriorityBadge } from '@/components/complaint-status-badge';
 import { toast } from 'sonner';
+import { fetchWithAuth } from '@/lib/api/fetch-with-auth';
 
 export default function AdminDashboardPage() {
   const [isExporting, setIsExporting] = useState(false);
@@ -37,7 +38,7 @@ export default function AdminDashboardPage() {
   } = useQuery<ReportSummary>({
     queryKey: ['admin-reports-summary'],
     queryFn: async () => {
-      const res = await fetch('/api/reports/summary');
+      const res = await fetchWithAuth('/api/reports/summary');
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || 'Failed to load report summary');
@@ -50,11 +51,11 @@ export default function AdminDashboardPage() {
   const handleExportCsv = async () => {
     try {
       setIsExporting(true);
-      const res = await fetch('/api/complaints');
+      const res = await fetchWithAuth('/api/complaints');
       if (!res.ok) throw new Error('Failed to fetch complaint data for export');
       const json = await res.json();
       const complaints: Complaint[] = json.data || [];
-      exportComplaintsToCsv(complaints, 'scms-facilities-master-report.csv');
+      exportComplaintsToCsv(complaints, 'grivo-facilities-master-report.csv');
       toast.success('CSV Export Completed', {
         description: `Exported ${complaints.length} complaint records to CSV.`,
       });

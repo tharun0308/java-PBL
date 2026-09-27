@@ -30,7 +30,7 @@ interface ComplaintTrackerCardProps {
 }
 
 export function ComplaintTrackerCard({ complaint, onOpenPhoto }: ComplaintTrackerCardProps) {
-  const formattedId = `#SCMS-${String(complaint.complaint_number).padStart(4, '0')}`;
+  const formattedId = complaint.complaintNumber || `#GRIV-${String(complaint.complaint_number || '0000').padStart(4, '0')}`;
   const sla = getComplaintSla(complaint);
 
   // Determine stage (1: Submitted, 2: Assigned, 3: In Progress, 4: Resolved, -1: Rejected)

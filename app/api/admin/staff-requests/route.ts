@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiClient, ApiException } from '@/lib/api/client';
-import { getAccessToken, getCurrentUser } from '@/lib/auth';
+import { getValidAccessToken, getUserFromToken, getCurrentUser } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   try {
-    const user = getCurrentUser();
-    const token = getAccessToken();
+    const token = await getValidAccessToken();
+    const user = token ? getUserFromToken(token) : getCurrentUser();
 
     if (!user || !token) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });

@@ -28,14 +28,14 @@ export default function AuthLayout({
           <div className="flex flex-col text-left">
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-2xl text-charcoal tracking-tight">
-                SCMS
+                Grivo
               </span>
               <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-lavender-soft text-charcoal border border-lavender/40">
                 Campus
               </span>
             </div>
             <span className="text-[11px] text-slate font-medium tracking-wide">
-              Smart Grievance & Resolution Portal
+              Campus Grievance & Resolution Platform
             </span>
           </div>
         </Link>

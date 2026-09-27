@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { StaffAdminRole, STAFF_ADMIN_ROLES } from '@/lib/types';
 import {
   Upload,
   FileCheck,
@@ -13,28 +14,47 @@ import {
   Loader2,
   AlertCircle,
   Building,
+  UserCheck,
+  ChevronDown,
 } from 'lucide-react';
 
 interface StaffIdUploadProps {
   onDocumentUploaded: (documentPath: string) => void;
   onDepartmentChanged: (department: string) => void;
+  onRoleChanged?: (role: StaffAdminRole) => void;
+  onRoleOtherChanged?: (roleOther: string) => void;
   currentDocumentPath?: string;
   currentDepartment?: string;
+  currentRole?: StaffAdminRole;
+  currentRoleOther?: string;
+  role?: StaffAdminRole | '';
+  roleOther?: string;
   required?: boolean;
 }
 
 export function StaffIdUpload({
   onDocumentUploaded,
   onDepartmentChanged,
+  onRoleChanged,
+  onRoleOtherChanged,
   currentDocumentPath = '',
   currentDepartment = '',
+  currentRole = 'PROFESSOR',
+  currentRoleOther = '',
+  role: controlledRole,
+  roleOther: controlledRoleOther,
   required = true,
 }: StaffIdUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [department, setDepartment] = useState(currentDepartment);
+  const [internalRole, setInternalRole] = useState<StaffAdminRole | ''>(controlledRole || currentRole);
+  const [internalRoleOther, setInternalRoleOther] = useState(controlledRoleOther || currentRoleOther);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedPath, setUploadedPath] = useState(currentDocumentPath);
+
+  const role = controlledRole !== undefined ? controlledRole : internalRole;
+  const roleOther = controlledRoleOther !== undefined ? controlledRoleOther : internalRoleOther;
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -113,6 +133,20 @@ export function StaffIdUpload({
     onDepartmentChanged(val);
   };
 
+  const handleRoleSelect = (selectedRole: StaffAdminRole) => {
+    setInternalRole(selectedRole);
+    if (onRoleChanged) {
+      onRoleChanged(selectedRole);
+    }
+  };
+
+  const handleRoleOtherChange = (val: string) => {
+    setInternalRoleOther(val);
+    if (onRoleOtherChanged) {
+      onRoleOtherChanged(val);
+    }
+  };
+
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024 * 1024) {
       return `${(bytes / 1024).toFixed(1)} KB`;
@@ -124,7 +158,65 @@ export function StaffIdUpload({
 
   return (
     <div className="space-y-4 pt-2">
-      {/* Employee ID File Input */}
+      {/* 1. Role / Hierarchy Selection (Required) */}
+      <div className="space-y-2">
+        <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal flex items-center justify-between">
+          <span className="flex items-center gap-1.5">
+            <UserCheck className="w-3.5 h-3.5 text-lavender-strong" />
+            <span>Staff / Administrative Role <span className="text-danger">*</span></span>
+          </span>
+          <span className="text-[10px] text-slate font-normal normal-case">Used for grievance escalation</span>
+        </label>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {STAFF_ADMIN_ROLES.map((r) => (
+            <button
+              key={r.value}
+              type="button"
+              onClick={() => handleRoleSelect(r.value)}
+              className={`px-3 py-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                role === r.value
+                  ? 'bg-pale-lavender border-lavender-strong text-charcoal ring-1 ring-lavender-strong shadow-sm font-semibold'
+                  : 'bg-white border-border text-charcoal hover:border-slate-300 hover:bg-slate-50'
+              }`}
+            >
+              <div className="text-xs font-bold leading-tight">{r.label}</div>
+              <div className="text-[10px] text-slate mt-0.5 font-mono">Rank {r.rank}</div>
+            </button>
+          ))}
+        </div>
+
+        {/* Dynamic specification input if role is 'OTHER' */}
+        {role === 'OTHER' && (
+          <div className="pt-1.5 animate-in fade-in duration-200">
+            <label className="block text-xs font-medium text-charcoal mb-1">
+              Please specify role title <span className="text-danger">*</span>
+            </label>
+            <Input
+              placeholder="e.g. Lab Superintendent, Assistant Librarian..."
+              value={roleOther}
+              onChange={(e) => handleRoleOtherChange(e.target.value)}
+              className="text-xs sm:text-sm bg-white border-border text-charcoal"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* 2. Department / Designation Field */}
+      <div className="space-y-1.5">
+        <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal flex items-center gap-1.5">
+          <Building className="w-3.5 h-3.5 text-slate" />
+          <span>Department <span className="text-[10px] text-slate font-normal normal-case">(e.g. Computer Science, Electrical)</span></span>
+        </label>
+        <Input
+          placeholder="e.g. Computer Science & Engineering"
+          value={department}
+          onChange={(e) => handleDepartmentChange(e.target.value)}
+          className="text-xs sm:text-sm bg-white border-border text-charcoal"
+        />
+      </div>
+
+      {/* 3. Employee ID File Upload */}
       <div className="space-y-2">
         <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal flex items-center justify-between">
           <span className="flex items-center gap-1.5">
@@ -203,23 +295,6 @@ export function StaffIdUpload({
             </label>
           </div>
         )}
-      </div>
-
-      {/* Department / Designation Optional Input */}
-      <div className="space-y-1.5">
-        <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal flex items-center gap-1.5">
-          <Building className="w-3.5 h-3.5 text-slate" />
-          <span>Department / Designation <span className="text-[10px] text-slate font-normal normal-case">(Optional)</span></span>
-        </label>
-        <Input
-          placeholder="e.g. Assistant Professor, Dept. of Computer Science"
-          value={department}
-          onChange={(e) => handleDepartmentChange(e.target.value)}
-          className="text-xs sm:text-sm bg-white border-border text-charcoal"
-        />
-        <p className="text-[11px] text-slate">
-          Helps the Main Administrator verify your department role when reviewing your request.
-        </p>
       </div>
     </div>
   );

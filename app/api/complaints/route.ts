@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { API_BASE_URL, apiClient, ApiException } from '@/lib/api/client';
-import { getAccessToken } from '@/lib/auth';
+import { getValidAccessToken } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   try {
-    const token = getAccessToken();
+    const token = await getValidAccessToken();
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });
     }
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const token = getAccessToken();
+    const token = await getValidAccessToken();
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });
     }
@@ -57,6 +57,8 @@ export async function POST(req: NextRequest) {
       token,
       body: JSON.stringify({
         category: body.category,
+        customCategory: body.customCategory || undefined,
+        photoPaths: body.photoPaths || undefined,
         location: body.location,
         description: body.description,
         priority: body.priority || 'MEDIUM',

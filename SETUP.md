@@ -1,4 +1,4 @@
-# Smart Campus Maintenance System (SCMS) - Developer Setup Guide
+# Grivo — Campus Grievance Management System - Developer Setup Guide
 
 ## Quick Start (Development)
 

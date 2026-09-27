@@ -108,9 +108,51 @@ export function getAccessToken(): string | undefined {
 }
 
 /**
+ * Check whether a JWT token is expired or close to expiry (within 10s buffer)
+ */
+export function isTokenExpired(token: string): boolean {
+  const claims = decodeJwt(token);
+  if (!claims || !claims.exp) return true;
+  return Date.now() >= (claims.exp - 10) * 1000;
+}
+
+/**
  * Retrieve raw refresh token from cookies on the server
  */
 export function getRefreshToken(): string | undefined {
   const cookieStore = cookies();
   return cookieStore.get(REFRESH_TOKEN_COOKIE)?.value;
+}
+
+/**
+ * Retrieve valid access token, silently refreshing from refresh token if access token is expired or missing.
+ */
+export async function getValidAccessToken(): Promise<string | undefined> {
+  const token = getAccessToken();
+  if (token && !isTokenExpired(token)) {
+    return token;
+  }
+
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return undefined;
+
+  try {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const res = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!res.ok) return undefined;
+    const data = await res.json().catch(() => null);
+    const { accessToken, refreshToken: newRefreshToken } = data?.data || {};
+    if (accessToken) {
+      setAuthCookies(accessToken, newRefreshToken);
+      return accessToken;
+    }
+  } catch {
+    return undefined;
+  }
+  return undefined;
 }

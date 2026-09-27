@@ -28,7 +28,7 @@ export function exportComplaintsToCsv(complaints: Complaint[], filename?: string
 
   const rows = complaints.map((c) => {
     const sla = getComplaintSla(c);
-    const formattedId = `#SCMS-${String(c.complaint_number).padStart(4, '0')}`;
+    const formattedId = c.complaintNumber || `#GRIV-${String(c.complaint_number || '0000').padStart(4, '0')}`;
 
     return [
       escapeCsv(formattedId),
@@ -54,7 +54,7 @@ export function exportComplaintsToCsv(complaints: Complaint[], filename?: string
   const link = document.createElement('a');
 
   const dateStr = new Date().toISOString().split('T')[0];
-  const downloadName = filename || `scms-complaints-report-${dateStr}.csv`;
+  const downloadName = filename || `grivo-complaints-report-${dateStr}.csv`;
   link.setAttribute('href', url);
   link.setAttribute('download', downloadName);
   document.body.appendChild(link);

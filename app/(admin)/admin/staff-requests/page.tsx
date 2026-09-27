@@ -28,6 +28,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { fetchWithAuth } from '@/lib/api/fetch-with-auth';
 
 interface PendingStaffRequest {
   id: string;
@@ -35,12 +36,29 @@ interface PendingStaffRequest {
   fullName: string;
   role: string;
   staffAdminStatus: string;
+  staffAdminRole?: 'PRINCIPAL' | 'HOD' | 'PROFESSOR' | 'OTHER';
+  staffAdminRoleOther?: string;
   userTitle?: string;
   staffAdminDocumentPath?: string;
   staffAdminDepartment?: string;
   createdAt?: string;
   updatedAt?: string;
 }
+
+const getRoleDisplay = (role?: string, other?: string) => {
+  switch (role) {
+    case 'PRINCIPAL':
+      return { label: 'Principal (Rank 3)', color: 'bg-purple-100 text-purple-800 border-purple-200' };
+    case 'HOD':
+      return { label: 'HOD (Rank 2)', color: 'bg-blue-100 text-blue-800 border-blue-200' };
+    case 'PROFESSOR':
+      return { label: 'Professor (Rank 1)', color: 'bg-emerald-100 text-emerald-800 border-emerald-200' };
+    case 'OTHER':
+      return { label: other ? `${other} (Rank 0)` : 'Other (Rank 0)', color: 'bg-slate-100 text-slate-800 border-slate-200' };
+    default:
+      return null;
+  }
+};
 
 export default function StaffRequestsAdminPage() {
   const queryClient = useQueryClient();
@@ -58,7 +76,7 @@ export default function StaffRequestsAdminPage() {
   } = useQuery<PendingStaffRequest[]>({
     queryKey: ['admin-staff-requests'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/staff-requests');
+      const res = await fetchWithAuth('/api/admin/staff-requests');
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || 'Failed to fetch staff requests');
@@ -71,7 +89,7 @@ export default function StaffRequestsAdminPage() {
   // Approve Mutation
   const approveMutation = useMutation({
     mutationFn: async (userId: string) => {
-      const res = await fetch(`/api/admin/staff-requests/${userId}/approve`, {
+      const res = await fetchWithAuth(`/api/admin/staff-requests/${userId}/approve`, {
         method: 'POST',
       });
       const data = await res.json();
@@ -102,7 +120,7 @@ export default function StaffRequestsAdminPage() {
   // Reject Mutation
   const rejectMutation = useMutation({
     mutationFn: async (userId: string) => {
-      const res = await fetch(`/api/admin/staff-requests/${userId}/reject`, {
+      const res = await fetchWithAuth(`/api/admin/staff-requests/${userId}/reject`, {
         method: 'POST',
       });
       const data = await res.json();
@@ -274,6 +292,11 @@ export default function StaffRequestsAdminPage() {
                             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-surface-muted text-charcoal border border-border">
                               {req.userTitle || 'Faculty'}
                             </span>
+                            {req.staffAdminRole && (
+                              <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${getRoleDisplay(req.staffAdminRole, req.staffAdminRoleOther)?.color}`}>
+                                {getRoleDisplay(req.staffAdminRole, req.staffAdminRoleOther)?.label}
+                              </span>
+                            )}
                             {req.staffAdminDepartment && (
                               <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-pale-lavender text-lavender-strong border border-lavender/30 flex items-center gap-1">
                                 <Building className="w-3 h-3" />
@@ -386,7 +409,7 @@ export default function StaffRequestsAdminPage() {
                     Faculty Employee ID — {previewDocUser.fullName}
                   </h3>
                   <p className="text-[11px] text-slate-300">
-                    {previewDocUser.staffAdminDepartment || 'Department unassigned'} • {previewDocUser.email}
+                    {previewDocUser.staffAdminRole ? `${getRoleDisplay(previewDocUser.staffAdminRole, previewDocUser.staffAdminRoleOther)?.label} • ` : ''}{previewDocUser.staffAdminDepartment || 'Department unassigned'} • {previewDocUser.email}
                   </p>
                 </div>
               </div>

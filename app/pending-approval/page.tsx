@@ -33,6 +33,8 @@ export default function PendingApprovalPage() {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [appealDocPath, setAppealDocPath] = useState('');
   const [appealDepartment, setAppealDepartment] = useState('');
+  const [appealRole, setAppealRole] = useState<'PRINCIPAL' | 'HOD' | 'PROFESSOR' | 'OTHER' | ''>('');
+  const [appealRoleOther, setAppealRoleOther] = useState('');
   const [showAppealForm, setShowAppealForm] = useState(false);
 
   // Fetch current user details from /api/auth/me
@@ -112,6 +114,22 @@ export default function PendingApprovalPage() {
       return;
     }
 
+    if (!appealRole) {
+      toast.error('Role Required', {
+        description: 'Please select your role (Principal, HOD, Professor, or Other).',
+        icon: <AlertCircle className="w-5 h-5 text-rose-500" />,
+      });
+      return;
+    }
+
+    if (appealRole === 'OTHER' && !appealRoleOther.trim()) {
+      toast.error('Specify Role', {
+        description: 'Please specify your custom role / designation.',
+        icon: <AlertCircle className="w-5 h-5 text-rose-500" />,
+      });
+      return;
+    }
+
     setIsAppealing(true);
     try {
       const res = await fetch('/api/user/appeal-staff', {
@@ -120,6 +138,8 @@ export default function PendingApprovalPage() {
         body: JSON.stringify({
           documentPath: appealDocPath,
           department: appealDepartment || undefined,
+          staffAdminRole: appealRole,
+          staffAdminRoleOther: appealRole === 'OTHER' ? appealRoleOther.trim() : undefined,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -179,14 +199,14 @@ export default function PendingApprovalPage() {
           <div className="flex flex-col text-left">
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-2xl text-charcoal tracking-tight">
-                SCMS
+                Grivo
               </span>
               <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-lavender text-charcoal">
                 Campus
               </span>
             </div>
             <span className="text-[11px] text-slate font-medium tracking-wide">
-              Smart Grievance & Resolution Portal
+              Campus Grievance & Resolution Platform
             </span>
           </div>
         </Link>
@@ -314,6 +334,10 @@ export default function PendingApprovalPage() {
                         onDepartmentChanged={(dept) => setAppealDepartment(dept)}
                         currentDocumentPath={appealDocPath}
                         currentDepartment={appealDepartment}
+                        role={appealRole}
+                        onRoleChanged={(r) => setAppealRole(r)}
+                        roleOther={appealRoleOther}
+                        onRoleOtherChanged={(o) => setAppealRoleOther(o)}
                         required={true}
                       />
 

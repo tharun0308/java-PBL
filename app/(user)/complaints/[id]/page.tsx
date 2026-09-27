@@ -10,7 +10,7 @@ import {
   STATUS_LABELS,
   PRIORITY_LABELS,
 } from '@/lib/constants';
-import { ComplaintStatusBadge, ComplaintPriorityBadge } from '@/components/complaint-status-badge';
+import { ComplaintStatusBadge, ComplaintPriorityBadge, ComplaintEscalationBadge } from '@/components/complaint-status-badge';
 import { formatDate, formatRelativeTime } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,11 +34,13 @@ import {
   ShieldAlert,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { fetchWithAuth } from '@/lib/api/fetch-with-auth';
 
 export default function UserComplaintDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
+  const [activePhoto, setActivePhoto] = React.useState<string | null>(null);
 
   const {
     data: complaint,
@@ -49,7 +51,7 @@ export default function UserComplaintDetailPage() {
   } = useQuery<Complaint>({
     queryKey: ['complaint', id],
     queryFn: async () => {
-      const res = await fetch(`/api/complaints/${id}`);
+      const res = await fetchWithAuth(`/api/complaints/${id}`);
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || 'Failed to load complaint details');
@@ -98,12 +100,15 @@ export default function UserComplaintDetailPage() {
     );
   }
 
-  const ticketNumber = complaint.complaintNumber || `#SCMS-${complaint.complaint_number || ''}`;
-  const categoryLabel = CATEGORY_LABELS[complaint.category] || complaint.category;
+  const ticketNumber = complaint.complaintNumber || `#GRIV-${complaint.complaint_number || ''}`;
+  const categoryLabel = complaint.category === 'OTHER' && (complaint.customCategory || complaint.custom_category)
+    ? `Other: ${complaint.customCategory || complaint.custom_category}`
+    : CATEGORY_LABELS[complaint.category] || complaint.category;
   const historyList: ComplaintHistory[] = complaint.history || [];
   const resolutionNote = complaint.resolutionNote || complaint.resolution_note;
   const assignedTo = complaint.assignedToName || complaint.assigned_to;
   const createdDate = complaint.createdAt || complaint.created_at;
+  const photos: string[] = complaint.photoPaths || (complaint.photo_paths as any) || [];
 
   return (
     <motion.div
@@ -136,6 +141,12 @@ export default function UserComplaintDetailPage() {
                 {categoryLabel}
               </span>
               <ComplaintPriorityBadge priority={complaint.priority} />
+              {complaint.escalationLevel && complaint.escalationLevel > 0 ? (
+                <ComplaintEscalationBadge
+                  escalationLevel={complaint.escalationLevel}
+                  escalatedTo={complaint.escalatedTo}
+                />
+              ) : null}
             </div>
 
             <div className="flex items-center gap-2">
@@ -167,6 +178,40 @@ export default function UserComplaintDetailPage() {
             </div>
           </div>
 
+          {/* Attached Defect Photos Gallery */}
+          {photos.length > 0 && (
+            <div className="space-y-2.5">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-lavender" />
+                <span>Attached Defect Photos ({photos.length})</span>
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {photos.map((filename, idx) => (
+                  <div
+                    key={filename}
+                    onClick={() => setActivePhoto(filename)}
+                    className="relative group rounded-xl overflow-hidden border border-border bg-charcoal/5 aspect-[4/3] flex items-center justify-center cursor-pointer shadow-xs hover:border-lavender/50 transition-all"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/api/complaints/photos/${filename}`}
+                      alt={`Defect photo ${idx + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-charcoal/75 text-white text-[10px] font-mono font-medium">
+                      Photo {idx + 1}
+                    </div>
+                    <div className="absolute inset-0 bg-charcoal/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-xs font-semibold text-white bg-charcoal/80 px-2.5 py-1 rounded-lg">
+                        Click to view
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Assignment Meta */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-xl bg-surface-muted border border-border text-xs">
             <div className="flex items-center gap-2">
@@ -195,6 +240,38 @@ export default function UserComplaintDetailPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Photo Modal */}
+      {activePhoto && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/80 backdrop-blur-xs p-4"
+          onClick={() => setActivePhoto(null)}
+        >
+          <div
+            className="relative max-w-3xl max-h-[85vh] bg-white rounded-2xl overflow-hidden shadow-2xl border border-border"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-3 bg-cream-card border-b border-border flex items-center justify-between">
+              <span className="text-xs font-semibold text-charcoal">Defect Photo Preview</span>
+              <button
+                type="button"
+                onClick={() => setActivePhoto(null)}
+                className="p-1 rounded-lg text-slate hover:text-charcoal hover:bg-charcoal/10 transition-colors"
+              >
+                <XCircle className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-2 flex items-center justify-center bg-charcoal/5 max-h-[75vh] overflow-auto">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`/api/complaints/photos/${activePhoto}`}
+                alt="Defect preview full"
+                className="max-h-[70vh] w-auto object-contain rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Immutable Audit Trail Timeline */}
       <Card className="shadow-md border-border bg-white">

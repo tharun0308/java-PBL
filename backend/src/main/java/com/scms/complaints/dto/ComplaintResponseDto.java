@@ -19,6 +19,8 @@ public class ComplaintResponseDto {
     private String submittedByName;
     private String submittedByEmail;
     private ComplaintCategory category;
+    private String customCategory;
+    private List<String> photoPaths = new ArrayList<>();
     private String location;
     private String description;
     private ComplaintPriority priority;
@@ -26,6 +28,12 @@ public class ComplaintResponseDto {
     private UUID assignedToId;
     private String assignedToName;
     private String resolutionNote;
+    private int escalationLevel;
+    private Instant escalatedAt;
+    private UUID escalatedToId;
+    private String escalatedToName;
+    private int upvoteCount;
+    private boolean hasUpvoted;
     private Instant createdAt;
     private Instant updatedAt;
     private List<ComplaintHistoryDto> history = new ArrayList<>();
@@ -33,6 +41,10 @@ public class ComplaintResponseDto {
     public ComplaintResponseDto() {}
 
     public ComplaintResponseDto(Complaint complaint) {
+        this(complaint, false);
+    }
+
+    public ComplaintResponseDto(Complaint complaint, boolean hasUpvoted) {
         this.id = complaint.getId();
         this.complaintNumber = complaint.getComplaintNumber();
         if (complaint.getSubmittedBy() != null) {
@@ -41,6 +53,15 @@ public class ComplaintResponseDto {
             this.submittedByEmail = complaint.getSubmittedBy().getEmail();
         }
         this.category = complaint.getCategory();
+        this.customCategory = complaint.getCustomCategory();
+        if (complaint.getPhotoPaths() != null && !complaint.getPhotoPaths().trim().isEmpty()) {
+            this.photoPaths = java.util.Arrays.stream(complaint.getPhotoPaths().split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList());
+        } else {
+            this.photoPaths = new ArrayList<>();
+        }
         this.location = complaint.getLocation();
         this.description = complaint.getDescription();
         this.priority = complaint.getPriority();
@@ -50,6 +71,14 @@ public class ComplaintResponseDto {
             this.assignedToName = complaint.getAssignedTo().getFullName();
         }
         this.resolutionNote = complaint.getResolutionNote();
+        this.escalationLevel = complaint.getEscalationLevel();
+        this.escalatedAt = complaint.getEscalatedAt();
+        if (complaint.getEscalatedTo() != null) {
+            this.escalatedToId = complaint.getEscalatedTo().getId();
+            this.escalatedToName = complaint.getEscalatedTo().getFullName();
+        }
+        this.upvoteCount = complaint.getUpvoteCount();
+        this.hasUpvoted = hasUpvoted;
         this.createdAt = complaint.getCreatedAt();
         this.updatedAt = complaint.getUpdatedAt();
         if (complaint.getHistory() != null) {
@@ -185,5 +214,69 @@ public class ComplaintResponseDto {
 
     public void setHistory(List<ComplaintHistoryDto> history) {
         this.history = history;
+    }
+
+    public String getCustomCategory() {
+        return customCategory;
+    }
+
+    public void setCustomCategory(String customCategory) {
+        this.customCategory = customCategory;
+    }
+
+    public List<String> getPhotoPaths() {
+        return photoPaths;
+    }
+
+    public void setPhotoPaths(List<String> photoPaths) {
+        this.photoPaths = photoPaths;
+    }
+
+    public int getEscalationLevel() {
+        return escalationLevel;
+    }
+
+    public void setEscalationLevel(int escalationLevel) {
+        this.escalationLevel = escalationLevel;
+    }
+
+    public Instant getEscalatedAt() {
+        return escalatedAt;
+    }
+
+    public void setEscalatedAt(Instant escalatedAt) {
+        this.escalatedAt = escalatedAt;
+    }
+
+    public UUID getEscalatedToId() {
+        return escalatedToId;
+    }
+
+    public void setEscalatedToId(UUID escalatedToId) {
+        this.escalatedToId = escalatedToId;
+    }
+
+    public String getEscalatedToName() {
+        return escalatedToName;
+    }
+
+    public void setEscalatedToName(String escalatedToName) {
+        this.escalatedToName = escalatedToName;
+    }
+
+    public int getUpvoteCount() {
+        return upvoteCount;
+    }
+
+    public void setUpvoteCount(int upvoteCount) {
+        this.upvoteCount = upvoteCount;
+    }
+
+    public boolean isHasUpvoted() {
+        return hasUpvoted;
+    }
+
+    public void setHasUpvoted(boolean hasUpvoted) {
+        this.hasUpvoted = hasUpvoted;
     }
 }

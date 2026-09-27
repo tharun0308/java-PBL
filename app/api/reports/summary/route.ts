@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiClient, ApiException } from '@/lib/api/client';
-import { getAccessToken } from '@/lib/auth';
+import { getValidAccessToken } from '@/lib/auth';
 import { Category, Priority } from '@/lib/constants';
 import { ReportSummary } from '@/lib/types';
 
 export async function GET(req: NextRequest) {
   try {
-    const token = getAccessToken();
+    const token = await getValidAccessToken();
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });
     }

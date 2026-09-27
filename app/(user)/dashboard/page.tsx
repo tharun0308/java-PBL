@@ -16,6 +16,7 @@ import {
 import { ComplaintStatusBadge, ComplaintPriorityBadge } from '@/components/complaint-status-badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDate, formatRelativeTime } from '@/lib/utils';
@@ -39,10 +40,12 @@ import {
   Sparkles,
   ArrowRight,
   Lock,
+  Camera,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { StaffIdUpload } from '@/components/staff-id-upload';
+import { fetchWithAuth } from '@/lib/api/fetch-with-auth';
 
 export default function UserDashboardPage() {
   const [search, setSearch] = useState('');
@@ -52,11 +55,13 @@ export default function UserDashboardPage() {
   const [isRequestingStaff, setIsRequestingStaff] = useState(false);
   const [teacherDocPath, setTeacherDocPath] = useState('');
   const [teacherDept, setTeacherDept] = useState('');
+  const [teacherRole, setTeacherRole] = useState<'PRINCIPAL' | 'HOD' | 'PROFESSOR' | 'OTHER' | ''>('');
+  const [teacherRoleOther, setTeacherRoleOther] = useState('');
 
   const { data: userData, refetch: refetchUser } = useQuery({
     queryKey: ['auth-me'],
     queryFn: async () => {
-      const res = await fetch('/api/auth/me');
+      const res = await fetchWithAuth('/api/auth/me');
       if (!res.ok) return null;
       const json = await res.json();
       return json.user;
@@ -65,6 +70,22 @@ export default function UserDashboardPage() {
 
   const handleRequestStaffAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!teacherRole) {
+      toast.error('Role Required', {
+        description: 'Please select your role (Principal, HOD, Professor, or Other).',
+        icon: <AlertCircle className="w-5 h-5 text-rose-500" />,
+      });
+      return;
+    }
+
+    if (teacherRole === 'OTHER' && !teacherRoleOther.trim()) {
+      toast.error('Specify Role', {
+        description: 'Please specify your custom role / designation.',
+        icon: <AlertCircle className="w-5 h-5 text-rose-500" />,
+      });
+      return;
+    }
+
     if (!teacherDocPath) {
       toast.error('Employee ID Required', {
         description: 'Please upload your Employee ID card to submit your request.',
@@ -75,12 +96,14 @@ export default function UserDashboardPage() {
 
     setIsRequestingStaff(true);
     try {
-      const res = await fetch('/api/user/request-staff-admin', {
+      const res = await fetchWithAuth('/api/user/request-staff-admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           documentPath: teacherDocPath,
           department: teacherDept || undefined,
+          staffAdminRole: teacherRole,
+          staffAdminRoleOther: teacherRole === 'OTHER' ? teacherRoleOther.trim() : undefined,
         }),
       });
       const json = await res.json();
@@ -112,7 +135,7 @@ export default function UserDashboardPage() {
   } = useQuery<Complaint[]>({
     queryKey: ['my-complaints'],
     queryFn: async () => {
-      const res = await fetch('/api/complaints');
+      const res = await fetchWithAuth('/api/complaints');
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || 'Failed to fetch complaints');
@@ -142,7 +165,7 @@ export default function UserDashboardPage() {
 
         if (search.trim()) {
           const q = search.toLowerCase();
-          const ticketNum = (c.complaintNumber || `#SCMS-${c.complaint_number || ''}`).toLowerCase();
+          const ticketNum = (c.complaintNumber || `#GRIV-${c.complaint_number || ''}`).toLowerCase();
           const matchNum = ticketNum.includes(q);
           const matchLoc = (c.location || '').toLowerCase().includes(q);
           const matchDesc = (c.description || '').toLowerCase().includes(q);
@@ -166,15 +189,28 @@ export default function UserDashboardPage() {
   }, [complaints, selectedStatus, selectedCategory, search, sortBy]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-7">
       {/* Top Banner & Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-charcoal tracking-tight flex items-center gap-2.5">
             <span>My Complaints</span>
             <span className="text-xs uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-pale-lavender text-lavender-strong border border-lavender/30">
-              Student / Faculty Portal
+              {userData?.role === 'STAFF_ADMIN' ? 'Staff Administrator' : 'Student / Faculty Portal'}
             </span>
+            {userData?.staffAdminRole && (
+              <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-pale-mint text-mint-strong border border-mint/30">
+                {userData.staffAdminRole === 'OTHER' && userData.staffAdminRoleOther
+                  ? `${userData.staffAdminRoleOther} (Rank 0)`
+                  : userData.staffAdminRole === 'PRINCIPAL'
+                  ? 'Principal (Rank 3)'
+                  : userData.staffAdminRole === 'HOD'
+                  ? 'HOD (Rank 2)'
+                  : userData.staffAdminRole === 'PROFESSOR'
+                  ? 'Professor (Rank 1)'
+                  : userData.staffAdminRole}
+              </span>
+            )}
           </h1>
           <p className="text-sm text-slate mt-1">
             Track real-time resolution status and communication logs for your submitted grievances.
@@ -203,73 +239,73 @@ export default function UserDashboardPage() {
 
 
       {/* Summary Stat Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
-        <Card className="bg-white border-border shadow-sm">
-          <CardContent className="p-4 flex flex-col">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 sm:gap-5 lg:gap-6 items-stretch">
+        <Card className="bg-white border-border shadow-sm h-full flex flex-col justify-between">
+          <CardContent className="p-4 sm:p-5 flex flex-col justify-between flex-1">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate min-h-[1.25rem] flex items-center">
               Total Filed
             </span>
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-2xl font-extrabold text-charcoal">
+            <div className="flex items-center justify-between mt-3">
+              <span className="text-2xl font-extrabold text-charcoal leading-none">
                 {isLoading ? <Skeleton className="h-7 w-8" /> : metrics.total}
               </span>
-              <ClipboardList className="w-5 h-5 text-slate" />
+              <ClipboardList className="w-5 h-5 text-slate shrink-0" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-pale-warning border-[#FDE68A] shadow-sm">
-          <CardContent className="p-4 flex flex-col">
-            <span className="text-xs font-semibold uppercase tracking-wider text-warning">
+        <Card className="bg-pale-warning border-[#FDE68A] shadow-sm h-full flex flex-col justify-between">
+          <CardContent className="p-4 sm:p-5 flex flex-col justify-between flex-1">
+            <span className="text-xs font-semibold uppercase tracking-wider text-warning min-h-[1.25rem] flex items-center">
               Pending
             </span>
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-2xl font-extrabold text-warning">
+            <div className="flex items-center justify-between mt-3">
+              <span className="text-2xl font-extrabold text-warning leading-none">
                 {isLoading ? <Skeleton className="h-7 w-8" /> : metrics.pending}
               </span>
-              <Clock className="w-5 h-5 text-warning" />
+              <Clock className="w-5 h-5 text-warning shrink-0" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-pale-lavender border-lavender/30 shadow-sm">
-          <CardContent className="p-4 flex flex-col">
-            <span className="text-xs font-semibold uppercase tracking-wider text-lavender-strong">
+        <Card className="bg-pale-lavender border-lavender/30 shadow-sm h-full flex flex-col justify-between">
+          <CardContent className="p-4 sm:p-5 flex flex-col justify-between flex-1">
+            <span className="text-xs font-semibold uppercase tracking-wider text-lavender-strong min-h-[1.25rem] flex items-center">
               In Progress
             </span>
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-2xl font-extrabold text-lavender-strong">
+            <div className="flex items-center justify-between mt-3">
+              <span className="text-2xl font-extrabold text-lavender-strong leading-none">
                 {isLoading ? <Skeleton className="h-7 w-8" /> : metrics.inProgress}
               </span>
-              <Loader2 className="w-5 h-5 text-lavender" />
+              <Loader2 className="w-5 h-5 text-lavender shrink-0" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-pale-mint border-mint/30 shadow-sm">
-          <CardContent className="p-4 flex flex-col">
-            <span className="text-xs font-semibold uppercase tracking-wider text-mint-strong">
+        <Card className="bg-pale-mint border-mint/30 shadow-sm h-full flex flex-col justify-between">
+          <CardContent className="p-4 sm:p-5 flex flex-col justify-between flex-1">
+            <span className="text-xs font-semibold uppercase tracking-wider text-mint-strong min-h-[1.25rem] flex items-center">
               Resolved
             </span>
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-2xl font-extrabold text-mint-strong">
+            <div className="flex items-center justify-between mt-3">
+              <span className="text-2xl font-extrabold text-mint-strong leading-none">
                 {isLoading ? <Skeleton className="h-7 w-8" /> : metrics.resolved}
               </span>
-              <CheckCircle2 className="w-5 h-5 text-mint-strong" />
+              <CheckCircle2 className="w-5 h-5 text-mint-strong shrink-0" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-pale-danger border-[#FECDD3] shadow-sm col-span-2 sm:col-span-1">
-          <CardContent className="p-4 flex flex-col">
-            <span className="text-xs font-semibold uppercase tracking-wider text-danger">
+        <Card className="bg-pale-danger border-[#FECDD3] shadow-sm col-span-2 sm:col-span-1 h-full flex flex-col justify-between">
+          <CardContent className="p-4 sm:p-5 flex flex-col justify-between flex-1">
+            <span className="text-xs font-semibold uppercase tracking-wider text-danger min-h-[1.25rem] flex items-center">
               Rejected
             </span>
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-2xl font-extrabold text-danger">
+            <div className="flex items-center justify-between mt-3">
+              <span className="text-2xl font-extrabold text-danger leading-none">
                 {isLoading ? <Skeleton className="h-7 w-8" /> : metrics.rejected}
               </span>
-              <XCircle className="w-5 h-5 text-danger" />
+              <XCircle className="w-5 h-5 text-danger shrink-0" />
             </div>
           </CardContent>
         </Card>
@@ -277,25 +313,24 @@ export default function UserDashboardPage() {
 
       {/* Filter and Search Bar */}
       <Card className="bg-white border-border shadow-sm">
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+        <CardContent className="p-4 sm:p-5">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3.5 sm:gap-4 lg:gap-5 items-center">
             {/* Search Input */}
-            <div className="sm:col-span-5 relative">
+            <div className="sm:col-span-12 lg:col-span-5 relative">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate pointer-events-none" />
               <Input
                 placeholder="Search ticket #, location, description..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9"
+                className="pl-9 h-11"
               />
             </div>
 
             {/* Status Filter */}
-            <div className="sm:col-span-3">
-              <select
+            <div className="sm:col-span-4 lg:col-span-3">
+              <Select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-white border border-border text-charcoal text-sm focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender"
               >
                 <option value="ALL">All Statuses</option>
                 {STATUSES.map((st: Status) => (
@@ -303,15 +338,14 @@ export default function UserDashboardPage() {
                     {STATUS_LABELS[st]}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             {/* Category Filter */}
-            <div className="sm:col-span-2">
-              <select
+            <div className="sm:col-span-4 lg:col-span-2">
+              <Select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-white border border-border text-charcoal text-sm focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender"
               >
                 <option value="ALL">All Categories</option>
                 {CATEGORIES.map((cat: Category) => (
@@ -319,27 +353,26 @@ export default function UserDashboardPage() {
                     {CATEGORY_LABELS[cat]}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             {/* Sort Order */}
-            <div className="sm:col-span-2">
-              <select
+            <div className="sm:col-span-4 lg:col-span-2">
+              <Select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-xl bg-white border border-border text-charcoal text-sm focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender"
               >
                 <option value="NEWEST">Newest First</option>
                 <option value="OLDEST">Oldest First</option>
                 <option value="PRIORITY">Highest Priority</option>
-              </select>
+              </Select>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Complaint List Section */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
@@ -407,9 +440,11 @@ export default function UserDashboardPage() {
         ) : (
           /* Complaint Cards Grid */
           filteredComplaints.map((c) => {
-            const ticketNumber = c.complaintNumber || `#SCMS-${String(c.complaint_number || '').padStart(4, '0')}`;
-            const categoryLabel = CATEGORY_LABELS[c.category] || c.category;
+            const categoryLabel = c.category === 'OTHER' && (c.customCategory || c.custom_category)
+              ? `Other: ${c.customCategory || c.custom_category}`
+              : CATEGORY_LABELS[c.category] || c.category;
             const createdDate = c.createdAt || c.created_at;
+            const ticketNumber = c.complaintNumber || c.complaint_number || `#${c.id}`;
 
             return (
               <Link
@@ -428,6 +463,12 @@ export default function UserDashboardPage() {
                           <Layers className="w-3.5 h-3.5 text-lavender" />
                           {categoryLabel}
                         </span>
+                        {((c.photoPaths && c.photoPaths.length > 0) || (c.photo_paths && c.photo_paths.length > 0)) && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium text-lavender-strong bg-pale-lavender px-2 py-0.5 rounded border border-lavender/30">
+                            <Camera className="w-3 h-3 text-lavender" />
+                            <span>{c.photoPaths?.length || c.photo_paths?.length} photo{(c.photoPaths?.length || c.photo_paths?.length || 1) > 1 ? 's' : ''}</span>
+                          </span>
+                        )}
                         <ComplaintPriorityBadge priority={c.priority} />
                       </div>
 
@@ -504,31 +545,29 @@ export default function UserDashboardPage() {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="border border-lavender/30 bg-card rounded-2xl shadow-sm overflow-hidden">
+              <Card className="border border-lavender/30 bg-card rounded-2xl shadow-sm overflow-hidden w-full">
                 <div className="p-5 sm:p-6 bg-gradient-to-r from-pale-lavender/60 via-pale-lavender/30 to-transparent border-b border-lavender/20">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-3.5">
-                      <div className="w-10 h-10 rounded-xl bg-white border border-lavender/30 text-lavender-strong flex items-center justify-center shrink-0 shadow-xs">
-                        <Sparkles className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="text-base font-bold text-charcoal">
-                            Request Manager (Staff Admin) Access
-                          </h3>
-                          <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-white text-lavender-strong border border-lavender/30 shadow-2xs">
-                            Faculty Feature
+                  <div className="flex items-start gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-white border border-lavender/30 text-lavender-strong flex items-center justify-center shrink-0 shadow-xs mt-0.5">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-base font-bold text-charcoal">
+                          Request Manager (Staff Admin) Access
+                        </h3>
+                        <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-white text-lavender-strong border border-lavender/30 shadow-2xs shrink-0">
+                          Faculty Feature
+                        </span>
+                        {(userData?.staffAdminAppealCount || 0) > 0 && (
+                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
+                            Attempt {(userData?.staffAdminAppealCount || 0) + 1} of 3
                           </span>
-                          {(userData?.staffAdminAppealCount || 0) > 0 && (
-                            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                              Attempt {(userData?.staffAdminAppealCount || 0) + 1} of 3
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs sm:text-sm text-slate mt-1 max-w-2xl leading-relaxed">
-                          As faculty, you can request Manager access to triage departmental grievances, assign technicians, and coordinate issue resolutions. Upload your Employee ID card to submit your request for Main Admin review.
-                        </p>
+                        )}
                       </div>
+                      <p className="text-xs sm:text-sm text-slate leading-relaxed break-words">
+                        As faculty, you can request Manager access to triage departmental grievances, assign technicians, and coordinate issue resolutions. Upload your Employee ID card to submit your request for Main Admin review.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -540,6 +579,10 @@ export default function UserDashboardPage() {
                       onDepartmentChanged={setTeacherDept}
                       currentDocumentPath={teacherDocPath}
                       currentDepartment={teacherDept}
+                      role={teacherRole}
+                      onRoleChanged={setTeacherRole}
+                      roleOther={teacherRoleOther}
+                      onRoleOtherChanged={setTeacherRoleOther}
                       required={true}
                     />
 

@@ -1,14 +1,14 @@
-# Smart Complaint Management System (SCMS)
+# Grivo — Campus Grievance Management System
 
-> A production-ready, full-stack campus facility complaint management, triage, and resolution platform built with Next.js 14 (App Router, TypeScript), Tailwind CSS, shadcn/ui, Supabase (PostgreSQL, Auth, RLS), TanStack React Query, and Recharts.
+> A production-ready, full-stack campus facility grievance management, triage, and resolution platform built with Next.js 14 (App Router, TypeScript), Tailwind CSS, Spring Boot 3 (Java 21), PostgreSQL, and TanStack React Query.
 
 ---
 
 ## Features
 
-- ⚡ **Student Portal**:
+- ⚡ **Student / Faculty Portal**:
   - Register complaints across 8 campus facility categories (`Electrical`, `Water Supply`, `Cleanliness`, `Hostel Maintenance`, `Internet/IT`, `Laboratory Equipment`, `Infrastructure`, `Other`).
-  - Automatic sequential complaint numbers (`#SCMS-0001`).
+  - Automatic sequential complaint numbers (`#GRIV-0001`).
   - Filter and track personal complaints with color-coded status badges (`Pending`, `In Progress`, `Resolved`, `Rejected`).
   - Real-time resolution timeline and administrator notes.
 - 🛡️ **Administrator Operations**:

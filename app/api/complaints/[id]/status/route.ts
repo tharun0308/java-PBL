@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiClient, ApiException } from '@/lib/api/client';
-import { getAccessToken } from '@/lib/auth';
+import { getValidAccessToken } from '@/lib/auth';
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const token = getAccessToken();
+    const token = await getValidAccessToken();
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });
     }

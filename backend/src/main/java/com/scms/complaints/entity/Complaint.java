@@ -26,6 +26,12 @@ public class Complaint {
     @Column(nullable = false)
     private ComplaintCategory category;
 
+    @Column(name = "custom_category")
+    private String customCategory;
+
+    @Column(name = "photo_paths")
+    private String photoPaths;
+
     @Column(nullable = false)
     private String location;
 
@@ -46,6 +52,19 @@ public class Complaint {
 
     @Column(name = "resolution_note", columnDefinition = "TEXT")
     private String resolutionNote;
+
+    @Column(name = "escalation_level", nullable = false)
+    private int escalationLevel = 0;
+
+    @Column(name = "escalated_at")
+    private Instant escalatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "escalated_to")
+    private User escalatedTo;
+
+    @Column(name = "upvote_count", nullable = false)
+    private int upvoteCount = 0;
 
     @OneToMany(mappedBy = "complaint", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("updatedAt ASC")
@@ -107,6 +126,22 @@ public class Complaint {
 
     public void setCategory(ComplaintCategory category) {
         this.category = category;
+    }
+
+    public String getCustomCategory() {
+        return customCategory;
+    }
+
+    public void setCustomCategory(String customCategory) {
+        this.customCategory = customCategory;
+    }
+
+    public String getPhotoPaths() {
+        return photoPaths;
+    }
+
+    public void setPhotoPaths(String photoPaths) {
+        this.photoPaths = photoPaths;
     }
 
     public String getLocation() {
@@ -171,6 +206,38 @@ public class Complaint {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public int getEscalationLevel() {
+        return escalationLevel;
+    }
+
+    public void setEscalationLevel(int escalationLevel) {
+        this.escalationLevel = escalationLevel;
+    }
+
+    public Instant getEscalatedAt() {
+        return escalatedAt;
+    }
+
+    public void setEscalatedAt(Instant escalatedAt) {
+        this.escalatedAt = escalatedAt;
+    }
+
+    public User getEscalatedTo() {
+        return escalatedTo;
+    }
+
+    public void setEscalatedTo(User escalatedTo) {
+        this.escalatedTo = escalatedTo;
+    }
+
+    public int getUpvoteCount() {
+        return upvoteCount;
+    }
+
+    public void setUpvoteCount(int upvoteCount) {
+        this.upvoteCount = upvoteCount;
     }
 
     public Instant getUpdatedAt() {

@@ -5,6 +5,8 @@ export const complaintCreateSchema = z.object({
   category: z.enum(CATEGORIES, {
     errorMap: () => ({ message: 'Please select a valid department category' }),
   }),
+  customCategory: z.string().max(100, 'Custom category cannot exceed 100 characters').optional().nullable(),
+  photoPaths: z.array(z.string()).optional().default([]),
   location: z
     .string()
     .min(3, 'Location must be at least 3 characters')
@@ -17,6 +19,14 @@ export const complaintCreateSchema = z.object({
     errorMap: () => ({ message: 'Please select a valid priority (LOW, MEDIUM, HIGH)' }),
   }),
   image_url: z.string().optional().nullable(),
+}).refine((data) => {
+  if (data.category === 'OTHER') {
+    return !!data.customCategory && data.customCategory.trim().length >= 2;
+  }
+  return true;
+}, {
+  message: 'Please specify the custom category (at least 2 characters)',
+  path: ['customCategory'],
 });
 
 export type ComplaintCreateInput = z.infer<typeof complaintCreateSchema>;

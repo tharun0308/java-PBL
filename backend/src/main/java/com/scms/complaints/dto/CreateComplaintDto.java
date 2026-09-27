@@ -11,6 +11,11 @@ public class CreateComplaintDto {
     @NotNull(message = "Category is required")
     private ComplaintCategory category;
 
+    @Size(max = 100, message = "Custom category cannot exceed 100 characters")
+    private String customCategory;
+
+    private java.util.List<String> photoPaths;
+
     @NotBlank(message = "Location is required")
     @Size(max = 255, message = "Location cannot exceed 255 characters")
     private String location;
@@ -36,6 +41,22 @@ public class CreateComplaintDto {
 
     public void setCategory(ComplaintCategory category) {
         this.category = category;
+    }
+
+    public String getCustomCategory() {
+        return customCategory;
+    }
+
+    public void setCustomCategory(String customCategory) {
+        this.customCategory = customCategory;
+    }
+
+    public java.util.List<String> getPhotoPaths() {
+        return photoPaths;
+    }
+
+    public void setPhotoPaths(java.util.List<String> photoPaths) {
+        this.photoPaths = photoPaths;
     }
 
     public String getLocation() {

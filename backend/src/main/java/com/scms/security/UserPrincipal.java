@@ -28,6 +28,9 @@ public class UserPrincipal implements UserDetails, OAuth2User, OidcUser {
     private final boolean onboardingCompleted;
     private final Integer academicYear;
     private final int staffAdminAppealCount;
+    private final com.scms.users.entity.StaffAdminRole staffAdminRole;
+    private final String staffAdminRoleOther;
+    private final String staffAdminDepartment;
     private final boolean active;
     private final Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
@@ -37,6 +40,8 @@ public class UserPrincipal implements UserDetails, OAuth2User, OidcUser {
     public UserPrincipal(UUID id, String email, String password, String fullName, Role role,
                          StaffAdminStatus staffAdminStatus, String userTitle,
                          boolean onboardingCompleted, Integer academicYear, int staffAdminAppealCount,
+                         com.scms.users.entity.StaffAdminRole staffAdminRole, String staffAdminRoleOther,
+                         String staffAdminDepartment,
                          boolean active, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.email = email;
@@ -48,6 +53,9 @@ public class UserPrincipal implements UserDetails, OAuth2User, OidcUser {
         this.onboardingCompleted = onboardingCompleted;
         this.academicYear = academicYear;
         this.staffAdminAppealCount = staffAdminAppealCount;
+        this.staffAdminRole = staffAdminRole;
+        this.staffAdminRoleOther = staffAdminRoleOther;
+        this.staffAdminDepartment = staffAdminDepartment;
         this.active = active;
         this.authorities = authorities;
     }
@@ -65,6 +73,9 @@ public class UserPrincipal implements UserDetails, OAuth2User, OidcUser {
                 user.isOnboardingCompleted(),
                 user.getAcademicYear(),
                 user.getStaffAdminAppealCount(),
+                user.getStaffAdminRole(),
+                user.getStaffAdminRoleOther(),
+                user.getStaffAdminDepartment(),
                 user.isActive(),
                 Collections.singletonList(authority)
         );
@@ -113,6 +124,18 @@ public class UserPrincipal implements UserDetails, OAuth2User, OidcUser {
 
     public int getStaffAdminAppealCount() {
         return staffAdminAppealCount;
+    }
+
+    public com.scms.users.entity.StaffAdminRole getStaffAdminRole() {
+        return staffAdminRole;
+    }
+
+    public String getStaffAdminRoleOther() {
+        return staffAdminRoleOther;
+    }
+
+    public String getStaffAdminDepartment() {
+        return staffAdminDepartment;
     }
 
     @Override

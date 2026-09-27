@@ -5,10 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.io.File;
 
 @SpringBootApplication
+@EnableScheduling
 public class ScmsApplication {
 
     private static final Logger log = LoggerFactory.getLogger(ScmsApplication.class);

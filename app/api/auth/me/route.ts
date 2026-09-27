@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser, getAccessToken } from '@/lib/auth';
+import { getCurrentUser, getValidAccessToken, getUserFromToken } from '@/lib/auth';
 import { API_BASE_URL } from '@/lib/api/client';
 
 export async function GET(req: NextRequest) {
-  const token = getAccessToken();
-  const fallbackUser = getCurrentUser();
+  const token = await getValidAccessToken();
+  const fallbackUser = token ? getUserFromToken(token) : getCurrentUser();
 
   if (!token || !fallbackUser) {
     return NextResponse.json({ user: null }, { status: 401 });

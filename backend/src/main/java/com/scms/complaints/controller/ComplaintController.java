@@ -33,6 +33,36 @@ public class ComplaintController {
         this.complaintService = complaintService;
     }
 
+    @PostMapping(value = "/upload-photo", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload defect photo", description = "Uploads a photo of the defect (JPG, PNG, WEBP, max 5MB) and returns the generated filename")
+    public ResponseEntity<ApiResponse<java.util.Map<String, String>>> uploadPhoto(
+            @RequestParam("file") org.springframework.web.multipart.MultipartFile file,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        String filename = complaintService.storeComplaintPhoto(principal, file);
+        java.util.Map<String, String> response = new java.util.HashMap<>();
+        response.put("filename", filename);
+        response.put("url", "/api/v1/complaints/photos/" + filename);
+        return ResponseEntity.ok(ApiResponse.success("Photo uploaded successfully", response));
+    }
+
+    @GetMapping("/photos/{filename}")
+    @Operation(summary = "Get complaint defect photo", description = "Streams the complaint defect photo file for viewing")
+    public ResponseEntity<org.springframework.core.io.Resource> getPhoto(
+            @PathVariable String filename) {
+        org.springframework.core.io.Resource fileResource = complaintService.getComplaintPhoto(filename);
+        String contentType = "image/jpeg";
+        if (filename.toLowerCase().endsWith(".png")) {
+            contentType = "image/png";
+        } else if (filename.toLowerCase().endsWith(".webp")) {
+            contentType = "image/webp";
+        }
+
+        return ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                .body(fileResource);
+    }
+
     @PostMapping
     @Operation(summary = "Submit a new complaint", description = "Creates a complaint with an auto-generated sequential number (#SCMS-XXXX) and initial Pending status")
     public ResponseEntity<ApiResponse<ComplaintResponseDto>> createComplaint(
@@ -56,6 +86,52 @@ public class ComplaintController {
                 principal, status, category, priority, search, pageable
         );
         return ResponseEntity.ok(ApiResponse.success(complaints));
+    }
+
+    @GetMapping("/all")
+    @Operation(summary = "Browse all complaints campus-wide", description = "Returns all campus complaints in read-only mode with upvote counts and user vote tracking. Accessible to Students and Teachers.")
+    public ResponseEntity<ApiResponse<Page<ComplaintResponseDto>>> getAllComplaints(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam(required = false) ComplaintStatus status,
+            @RequestParam(required = false) ComplaintCategory category,
+            @RequestParam(required = false) ComplaintPriority priority,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Boolean escalatedOnly,
+            @PageableDefault(size = 20, sort = "upvoteCount", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<ComplaintResponseDto> complaints = complaintService.getPublicComplaints(
+                principal, status, category, priority, search, escalatedOnly, pageable
+        );
+        return ResponseEntity.ok(ApiResponse.success(complaints));
+    }
+
+    @PostMapping("/{id}/upvote")
+    @Operation(summary = "Upvote a complaint", description = "Adds an upvote to indicate being affected by the issue (1 vote per user per complaint)")
+    public ResponseEntity<ApiResponse<ComplaintResponseDto>> upvoteComplaint(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        ComplaintResponseDto result = complaintService.upvoteComplaint(id, principal);
+        return ResponseEntity.ok(ApiResponse.success("Complaint upvoted successfully", result));
+    }
+
+    @DeleteMapping("/{id}/upvote")
+    @Operation(summary = "Remove upvote from a complaint", description = "Removes the user's previous upvote on a complaint")
+    public ResponseEntity<ApiResponse<ComplaintResponseDto>> removeUpvote(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        ComplaintResponseDto result = complaintService.removeUpvote(id, principal);
+        return ResponseEntity.ok(ApiResponse.success("Upvote removed successfully", result));
+    }
+
+    @PostMapping("/{id}/vote")
+    @Operation(summary = "Toggle upvote on a complaint", description = "Toggles upvote status on a complaint")
+    public ResponseEntity<ApiResponse<ComplaintResponseDto>> toggleVote(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        ComplaintResponseDto current = complaintService.getComplaintById(id, principal);
+        ComplaintResponseDto result = current.isHasUpvoted()
+                ? complaintService.removeUpvote(id, principal)
+                : complaintService.upvoteComplaint(id, principal);
+        return ResponseEntity.ok(ApiResponse.success("Vote updated successfully", result));
     }
 
     @GetMapping("/{id}")

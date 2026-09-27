@@ -36,6 +36,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { fetchWithAuth } from '@/lib/api/fetch-with-auth';
 
 interface PhotoPreviewState {
   url: string;
@@ -72,7 +73,7 @@ function AdminComplaintsContent() {
       if (category !== 'all') params.set('category', category);
       if (priority !== 'all') params.set('priority', priority);
 
-      const res = await fetch(`/api/complaints?${params.toString()}`);
+      const res = await fetchWithAuth(`/api/complaints?${params.toString()}`);
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || 'Failed to load complaints');
@@ -96,7 +97,7 @@ function AdminComplaintsContent() {
       });
       return;
     }
-    exportComplaintsToCsv(complaints, 'scms-complaints-filtered.csv');
+    exportComplaintsToCsv(complaints, 'grivo-complaints-filtered.csv');
     toast.success('Filtered List Exported', {
       description: `Downloaded ${complaints.length} records as CSV.`,
     });
@@ -207,7 +208,7 @@ function AdminComplaintsContent() {
                 </TableHeader>
                 <TableBody>
                   {complaints.map((complaint) => {
-                    const formattedId = `#SCMS-${String(complaint.complaint_number).padStart(
+                    const formattedId = complaint.complaintNumber || `#GRIV-${String(complaint.complaint_number || '0000').padStart(
                       4,
                       '0'
                     )}`;
@@ -233,8 +234,10 @@ function AdminComplaintsContent() {
                           </Link>
                         </TableCell>
                         <TableCell>
-                          <span className="text-xs font-semibold uppercase tracking-wider text-charcoal bg-surface-muted px-2 py-0.5 rounded">
-                            {complaint.category}
+                          <span className="text-xs font-semibold uppercase tracking-wider text-charcoal bg-surface-muted px-2 py-0.5 rounded border border-border">
+                            {complaint.category === 'OTHER' && (complaint.customCategory || complaint.custom_category)
+                              ? `Other: ${complaint.customCategory || complaint.custom_category}`
+                              : complaint.category}
                           </span>
                         </TableCell>
                         <TableCell className="max-w-[170px] truncate text-xs font-medium text-charcoal">
@@ -271,8 +274,37 @@ function AdminComplaintsContent() {
 
                         {/* Attachments / Evidence Column */}
                         <TableCell>
-                          <div className="flex items-center gap-1.5">
-                            {complaint.image_url ? (
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {((complaint.photoPaths && complaint.photoPaths.length > 0) || (complaint.photo_paths && complaint.photo_paths.length > 0)) ? (
+                              (complaint.photoPaths || complaint.photo_paths || []).map((filename, pIdx) => (
+                                <button
+                                  key={filename}
+                                  type="button"
+                                  title={`Click to inspect Student Defect Photo ${pIdx + 1}`}
+                                  onClick={() =>
+                                    setPhotoPreview({
+                                      url: `/api/complaints/photos/${filename}`,
+                                      title: `Student Defect Photo ${pIdx + 1} (${formattedId})`,
+                                      subtitle: `${complaint.category} • ${complaint.location}`,
+                                      uploader: complaint.user ? `Reported by ${complaint.user.full_name}` : 'Reported by Student User',
+                                      type: 'defect',
+                                      downloadName: `defect-${complaint.complaint_number || 'photo'}-${pIdx + 1}.jpg`,
+                                    })
+                                  }
+                                  className="relative group w-9 h-9 rounded-lg overflow-hidden border border-border hover:ring-2 hover:ring-lavender transition-all cursor-pointer shrink-0 bg-surface-muted shadow-sm"
+                                >
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={`/api/complaints/photos/${filename}`}
+                                    alt="Defect thumbnail"
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                                  />
+                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white">
+                                    <Eye className="w-3.5 h-3.5" />
+                                  </div>
+                                </button>
+                              ))
+                            ) : complaint.image_url ? (
                               <button
                                 type="button"
                                 title="Click to inspect Student Defect Photo"

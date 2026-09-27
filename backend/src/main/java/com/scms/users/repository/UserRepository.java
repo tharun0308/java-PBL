@@ -17,6 +17,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmailIgnoreCase(String email);
     boolean existsByEmailIgnoreCase(String email);
     List<User> findByStaffAdminStatus(StaffAdminStatus staffAdminStatus);
+    List<User> findByStaffAdminRoleAndStaffAdminStatus(com.scms.users.entity.StaffAdminRole staffAdminRole, StaffAdminStatus staffAdminStatus);
     Page<User> findByRole(Role role, Pageable pageable);
+    List<User> findByRole(Role role);
     List<User> findByRoleIn(List<Role> roles);
 }

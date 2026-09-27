@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { FloatingCards } from '@/components/floating-cards';
 import { StaffIdUpload } from '@/components/staff-id-upload';
+import { StaffAdminRole } from '@/lib/types';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -32,6 +33,8 @@ export default function OnboardingPage() {
   const [teacherIntent, setTeacherIntent] = useState<'REGULAR' | 'MANAGER' | null>(null);
   const [documentPath, setDocumentPath] = useState<string>('');
   const [department, setDepartment] = useState<string>('');
+  const [staffAdminRole, setStaffAdminRole] = useState<StaffAdminRole>('PROFESSOR');
+  const [staffAdminRoleOther, setStaffAdminRoleOther] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -119,6 +122,8 @@ export default function OnboardingPage() {
               teacherIntent,
               staffAdminDocumentPath: teacherIntent === 'MANAGER' ? documentPath : null,
               staffAdminDepartment: teacherIntent === 'MANAGER' ? (department || null) : null,
+              staffAdminRole: teacherIntent === 'MANAGER' ? staffAdminRole : null,
+              staffAdminRoleOther: teacherIntent === 'MANAGER' && staffAdminRole === 'OTHER' ? (staffAdminRoleOther || null) : null,
             };
 
       const response = await fetch('/api/auth/onboarding', {
@@ -135,7 +140,7 @@ export default function OnboardingPage() {
         throw new Error(data.error || 'Failed to complete profile onboarding.');
       }
 
-      toast.success('Welcome to SCMS!', {
+      toast.success('Welcome to Grivo!', {
         description: data.message || 'Your campus profile has been configured successfully.',
         icon: <CheckCircle2 className="w-5 h-5 text-emerald-600" />,
       });
@@ -159,7 +164,10 @@ export default function OnboardingPage() {
   const isStep2Valid =
     (selectedRole === 'Student' && academicYear !== null) ||
     (selectedRole === 'Teacher' && teacherIntent === 'REGULAR') ||
-    (selectedRole === 'Teacher' && teacherIntent === 'MANAGER' && !!documentPath);
+    (selectedRole === 'Teacher' &&
+      teacherIntent === 'MANAGER' &&
+      !!documentPath &&
+      (staffAdminRole !== 'OTHER' || !!staffAdminRoleOther.trim()));
 
   const stepVariants: Variants = {
     enter: (dir: number) => ({
@@ -480,8 +488,12 @@ export default function OnboardingPage() {
                           <StaffIdUpload
                             onDocumentUploaded={(path) => setDocumentPath(path)}
                             onDepartmentChanged={(dept) => setDepartment(dept)}
+                            onRoleChanged={(r) => setStaffAdminRole(r)}
+                            onRoleOtherChanged={(other) => setStaffAdminRoleOther(other)}
                             currentDocumentPath={documentPath}
                             currentDepartment={department}
+                            currentRole={staffAdminRole}
+                            currentRoleOther={staffAdminRoleOther}
                             required={true}
                           />
                         </div>

@@ -19,11 +19,11 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("SCMS — Campus Smart Complaint Management System API")
+                        .title("Grivo — Campus Grievance Management System API")
                         .version("1.0.0")
                         .description("Production-grade RESTful API for student complaints, facility triage, and administrative workflows.")
                         .contact(new Contact()
-                                .name("SCMS Development Team")
+                                .name("Grivo Development Team")
                                 .email("admin@college.edu"))
                         .license(new License().name("Apache 2.0")))
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))

@@ -21,6 +21,8 @@ public class UserSummaryDto {
     private int staffAdminAppealCount;
     private String staffAdminDocumentPath;
     private String staffAdminDepartment;
+    private com.scms.users.entity.StaffAdminRole staffAdminRole;
+    private String staffAdminRoleOther;
     private boolean active;
 
     public UserSummaryDto() {}
@@ -38,6 +40,8 @@ public class UserSummaryDto {
         this.staffAdminAppealCount = user.getStaffAdminAppealCount();
         this.staffAdminDocumentPath = user.getStaffAdminDocumentPath();
         this.staffAdminDepartment = user.getStaffAdminDepartment();
+        this.staffAdminRole = user.getStaffAdminRole();
+        this.staffAdminRoleOther = user.getStaffAdminRoleOther();
         this.active = user.isActive();
     }
 
@@ -135,6 +139,22 @@ public class UserSummaryDto {
 
     public void setStaffAdminDepartment(String staffAdminDepartment) {
         this.staffAdminDepartment = staffAdminDepartment;
+    }
+
+    public com.scms.users.entity.StaffAdminRole getStaffAdminRole() {
+        return staffAdminRole;
+    }
+
+    public void setStaffAdminRole(com.scms.users.entity.StaffAdminRole staffAdminRole) {
+        this.staffAdminRole = staffAdminRole;
+    }
+
+    public String getStaffAdminRoleOther() {
+        return staffAdminRoleOther;
+    }
+
+    public void setStaffAdminRoleOther(String staffAdminRoleOther) {
+        this.staffAdminRoleOther = staffAdminRoleOther;
     }
 
     public boolean isActive() {

@@ -8,7 +8,7 @@ export const BUILD_TIMESTAMP = '2026-09-27T00:45:00.000Z';
 export function BuildTimestamp() {
   useEffect(() => {
     console.log(
-      `%c[SCMS BUILD TIMESTAMP] ${BUILD_TIMESTAMP}`,
+      `%c[GRIVO BUILD TIMESTAMP] ${BUILD_TIMESTAMP}`,
       'background: #1F2937; color: #A78BFA; font-weight: bold; padding: 4px 8px; border-radius: 4px;'
     );
     console.log('BUILD:', BUILD_TIMESTAMP);

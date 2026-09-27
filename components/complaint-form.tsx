@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,40 +29,119 @@ import {
   CheckCircle2,
   ArrowRight,
   ShieldAlert,
+  RotateCcw,
+  Save,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { fetchWithAuth } from '@/lib/api/fetch-with-auth';
+import { ComplaintPhotoUpload } from '@/components/complaint-photo-upload';
+
+const DRAFT_STORAGE_KEY = 'scms_complaint_form_draft';
 
 export function ComplaintForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDraftRestored, setIsDraftRestored] = useState(false);
 
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<ComplaintCreateInput>({
     resolver: zodResolver(complaintCreateSchema) as any,
     defaultValues: {
       category: 'ELECTRICAL',
+      customCategory: '',
+      photoPaths: [],
       location: '',
       description: '',
       priority: 'MEDIUM',
     },
   });
 
+  const selectedCategory = watch('category');
   const selectedPriority = watch('priority');
   const watchedDescription = watch('description', '');
+  const watchedPhotoPaths = watch('photoPaths') || [];
+  const watchedValues = watch();
+
+  // Restore draft on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.location || parsed.description || parsed.customCategory || parsed.photoPaths?.length) {
+          if (parsed.category) setValue('category', parsed.category);
+          if (parsed.customCategory) setValue('customCategory', parsed.customCategory);
+          if (parsed.photoPaths) setValue('photoPaths', parsed.photoPaths);
+          if (parsed.location) setValue('location', parsed.location);
+          if (parsed.description) setValue('description', parsed.description);
+          if (parsed.priority) setValue('priority', parsed.priority);
+          setIsDraftRestored(true);
+        }
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, [setValue]);
+
+  // Auto-save draft on changes
+  useEffect(() => {
+    try {
+      if (
+        watchedValues.location?.trim() ||
+        watchedValues.description?.trim() ||
+        watchedValues.customCategory?.trim() ||
+        (watchedValues.photoPaths && watchedValues.photoPaths.length > 0)
+      ) {
+        localStorage.setItem(
+          DRAFT_STORAGE_KEY,
+          JSON.stringify({
+            category: watchedValues.category,
+            customCategory: watchedValues.customCategory,
+            photoPaths: watchedValues.photoPaths,
+            location: watchedValues.location,
+            description: watchedValues.description,
+            priority: watchedValues.priority,
+            savedAt: new Date().toISOString(),
+          })
+        );
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, [watchedValues]);
+
+  const handleClearDraft = () => {
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch {}
+    reset({
+      category: 'ELECTRICAL',
+      customCategory: '',
+      photoPaths: [],
+      location: '',
+      description: '',
+      priority: 'MEDIUM',
+    });
+    setIsDraftRestored(false);
+    toast.info('Draft cleared');
+  };
 
   const onSubmit = async (data: ComplaintCreateInput) => {
     setIsSubmitting(true);
     try {
-      const res = await fetch('/api/complaints', {
+      const res = await fetchWithAuth('/api/complaints', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           category: data.category,
+          customCategory: data.category === 'OTHER' ? data.customCategory?.trim() : undefined,
+          photoPaths: data.photoPaths && data.photoPaths.length > 0 ? data.photoPaths : undefined,
           location: data.location.trim(),
           description: data.description.trim(),
           priority: data.priority,
@@ -74,6 +153,11 @@ export function ComplaintForm() {
       if (!res.ok) {
         throw new Error(json.error || 'Failed to submit complaint');
       }
+
+      // Clear draft on successful submission
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {}
 
       const complaintNumber = json.data?.complaintNumber || 'Ticket Created';
 
@@ -118,6 +202,31 @@ export function ComplaintForm() {
         </CardHeader>
 
         <CardContent className="pt-6">
+          <AnimatePresence>
+            {isDraftRestored && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-6 p-3.5 bg-pale-lavender border border-lavender/40 rounded-xl flex items-center justify-between text-sm"
+              >
+                <div className="flex items-center gap-2.5 text-lavender-strong font-medium">
+                  <RotateCcw className="w-4 h-4 text-lavender animate-pulse" />
+                  <span>Restored unsaved draft from your previous session</span>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClearDraft}
+                  className="text-xs text-slate hover:text-danger hover:bg-danger/10 h-7 px-2.5 rounded-lg"
+                >
+                  Clear Draft
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Category Dropdown */}
             <div className="space-y-2">
@@ -145,6 +254,37 @@ export function ComplaintForm() {
                   {errors.category.message}
                 </p>
               )}
+
+              {/* Conditional "Other" Specification Field */}
+              <AnimatePresence>
+                {selectedCategory === 'OTHER' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="pt-2"
+                  >
+                    <label
+                      htmlFor="customCategory"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-charcoal mb-1.5"
+                    >
+                      <span>Please specify category <span className="text-danger">*</span></span>
+                    </label>
+                    <Input
+                      id="customCategory"
+                      placeholder="e.g. Broken Water Purifier, Pest Control, Window Crack..."
+                      {...register('customCategory')}
+                      className="bg-white border-border focus:border-lavender text-sm"
+                    />
+                    {errors.customCategory && (
+                      <p className="text-xs text-danger flex items-center gap-1.5 mt-1">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        {errors.customCategory.message}
+                      </p>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Location Input */}
@@ -258,6 +398,14 @@ export function ComplaintForm() {
                 </p>
               )}
             </div>
+
+            {/* Defect Photo Attachment Section */}
+            <ComplaintPhotoUpload
+              photoPaths={watchedPhotoPaths}
+              onChange={(paths) => setValue('photoPaths', paths, { shouldValidate: true })}
+              maxPhotos={3}
+              disabled={isSubmitting}
+            />
 
             {/* Submit Action */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-end gap-3">

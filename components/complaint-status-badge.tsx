@@ -68,3 +68,35 @@ export function ComplaintPriorityBadge({
     </span>
   );
 }
+
+interface ComplaintEscalationBadgeProps {
+  escalationLevel?: number;
+  escalatedTo?: string | null;
+  className?: string;
+}
+
+export function ComplaintEscalationBadge({
+  escalationLevel = 0,
+  escalatedTo,
+  className,
+}: ComplaintEscalationBadgeProps) {
+  if (!escalationLevel || escalationLevel <= 0) return null;
+
+  const isL2 = escalationLevel >= 2;
+
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border animate-pulse',
+        isL2
+          ? 'bg-rose-100 text-rose-800 border-rose-300'
+          : 'bg-amber-100 text-amber-800 border-amber-300',
+        className
+      )}
+      title={escalatedTo ? `Escalated to: ${escalatedTo}` : `Level ${escalationLevel} Escalation`}
+    >
+      <span>🚨</span>
+      <span>{isL2 ? 'Escalated L2 (Principal)' : 'Escalated L1 (HOD)'}</span>
+    </span>
+  );
+}

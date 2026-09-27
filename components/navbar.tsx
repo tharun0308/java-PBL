@@ -17,6 +17,7 @@ import {
   User as UserIcon,
   Sparkles,
   UserCheck,
+  Globe,
 } from 'lucide-react';
 
 import { BrandIcon } from './brand-logo';
@@ -61,6 +62,12 @@ export function Navbar({ user }: NavbarProps) {
       show: !!user && !isAdmin,
     },
     {
+      name: 'Browse Campus',
+      href: '/complaints/browse',
+      icon: Globe,
+      show: !!user,
+    },
+    {
       name: 'New Complaint',
       href: '/complaints/new',
       icon: PlusCircle,
@@ -102,14 +109,14 @@ export function Navbar({ user }: NavbarProps) {
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
                   <span className="font-extrabold text-white tracking-tight text-lg leading-tight">
-                    SCMS
+                    Grivo
                   </span>
                   <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-lavender/15 text-lavender border border-lavender/30">
                     Campus
                   </span>
                 </div>
                 <span className="hidden sm:inline text-[11px] text-slate-400 font-normal leading-tight">
-                  Smart Complaint System
+                  Campus Grievance Platform
                 </span>
               </div>
             </Link>

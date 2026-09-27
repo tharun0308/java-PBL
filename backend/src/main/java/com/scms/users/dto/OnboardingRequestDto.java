@@ -15,6 +15,10 @@ public class OnboardingRequestDto {
 
     private String staffAdminDepartment; // optional department/designation for MANAGER intent
 
+    private String staffAdminRole; // PRINCIPAL, HOD, PROFESSOR, OTHER
+
+    private String staffAdminRoleOther; // text specify when role is OTHER
+
     public OnboardingRequestDto() {}
 
     public OnboardingRequestDto(String userTitle, Integer academicYear, String teacherIntent) {
@@ -61,5 +65,21 @@ public class OnboardingRequestDto {
 
     public void setStaffAdminDepartment(String staffAdminDepartment) {
         this.staffAdminDepartment = staffAdminDepartment;
+    }
+
+    public String getStaffAdminRole() {
+        return staffAdminRole;
+    }
+
+    public void setStaffAdminRole(String staffAdminRole) {
+        this.staffAdminRole = staffAdminRole;
+    }
+
+    public String getStaffAdminRoleOther() {
+        return staffAdminRoleOther;
+    }
+
+    public void setStaffAdminRoleOther(String staffAdminRoleOther) {
+        this.staffAdminRoleOther = staffAdminRoleOther;
     }
 }

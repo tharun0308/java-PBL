@@ -12,11 +12,11 @@ export function BrandIcon({ className = 'w-5 h-5' }: { className?: string }) {
       className={className}
     >
       <defs>
-        <linearGradient id="scms-logo-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+        <linearGradient id="grivo-logo-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
           <stop stopColor="#A78BFA" />
           <stop offset="1" stopColor="#86EFAC" />
         </linearGradient>
-        <linearGradient id="scms-inner-grad" x1="7" y1="7" x2="17" y2="17" gradientUnits="userSpaceOnUse">
+        <linearGradient id="grivo-inner-grad" x1="7" y1="7" x2="17" y2="17" gradientUnits="userSpaceOnUse">
           <stop stopColor="#C4B5FD" />
           <stop offset="1" stopColor="#86EFAC" />
         </linearGradient>
@@ -24,7 +24,7 @@ export function BrandIcon({ className = 'w-5 h-5' }: { className?: string }) {
       {/* Outer Institutional Shield Contour */}
       <path
         d="M12 2.5L4 6.5V12.8C4 17.8 7.4 21.6 12 22.8C16.6 21.6 20 17.8 20 12.8V6.5L12 2.5Z"
-        stroke="url(#scms-logo-grad)"
+        stroke="url(#grivo-logo-grad)"
         strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -32,7 +32,7 @@ export function BrandIcon({ className = 'w-5 h-5' }: { className?: string }) {
       {/* Precision Check & Resolution Grid Pathway */}
       <path
         d="M8.5 12.5L11 15L15.8 9.5"
-        stroke="url(#scms-inner-grad)"
+        stroke="url(#grivo-inner-grad)"
         strokeWidth="2.2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -51,7 +51,7 @@ interface BrandLogoProps {
 
 export function BrandLogo({
   href = '/',
-  tagline = 'Smart Complaint System',
+  tagline = 'Campus Grievance Platform',
   showTagline = true,
 }: BrandLogoProps) {
   return (
@@ -64,7 +64,7 @@ export function BrandLogo({
       <div className="flex flex-col text-left">
         <div className="flex items-center gap-2">
           <span className="font-extrabold text-white tracking-tight text-lg leading-tight">
-            SCMS
+            Grivo
           </span>
           <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-lavender text-charcoal">
             Campus

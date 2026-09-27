@@ -44,7 +44,7 @@ export default function HomePage() {
       icon: Zap,
       title: 'Real-Time Facility Triage',
       description:
-        'Instant categorization across 8 campus departments with auto-generated sequential tracking numbers (#SCMS-0001).',
+        'Instant categorization across 8 campus departments with auto-generated sequential tracking numbers (#GRIV-0001).',
       accent: 'bg-pale-warning',
       iconColor: 'text-warning',
       border: 'hover:border-warning/50',
@@ -316,7 +316,7 @@ export default function HomePage() {
         <footer className="w-full border-t border-border bg-white py-8 text-center text-xs text-slate">
           <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-charcoal">SCMS Campus Portal</span>
+              <span className="font-semibold text-charcoal">Grivo Campus Portal</span>
               <span>•</span>
               <span>Production Java Spring Boot 3 Backend</span>
             </div>

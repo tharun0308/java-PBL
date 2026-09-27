@@ -28,7 +28,7 @@ export function FloatingCards({ className = '' }: FloatingCardsProps) {
           </div>
           <div className="flex flex-col min-w-0 pr-1">
             <div className="flex items-center gap-1.5">
-              <span className="font-mono text-[11px] font-bold text-lavender-strong">#SCMS-0038</span>
+              <span className="font-mono text-[11px] font-bold text-lavender-strong">#GRIV-0038</span>
               <span className="text-[10px] text-slate">•</span>
               <span className="text-[11px] font-medium text-charcoal">Plumbing</span>
             </div>

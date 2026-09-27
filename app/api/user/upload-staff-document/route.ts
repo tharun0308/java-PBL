@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { API_BASE_URL } from '@/lib/api/client';
-import { getAccessToken } from '@/lib/auth';
+import { getValidAccessToken } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const accessToken = getAccessToken();
+    const accessToken = await getValidAccessToken();
     if (!accessToken) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });
     }

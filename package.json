@@ -1,5 +1,5 @@
 {
-  "name": "scms",
+  "name": "grivo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -34,6 +34,8 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.24",
+    "pg": "^8.23.0",
+    "playwright": "^1.63.0",
     "postcss": "^8.4.49",
     "puppeteer-core": "^25.12.0",
     "tailwindcss": "^3.4.17",

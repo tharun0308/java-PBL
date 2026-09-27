@@ -62,10 +62,38 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
   }
 
   try {
-    const res = await fetch(url, {
+    let res = await fetch(url, {
       ...rest,
       headers: reqHeaders,
     });
+
+    if (res.status === 401 && typeof window === 'undefined') {
+      try {
+        const { getRefreshToken, setAuthCookies } = await import('@/lib/auth');
+        const refreshToken = getRefreshToken();
+        if (refreshToken) {
+          const refreshRes = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken }),
+          });
+          if (refreshRes.ok) {
+            const refreshData = await refreshRes.json().catch(() => null);
+            const { accessToken, refreshToken: newRefreshToken } = refreshData?.data || {};
+            if (accessToken) {
+              setAuthCookies(accessToken, newRefreshToken);
+              reqHeaders['Authorization'] = `Bearer ${accessToken}`;
+              res = await fetch(url, {
+                ...rest,
+                headers: reqHeaders,
+              });
+            }
+          }
+        }
+      } catch {
+        // Fall through to standard 401 handling
+      }
+    }
 
     if (res.status === 204) {
       return null as unknown as T;

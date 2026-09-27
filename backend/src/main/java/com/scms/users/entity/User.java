@@ -54,6 +54,13 @@ public class User {
     @Column(name = "staff_admin_department")
     private String staffAdminDepartment;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "staff_admin_role")
+    private StaffAdminRole staffAdminRole;
+
+    @Column(name = "staff_admin_role_other")
+    private String staffAdminRoleOther;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
@@ -198,6 +205,22 @@ public class User {
 
     public void setStaffAdminDepartment(String staffAdminDepartment) {
         this.staffAdminDepartment = staffAdminDepartment;
+    }
+
+    public StaffAdminRole getStaffAdminRole() {
+        return staffAdminRole;
+    }
+
+    public void setStaffAdminRole(StaffAdminRole staffAdminRole) {
+        this.staffAdminRole = staffAdminRole;
+    }
+
+    public String getStaffAdminRoleOther() {
+        return staffAdminRoleOther;
+    }
+
+    public void setStaffAdminRoleOther(String staffAdminRoleOther) {
+        this.staffAdminRoleOther = staffAdminRoleOther;
     }
 
     public Instant getUpdatedAt() {

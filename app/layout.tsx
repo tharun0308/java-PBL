@@ -7,7 +7,7 @@ import { BuildTimestamp } from '@/components/build-timestamp';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'SCMS — Smart Complaint Management System',
+  title: 'Grivo — Campus Grievance Management System',
   description:
     'Campus facility issue tracking, triage, resolution, and audit trail system for students and administrators.',
 };

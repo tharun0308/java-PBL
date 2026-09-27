@@ -2,6 +2,7 @@ package com.scms.users.dto;
 
 import com.scms.users.entity.AuthProvider;
 import com.scms.users.entity.Role;
+import com.scms.users.entity.StaffAdminRole;
 import com.scms.users.entity.StaffAdminStatus;
 import com.scms.users.entity.User;
 
@@ -22,6 +23,8 @@ public class UserResponseDto {
     private int staffAdminAppealCount;
     private String staffAdminDocumentPath;
     private String staffAdminDepartment;
+    private StaffAdminRole staffAdminRole;
+    private String staffAdminRoleOther;
     private boolean active;
     private Instant createdAt;
     private Instant updatedAt;
@@ -41,6 +44,8 @@ public class UserResponseDto {
         this.staffAdminAppealCount = user.getStaffAdminAppealCount();
         this.staffAdminDocumentPath = user.getStaffAdminDocumentPath();
         this.staffAdminDepartment = user.getStaffAdminDepartment();
+        this.staffAdminRole = user.getStaffAdminRole();
+        this.staffAdminRoleOther = user.getStaffAdminRoleOther();
         this.active = user.isActive();
         this.createdAt = user.getCreatedAt();
         this.updatedAt = user.getUpdatedAt();
@@ -148,6 +153,22 @@ public class UserResponseDto {
 
     public void setStaffAdminDepartment(String staffAdminDepartment) {
         this.staffAdminDepartment = staffAdminDepartment;
+    }
+
+    public StaffAdminRole getStaffAdminRole() {
+        return staffAdminRole;
+    }
+
+    public void setStaffAdminRole(StaffAdminRole staffAdminRole) {
+        this.staffAdminRole = staffAdminRole;
+    }
+
+    public String getStaffAdminRoleOther() {
+        return staffAdminRoleOther;
+    }
+
+    public void setStaffAdminRoleOther(String staffAdminRoleOther) {
+        this.staffAdminRoleOther = staffAdminRoleOther;
     }
 
     public Instant getCreatedAt() {
